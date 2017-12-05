@@ -1,0 +1,17 @@
+{
+  "extends": "standard",
+  "rules": {
+    "comma-dangle": ["error", "never"],
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never"
+    }],
+    "no-return-assign": "off",
+    "semi": ["error", "always"],
+    "no-unused-expressions": "off"
+  },
+  "env": {
+    "node": true,
+    "mocha": true
+  }
+}

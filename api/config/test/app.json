@@ -1,0 +1,9 @@
+{
+  "sessionSecret": "session secret",
+  "cookieSecret": "cookie secret",
+  "protocol": "http",
+  "host": "test-easelbee.io",
+  "port": 8000,
+  "listenPort": 8000,
+  "logging": false
+}

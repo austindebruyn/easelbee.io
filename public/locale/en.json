@@ -1,0 +1,36 @@
+{
+  "forgot-password": {
+    "complete": {
+      "header": "Enter the token received in your password reset email.",
+      "submit": "Reset Password",
+      "send-email-again": "Send Email Again",
+      "code-placeholder": "Temporary Code",
+      "errors": {
+        "missing-code": "You need to enter the password reset code that was emailed.",
+        "missing-password": "You need to enter a new password.",
+        "passwords-dont-match": "The new passwords don't match.",
+        "invalid-code": "The code you used was wrong. Please try sending another email.",
+        "code-already-used": "The link from your email has already been used. Try sending another."
+      }
+    },
+    "new": {
+      "title": "Forgot your password?",
+      "header": "Enter the email you signed up with and an email with instructions will be sent to you.",
+      "send-email": "Send Email",
+      "errors": {
+        "missing-email": "You need to enter an email.",
+        "invalid-email": "This email isn't registered."
+      }
+    },
+    "back-to-login": "Back to Login"
+  },
+  "error-list": {
+    "generic-error": "An unknown error has occured. Are you offline?"
+  },
+  "placeholders": {
+    "email": "Email",
+    "code-placeholder": "Code",
+    "new-password": "New Password",
+    "confirm-new-password": "Confirm New Password"
+  }
+}

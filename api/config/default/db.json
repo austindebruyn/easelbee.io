@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "username": "lyn",
+  "password": "",
+  "database": "easelbee",
+  "dialect": "mysql"
+}

@@ -1,0 +1,9 @@
+node_modules
+public/dist
+/sessions
+/memory
+dump.rdb
+coverage
+.nyc_output
+integration/screenshots
+.vscode

@@ -1,0 +1,26 @@
+@import './mixins';
+@import './colors';
+@import './fonts';
+
+html {
+  font-size: 18px;
+
+  @include media-breakpoint-up(md) {
+    font-size: 16px;
+  }
+}
+
+body {
+  color: $black;
+  background-color: $gray-light;
+  font-family: 'tensoregular';
+}
+
+input {
+  font-family: 'tensoregular';
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'sinkinsans';
+  font-weight: medium;
+}
