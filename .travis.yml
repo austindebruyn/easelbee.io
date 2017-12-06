@@ -21,3 +21,4 @@ addons:
     - test-easelbee.io
 after_success:
   - yarn coveralls
+  - sh bin/touch-lynbot.sh
