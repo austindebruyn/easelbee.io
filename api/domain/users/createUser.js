@@ -4,6 +4,7 @@ const EmailPreferences = require('../emailPreferences/EmailPreferences');
 const hashPasswords = require('./passwords').hash;
 const sendVerificationEmail = require('../emailPreferences/sendVerificationEmail');
 const uid = require('uid-safe');
+const LynbotAPI = require('../../lib/LynbotAPI');
 
 class UserCreationError extends Error {
   constructor(code, data = {}) {
@@ -69,6 +70,9 @@ module.exports.createUser = function createUser(data) {
       .then(function (model) {
         model.user = state.user;
         return sendVerificationEmail.sendVerificationEmail(model);
+      })
+      .then(function () {
+        return LynbotAPI.send(`A new user __${email}__ just signed up!`);
       })
       .then(function () {
         return resolve(state.user);

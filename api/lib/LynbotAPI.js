@@ -3,7 +3,6 @@ const config = require('../config');
 
 class LynbotAPI {
   constructor() {
-
   }
 
   send(message) {
