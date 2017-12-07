@@ -72,7 +72,7 @@ module.exports.createUser = function createUser(data) {
         return sendVerificationEmail.sendVerificationEmail(model);
       })
       .then(function () {
-        return LynbotAPI.send(`A new user __${email}__ just signed up!`);
+        return new LynbotAPI().send(`A new user __${email}__ just signed up!`);
       })
       .then(function () {
         return resolve(state.user);

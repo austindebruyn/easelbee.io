@@ -27,7 +27,8 @@ module.exports.create = function (req, res, next) {
           });
         })
         .then(function () {
-          return LynbotAPI.send(`__${state.json.email}__ just signed in.`);
+          const message = `__${state.json.email}__ just signed in.`;
+          return new LynbotAPI().send(message);
         })
         .catch(next);
     });
