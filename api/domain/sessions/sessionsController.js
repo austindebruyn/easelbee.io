@@ -1,4 +1,5 @@
 const auth = require('../../services/auth');
+const LynbotAPI = require('../../lib/LynbotAPI');
 
 module.exports.create = function (req, res, next) {
   auth.authenticate(function (err, user, info) {
@@ -15,13 +16,20 @@ module.exports.create = function (req, res, next) {
 
     req.login(user, function (err) {
       if (err) return next(err);
+      const state = {};
 
-      return user.toJSON().then(function (json) {
-        return res.json({
-          ok: true,
-          user: json
-        });
-      }).catch(next);
+      return user.toJSON()
+        .then(function (json) {
+          state.json = json;
+          return res.json({
+            ok: true,
+            user: json
+          });
+        })
+        .then(function () {
+          return LynbotAPI.send(`__${json.email}__ just signed in.`);
+        })
+        .catch(next);
     });
   })(req, res, next);
 };
