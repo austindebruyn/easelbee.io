@@ -27,3 +27,5 @@ class LynbotAPI {
     });
   }
 }
+
+module.exports = LynbotAPI;
