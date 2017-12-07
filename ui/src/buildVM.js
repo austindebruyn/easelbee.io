@@ -10,10 +10,10 @@ export default function (opts) {
   // hydrate
   const user = opts.user;
   const raven = buildRaven(opts.context.sentry);
-  user.ha()
-  store.store.subscribe(function () {
+
+  store.subscribe(function () {
     if (raven) {
-      raven.setRavenUser(pick(store.state.user, 'id', 'username', 'email'));
+      raven.setRavenUser(pick(store.state.user.value, 'id', 'username', 'email'));
     }
   });
   store.commit('loginSuccess', user);
