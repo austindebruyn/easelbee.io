@@ -55,7 +55,6 @@ module.exports.createUser = function createUser(data) {
         return hashPasswords(password);
       })
       .then(function (password) {
-        console.log(displayName);
         return User.create({ displayName, email, password });
       })
       .then(function (user) {

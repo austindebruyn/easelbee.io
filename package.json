@@ -101,7 +101,7 @@
     "lint:api:fix": "eslint api --fix",
     "lint:ui": "eslint --ext .js --ext .vue ui",
     "lint:ui:fix": "eslint ui --ext .js --ext .vue --fix",
-    "test:api": "NODE_ENV=test mocha --recursive 'api/**/*.test.js'",
+    "test:api": "NODE_ENV=test mocha --exit --recursive 'api/**/*.test.js'",
     "test:api:cover": "nyc --reporter=lcov --reporter=text npm run test:api",
     "test:ui:watch": "cd ui && karma start --debug",
     "test:ui": "cd ui && karma start --single-run",
