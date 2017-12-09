@@ -61,50 +61,47 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import axios from 'axios';
-  import errors from 'i18n/errors';
-  import { mapState } from 'vuex';
-  import { isLoaded, isMutating } from 'state/Resource';
-  import AuthLayout from 'components/auth/AuthLayout';
+import { mapState } from 'vuex';
+import { isLoaded, isMutating } from 'state/Resource';
+import AuthLayout from 'components/auth/AuthLayout';
 
-  export default {
-    name: 'create-account-page',
-    components: {
-      'auth-layout': AuthLayout
-    },
-    data: function () {
-      return {
-        username: null,
-        email: null,
-        password: null,
-        password2: null
-      };
-    },
-    computed: {
-      ...mapState(['user']),
-      shouldDisableForm: function () {
-        return isMutating(this.user);
-      }
-    },
-    updated: function () {
-      if (isLoaded(this.user) && this.user.value) {
-        this.$router.push('/home');
-      }
-    },
-    methods: {
-      onSubmit: function (e) {
-        e.preventDefault();
-
-        this.$store.dispatch('createUser', {
-          username: e.target.username.value,
-          email: e.target.email.value,
-          password: e.target.password.value,
-          password2: e.target.password2.value
-        });
-      }
+export default {
+  name: 'create-account-page',
+  components: {
+    'auth-layout': AuthLayout
+  },
+  data: function () {
+    return {
+      username: null,
+      email: null,
+      password: null,
+      password2: null
+    };
+  },
+  computed: {
+    ...mapState(['user']),
+    shouldDisableForm: function () {
+      return isMutating(this.user);
     }
-  };
+  },
+  updated: function () {
+    if (isLoaded(this.user) && this.user.value) {
+      this.$router.push('/home');
+    }
+  },
+  methods: {
+    onSubmit: function (e) {
+      e.preventDefault();
+
+      this.$store.dispatch('createUser', {
+        username: e.target.username.value,
+        email: e.target.email.value,
+        password: e.target.password.value,
+        password2: e.target.password2.value
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss">

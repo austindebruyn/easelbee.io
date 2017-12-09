@@ -6,7 +6,7 @@ import Vuex from 'vuex';
 import Resource, { STATUS } from 'state/Resource';
 import VErrorList from 'components/controls/VErrorList';
 
-function factory(opts = {}) {
+function factory (opts = {}) {
   this.mutations = {
     loginSuccess: sinon.spy(),
     completePasswordResetSuccess: function (state) {
@@ -68,7 +68,7 @@ describe('CompletePasswordResetPage', function () {
     });
 
     it('disabled all inputs', function () {
-      function shouldBeDisabled(input) {
+      function shouldBeDisabled (input) {
         expect(input.element.getAttribute('disabled')).to.eql('disabled');
       }
       this.wrapper.find('input').forEach(shouldBeDisabled);

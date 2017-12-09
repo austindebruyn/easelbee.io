@@ -10,7 +10,7 @@ var animate = function () {
 };
 
 const VueTween = {
-  install(Vue) {
+  install (Vue) {
     return Vue.prototype.$tween = function (obj, duration) {
       if (this.tween) {
         this.tween.stop();

@@ -6,7 +6,7 @@ export const STATUS = {
 };
 
 export default class Resource {
-  constructor(opts) {
+  constructor (opts) {
     this.status = STATUS.UNLOADED;
     this.value = null;
     this.errors = null;
@@ -14,18 +14,18 @@ export default class Resource {
   }
 }
 
-export function isUnloaded(resource) {
+export function isUnloaded (resource) {
   return resource.status === STATUS.UNLOADED;
 }
 
-export function isLoaded(resource) {
+export function isLoaded (resource) {
   return resource.status === STATUS.LOADED;
 }
 
-export function isMutating(resource) {
+export function isMutating (resource) {
   return resource.status === STATUS.MUTATING;
 }
 
-export function isErrored(resource) {
+export function isErrored (resource) {
   return resource.status === STATUS.ERRORED;
 }

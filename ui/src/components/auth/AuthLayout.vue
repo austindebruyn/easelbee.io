@@ -6,11 +6,9 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-
-  export default {
-    name: 'auth-layout'
-  };
+export default {
+  name: 'auth-layout'
+};
 </script>
 
 <style lang="scss">

@@ -70,57 +70,54 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import axios from 'axios';
-  import errors from 'i18n/errors';
-  import AuthLayout from 'components/auth/AuthLayout';
-  import VErrorList from 'components/controls/VErrorList';
-  import VLink from 'components/controls/VLink';
-  import { mapState } from 'vuex';
-  import { isLoaded, isMutating } from 'state/Resource';
+import AuthLayout from 'components/auth/AuthLayout';
+import VErrorList from 'components/controls/VErrorList';
+import VLink from 'components/controls/VLink';
+import { mapState } from 'vuex';
+import { isLoaded, isMutating } from 'state/Resource';
 
-  export default {
-    name: 'complete-password-reset-page',
-    components: {
-      'auth-layout': AuthLayout,
-      'v-error-list': VErrorList,
-      'v-link': VLink
-    },
-    data: function () {
-      return {
-        code: null,
-        password: null,
-        password2: null
-      };
-    },
-    computed: {
-      ...mapState([ 'completePasswordReset' ]),
-      shouldDisableForm: function () {
-        return isMutating(this.completePasswordReset);
-      }
-    },
-    mounted: function () {
-      if (this.$route && this.$route.query.code != null) {
-        this.code = this.$route.query.code;
-      }
-    },
-    updated: function () {
-      if (isLoaded(this.completePasswordReset)) {
-        this.$router.push('/home');
-      }
-    },
-    methods: {
-      onSubmit: function (e) {
-        e.preventDefault();
-
-        this.$store.dispatch('completePasswordReset', {
-          code: this.code,
-          password: this.password,
-          password2: this.password2
-        });
-      }
+export default {
+  name: 'complete-password-reset-page',
+  components: {
+    'auth-layout': AuthLayout,
+    'v-error-list': VErrorList,
+    'v-link': VLink
+  },
+  data: function () {
+    return {
+      code: null,
+      password: null,
+      password2: null
+    };
+  },
+  computed: {
+    ...mapState([ 'completePasswordReset' ]),
+    shouldDisableForm: function () {
+      return isMutating(this.completePasswordReset);
     }
-  };
+  },
+  mounted: function () {
+    if (this.$route && this.$route.query.code != null) {
+      this.code = this.$route.query.code;
+    }
+  },
+  updated: function () {
+    if (isLoaded(this.completePasswordReset)) {
+      this.$router.push('/home');
+    }
+  },
+  methods: {
+    onSubmit: function (e) {
+      e.preventDefault();
+
+      this.$store.dispatch('completePasswordReset', {
+        code: this.code,
+        password: this.password,
+        password2: this.password2
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss">

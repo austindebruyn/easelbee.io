@@ -37,48 +37,45 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import axios from 'axios';
-  import errors from 'i18n/errors';
-  import AuthLayout from 'components/auth/AuthLayout';
-  import VErrorList from 'components/controls/VErrorList';
-  import VLink from 'components/controls/VLink';
-  import { mapState } from 'vuex';
-  import { isLoaded, isMutating } from 'state/Resource';
+import AuthLayout from 'components/auth/AuthLayout';
+import VErrorList from 'components/controls/VErrorList';
+import VLink from 'components/controls/VLink';
+import { mapState } from 'vuex';
+import { isLoaded, isMutating } from 'state/Resource';
 
-  export default {
-    name: 'new-password-reset',
-    components: {
-      'auth-layout': AuthLayout,
-      'v-error-list': VErrorList,
-      'v-link': VLink
-    },
-    data: function () {
-      return {
-        email: null
-      };
-    },
-    computed: {
-      ...mapState([ 'passwordReset' ]),
-      shouldDisableForm: function () {
-        return isMutating(this.passwordReset);
-      }
-    },
-    updated: function () {
-      if (isLoaded(this.passwordReset)) {
-        this.$router.push('/passwordResets/complete');
-      }
-    },
-    methods: {
-      onSubmit: function (e) {
-        e.preventDefault();
-
-        this.$store.dispatch('createPasswordReset', {
-          email: this.email
-        });
-      }
+export default {
+  name: 'new-password-reset',
+  components: {
+    'auth-layout': AuthLayout,
+    'v-error-list': VErrorList,
+    'v-link': VLink
+  },
+  data: function () {
+    return {
+      email: null
+    };
+  },
+  computed: {
+    ...mapState([ 'passwordReset' ]),
+    shouldDisableForm: function () {
+      return isMutating(this.passwordReset);
     }
-  };
+  },
+  updated: function () {
+    if (isLoaded(this.passwordReset)) {
+      this.$router.push('/passwordResets/complete');
+    }
+  },
+  methods: {
+    onSubmit: function (e) {
+      e.preventDefault();
+
+      this.$store.dispatch('createPasswordReset', {
+        email: this.email
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss">

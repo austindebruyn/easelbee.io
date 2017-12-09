@@ -9,20 +9,19 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import LoadingSpinner from 'components/LoadingSpinner';
+import LoadingSpinner from 'components/LoadingSpinner';
 
-  export default {
-    name: 'home-index-page',
-    components: {
-      'loading-spinner': LoadingSpinner
-    },
-    computed: {
-      user: function () {
-        return this.$store.state.user;
-      }
+export default {
+  name: 'home-index-page',
+  components: {
+    'loading-spinner': LoadingSpinner
+  },
+  computed: {
+    user: function () {
+      return this.$store.state.user;
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss">

@@ -7,11 +7,9 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-
-  export default {
-    name: 'not-found'
-  };
+export default {
+  name: 'not-found'
+};
 </script>
 
 <style lang="scss">

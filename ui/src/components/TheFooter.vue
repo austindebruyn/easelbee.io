@@ -13,16 +13,14 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-
-  export default {
-    name: 'the-footer',
-    computed: {
-      githubUrl: function () {
-        return 'https://github.com/austindebruyn/easelbee.io';
-      }
+export default {
+  name: 'the-footer',
+  computed: {
+    githubUrl: function () {
+      return 'https://github.com/austindebruyn/easelbee.io';
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss" scoped>

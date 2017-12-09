@@ -8,17 +8,18 @@
 </template>
 
 <script>
-  import oneOf from 'lib/oneOf';
+import oneOf from 'lib/oneOf';
 
-  export default {
-    name: 'loading-spinner',
-    props: {
-      size: {
-        type: String,
-        default: 'sm'
-      }
+export default {
+  name: 'loading-spinner',
+  props: {
+    size: {
+      type: String,
+      validator: oneOf(['sm', 'xl']),
+      default: 'sm'
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss" scoped>

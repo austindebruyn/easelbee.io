@@ -15,40 +15,58 @@
 </template>
 
 <script>
-  export default {
-    name: 'v-input-text',
-    props: {
-      name: String,
-      placeholder: String,
-      disabled: Boolean,
+export default {
+  name: 'v-input-text',
+  props: {
+    name: {
       type: String,
-      icon: String,
-      value: String
+      required: true
     },
-    data: function () {
+    placeholder: {
+      type: String,
+      required: true
+    },
+    disabled: {
+      type: Boolean,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    },
+    icon: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: String,
+      required: true
+    }
+  },
+  data: function () {
+    return {
+      focus: false
+    };
+  },
+  computed: {
+    classes () {
       return {
-        focus: false
+        'input-group-focus': this.focus
       };
     },
-    computed: {
-      classes() {
-        return {
-          'input-group-focus': this.focus
-        };
-      },
-      iconClass() {
-        return `fa-${this.icon}`;
-      }
-    },
-    methods: {
-      handleFocus() {
-        this.focus = true;
-      },
-      handleBlur() {
-        this.focus = false;
-      }
+    iconClass () {
+      return `fa-${this.icon}`;
     }
-  };
+  },
+  methods: {
+    handleFocus () {
+      this.focus = true;
+    },
+    handleBlur () {
+      this.focus = false;
+    }
+  }
+};
 </script>
 
 <style lang="scss">

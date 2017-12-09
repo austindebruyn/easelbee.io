@@ -65,7 +65,7 @@ export default new Vuex.Store({
   },
 
   actions: {
-    fetch_emailPreferences({ state, commit }) {
+    fetch_emailPreferences ({ state, commit }) {
       const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -100,7 +100,7 @@ export default new Vuex.Store({
           commit('loginFailure', data.errors);
         });
     },
-    createUser({ state, commit }, payload) {
+    createUser ({ state, commit }, payload) {
       const { username, email, password, password2 } = payload;
       commit('loginStart');
 
@@ -123,7 +123,7 @@ export default new Vuex.Store({
           commit('loginFailure', data.errors);
         });
     },
-    createPasswordReset({ state, commit }, { email }) {
+    createPasswordReset ({ state, commit }, { email }) {
       commit('createPasswordResetStart');
 
       return axios.post('/api/passwordResets', { email }, {
@@ -140,7 +140,7 @@ export default new Vuex.Store({
           commit('createPasswordResetFailure', data.errors);
         });
     },
-    completePasswordReset({ state, commit }, { code, password, password2 }) {
+    completePasswordReset ({ state, commit }, { code, password, password2 }) {
       commit('completePasswordResetStart');
 
       return axios.post('/api/passwordResets/complete', {

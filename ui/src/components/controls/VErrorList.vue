@@ -4,46 +4,45 @@
 </template>
 
 <script>
-  import { isErrored } from 'state/Resource';
+import { isErrored } from 'state/Resource';
 
-  export default {
-    name: 'v-error-list',
-    props: {
-      resource: {
-        required: true,
-        type: Object,
-        validator: function (value) {
-          return typeof value.status === 'number';
-        }
-      },
-      prefix: {
-        required: true,
-        type: String
+export default {
+  name: 'v-error-list',
+  props: {
+    resource: {
+      required: true,
+      type: Object,
+      validator: function (value) {
+        return typeof value.status === 'number';
       }
     },
-    data: function () {
-      return {
-        errors: []
-      };
-    },
-    computed: {
-      shouldShow: function () {
-        return isErrored(this.resource);
-      }
-    },
-    watch: {
-      'resource.errors': function (errors) {
-        if (!errors || errors.length < 1) {
-          this.errors = [ this.$t('error-list.generic-error') ]
-        }
-        else {
-          this.errors = errors.map(error => {
-            return this.$t(`${this.prefix}.${error.code}`);
-          });
-        }
+    prefix: {
+      required: true,
+      type: String
+    }
+  },
+  data: function () {
+    return {
+      errors: []
+    };
+  },
+  computed: {
+    shouldShow: function () {
+      return isErrored(this.resource);
+    }
+  },
+  watch: {
+    'resource.errors': function (errors) {
+      if (!errors || errors.length < 1) {
+        this.errors = [ this.$t('error-list.generic-error') ];
+      } else {
+        this.errors = errors.map(error => {
+          return this.$t(`${this.prefix}.${error.code}`);
+        });
       }
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss" scoped>

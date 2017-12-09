@@ -16,40 +16,39 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import LoadingSpinner from 'components/LoadingSpinner';
-  import SettingsPageUserForm from 'components/SettingsPage/SettingsPageUserForm';
-  import moment from 'moment';
+import LoadingSpinner from 'components/LoadingSpinner';
+import SettingsPageUserForm from 'components/SettingsPage/SettingsPageUserForm';
+import moment from 'moment';
 
-  export default {
-    name: 'settings-page',
-    components: {
-      'loading-spinner': LoadingSpinner,
-      'settings-page-user-form': SettingsPageUserForm
+export default {
+  name: 'settings-page',
+  components: {
+    'loading-spinner': LoadingSpinner,
+    'settings-page-user-form': SettingsPageUserForm
+  },
+  data () {
+    return {username: this.user && this.user.username};
+  },
+  computed: {
+    user: function () {
+      return this.$store.state.user;
     },
-    data() {
-      return {username: this.user && this.user.username};
+    email_preferences: function () {
+      return this.$store.state.email_preferences;
     },
-    computed: {
-      user: function () {
-        return this.$store.state.user;
-      },
-      email_preferences: function () {
-        return this.$store.state.email_preferences;
-      },
-      loaded: function () {
-        return this.email_preferences && this.user;
-      },
-      relative_user_age: function () {
-        return `Signed up ${moment(this.user.createdAt).fromNow()}`;
-      }
+    loaded: function () {
+      return this.email_preferences && this.user;
     },
-    mounted: function () {
-      if (!this.email_preferences) {
-        return this.$store.dispatch('fetch_email_preferences');
-      }
+    relative_user_age: function () {
+      return `Signed up ${moment(this.user.createdAt).fromNow()}`;
     }
-  };
+  },
+  mounted: function () {
+    if (!this.email_preferences) {
+      return this.$store.dispatch('fetch_email_preferences');
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

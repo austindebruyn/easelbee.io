@@ -7,25 +7,25 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import { mapState } from 'vuex';
-  import { STATUS } from 'state/Resource';
-  import LoadingSpinner from 'components/LoadingSpinner';
+import Vue from 'vue';
+import { mapState } from 'vuex';
+import { STATUS } from 'state/Resource';
+import LoadingSpinner from 'components/LoadingSpinner';
 
-  export default Vue.component('App', {
-    components: {
-      'loading-spinner': LoadingSpinner
+export default Vue.component('App', {
+  components: {
+    'loading-spinner': LoadingSpinner
+  },
+  computed: {
+    ...mapState(['i18n']),
+    ready: function () {
+      return this.i18n.status === STATUS.LOADED;
     },
-    computed: {
-      ...mapState(['i18n']),
-      ready: function () {
-        return this.i18n.status === STATUS.LOADED;
-      },
-      errored: function () {
-        return this.i18n.status === STATUS.ERRORED;
-      }
+    errored: function () {
+      return this.i18n.status === STATUS.ERRORED;
     }
-  });
+  }
+});
 </script>
 
 <style lang="scss">

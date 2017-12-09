@@ -46,49 +46,45 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import store from 'state/store';
-  import errors from 'i18n/errors';
-  import axios from 'axios';
-  import { mapState } from 'vuex';
-  import LoadingSpinner from 'components/LoadingSpinner';
-  import AuthLayout from 'components/auth/AuthLayout';
-  import { isLoaded, isMutating } from 'state/Resource';
+import { mapState } from 'vuex';
+import LoadingSpinner from 'components/LoadingSpinner';
+import AuthLayout from 'components/auth/AuthLayout';
+import { isLoaded, isMutating } from 'state/Resource';
 
-  export default {
-    name: 'login-page',
-    components: {
-      'auth-layout': AuthLayout,
-      'loading-spinner': LoadingSpinner
-    },
-    data: function () {
-      return {
-        username: null,
-        password: null
-      };
-    },
-    computed: {
-      ...mapState([ 'user' ]),
-      shouldDisableForm: function () {
-        return isMutating(this.user);
-      }
-    },
-    updated: function () {
-      if (isLoaded(this.user)) {
-        this.$router.push('/home');
-      }
-    },
-    methods: {
-      onSubmit: function (e) {
-        e.preventDefault();
-
-        this.$store.dispatch('login', {
-          username: this.username,
-          password: this.password
-        });
-      }
+export default {
+  name: 'login-page',
+  components: {
+    'auth-layout': AuthLayout,
+    'loading-spinner': LoadingSpinner
+  },
+  data: function () {
+    return {
+      username: null,
+      password: null
+    };
+  },
+  computed: {
+    ...mapState([ 'user' ]),
+    shouldDisableForm: function () {
+      return isMutating(this.user);
     }
-  };
+  },
+  updated: function () {
+    if (isLoaded(this.user)) {
+      this.$router.push('/home');
+    }
+  },
+  methods: {
+    onSubmit: function (e) {
+      e.preventDefault();
+
+      this.$store.dispatch('login', {
+        username: this.username,
+        password: this.password
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss">
