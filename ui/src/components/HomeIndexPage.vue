@@ -10,6 +10,7 @@
 
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
+import { isLoaded } from 'store/Resource';
 
 export default {
   name: 'home-index-page',
@@ -18,7 +19,10 @@ export default {
   },
   computed: {
     user: function () {
-      return this.$store.state.user;
+      if (!isLoaded(this.$store.state.user)) {
+        return null;
+      }
+      return this.$store.state.user.value;
     }
   }
 };
