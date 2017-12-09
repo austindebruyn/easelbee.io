@@ -25,7 +25,7 @@ module.exports = {
         }
       }
     }).then(function () {
-      renameColumn('users', 'displayName', 'username');
+      q.renameColumn('users', 'displayName', 'username');
     });
   }
-}
+};

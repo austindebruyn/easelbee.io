@@ -4,26 +4,26 @@ const passwordUtils = require('../domain/users/passwords');
 const User = require('../domain/users/User');
 
 passport.use(new LocalStrategy({
-    usernameField: 'email'
-  },
-  function (email, password, done) {
-    let user;
+  usernameField: 'email'
+},
+function (email, password, done) {
+  let user;
 
-    User.findOne({ where: { email } }).then(function (record) {
-      user = record;
+  User.findOne({ where: { email } }).then(function (record) {
+    user = record;
 
-      if (!user) {
-        return null;
-      }
-      return passwordUtils.verify(password, user.password);
+    if (!user) {
+      return null;
+    }
+    return passwordUtils.verify(password, user.password);
+  })
+    .then(function (success) {
+      return done(null, success ? user : false);
     })
-      .then(function (success) {
-        return done(null, success ? user : false);
-      })
-      .catch(function (err) {
-        return done(err);
-      });
-  }
+    .catch(function (err) {
+      return done(err);
+    });
+}
 ));
 
 passport.serializeUser(function (user, done) {
