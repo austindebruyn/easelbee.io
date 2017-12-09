@@ -7,18 +7,18 @@ cache:
 node_js:
   - 8.6
 script:
-  # - yarn lint:api
-  # - yarn lint:ui
-  # - yarn test:api:cover
-  # - yarn test:ui
+  - yarn lint:api
+  - yarn lint:ui
+  - yarn test:api:cover
+  - yarn test:ui
   # - NODE_ENV=test yarn build
   # - yarn test:integration
 services:
   - redis-server
-addons:
-  sauce_connect: true
-  hosts:
-    - test-easelbee.io
+# addons:
+  # sauce_connect: true
+  # hosts:
+  #   - test-easelbee.io
 after_success:
-  # - yarn coveralls
+  - yarn coveralls
   - sh bin/touch-lynbot.sh
