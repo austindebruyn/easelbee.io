@@ -20,27 +20,27 @@ export default {
   props: {
     name: {
       type: String,
-      required: true
+      default: ''
     },
     placeholder: {
       type: String,
-      required: true
+      default: null
     },
     disabled: {
       type: Boolean,
-      required: true
+      default: null
     },
     type: {
       type: String,
-      required: true
+      default: 'text'
     },
     icon: {
       type: String,
-      required: true
+      default: null
     },
     value: {
       type: String,
-      required: true
+      default: null
     }
   },
   data: function () {
