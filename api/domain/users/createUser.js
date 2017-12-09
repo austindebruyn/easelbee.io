@@ -24,7 +24,7 @@ class UserCreationError extends Error {
 
 module.exports.createUser = function createUser(data) {
   const {
-    username,
+    displayName,
     email,
     password,
     password2
@@ -46,19 +46,17 @@ module.exports.createUser = function createUser(data) {
       return resolve();
     })
       .then(function () {
-        return User.findAll({ where: { $or: [{ username }, { email }] } });
+        return User.findAll({ where: { email } });
       })
       .then(function (records) {
         if (records.length > 0) {
-          if (records[0].email === email) {
-            throw new UserCreationError('EMAIL_NOT_UNIQUE');
-          }
-          throw new UserCreationError('USERNAME_NOT_UNIQUE');
+          throw new UserCreationError('EMAIL_NOT_UNIQUE');
         }
         return hashPasswords(password);
       })
       .then(function (password) {
-        return User.create({ username, email, password });
+        console.log(displayName);
+        return User.create({ displayName, email, password });
       })
       .then(function (user) {
         state.user = user;

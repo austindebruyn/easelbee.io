@@ -14,7 +14,7 @@ describe('passwordResetsController', function () {
 
   beforeEach(function () {
     return factory
-      .create('user', { username: 'jhoffy', email: 'jhoffy@gmail.com' })
+      .create('user', { displayName: 'jhoffy', email: 'jhoffy@gmail.com' })
       .then(model => user = model);
   });
 
@@ -78,7 +78,7 @@ describe('passwordResetsController', function () {
             subject: 'Reset your easelbee.io account',
             template: 'password-reset',
             values: {
-              username: 'jhoffy',
+              displayName: 'jhoffy',
               href: `http://test-easelbee.io:8000/passwordResets/complete?code=${model.code}`
             }
           });
@@ -176,7 +176,7 @@ describe('passwordResetsController', function () {
             ok: true,
             user: {
               id: 1,
-              username: 'jhoffy',
+              displayName: 'jhoffy',
               email: 'jhoffy@gmail.com',
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'

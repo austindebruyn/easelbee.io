@@ -1,8 +1,8 @@
 export default {
   PASSWORDS_DONT_MATCH: 'Those passwords don’t match.',
-  USERNAME_NOT_UNIQUE: 'That username has been taken.',
+  EMAIL_NOT_UNIQUE: 'That email has been registered.',
   VALIDATION: 'Something’s wrong with the stuff you entered.',
-  WRONG_USERNAME_OR_PASSWORD: 'Wrong username or password.',
+  WRONG_EMAIL_OR_PASSWORD: 'Wrong email or password.',
   update_user: {
     WRONG_PASSWORD: 'The current password wasn’t correct.'
   },

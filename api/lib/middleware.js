@@ -56,7 +56,7 @@ module.exports = function (app) {
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
       };
       if (req.user) {
-        Object.assign(user, _.pick(req.user, 'id', 'username', 'email'));
+        Object.assign(user, _.pick(req.user, 'id', 'displayName', 'email'));
       }
 
       Raven.setContext({ user });

@@ -80,11 +80,11 @@ export default new Vuex.Store({
           }
         });
     },
-    login: function ({ state, commit }, { username, password }) {
+    login: function ({ state, commit }, { email, password }) {
       commit('loginStart');
 
       return axios.post('/login', {
-        username,
+        email,
         password
       }, {
         credentials: 'same-origin',
@@ -101,11 +101,11 @@ export default new Vuex.Store({
         });
     },
     createUser ({ state, commit }, payload) {
-      const { username, email, password, password2 } = payload;
+      const { displayName, email, password, password2 } = payload;
       commit('loginStart');
 
       return axios.post('/api/users', {
-        username,
+        displayName,
         email,
         password,
         password2

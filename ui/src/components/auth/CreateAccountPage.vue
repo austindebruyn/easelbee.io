@@ -11,11 +11,11 @@
                 span.input-group-addon
                   i.fa.fa-user-o
                 input.transparent.round.input-lg.form-control(
-                  v-model='username'
+                  v-model='displayName'
                   type='text'
                   autocomplete='off'
-                  name='username'
-                  placeholder='Username'
+                  name='displayName'
+                  placeholder='Display Name'
                   :disabled='shouldDisableForm'
                 )
               .input-group
@@ -72,7 +72,7 @@ export default {
   },
   data: function () {
     return {
-      username: null,
+      displayName: null,
       email: null,
       password: null,
       password2: null
@@ -94,7 +94,7 @@ export default {
       e.preventDefault();
 
       this.$store.dispatch('createUser', {
-        username: e.target.username.value,
+        displayName: e.target.displayName.value,
         email: e.target.email.value,
         password: e.target.password.value,
         password2: e.target.password2.value

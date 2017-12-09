@@ -3,6 +3,10 @@ const config = require('../config');
 
 class LynbotAPI {
   send(message) {
+    if (!config.lynbot.enabled) {
+      return Promise.resolve();
+    }
+
     return new Promise((resolve, reject) => {
       const {
         protocol,

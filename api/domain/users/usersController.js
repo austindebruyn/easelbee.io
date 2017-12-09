@@ -3,14 +3,14 @@ const updateUser = require('./updateUser');
 
 module.exports.create = function (req, res, next) {
   const {
-    username,
+    displayName,
     email,
     password,
     password2
   } = req.body;
 
   return createUser.createUser({
-    username, email, password, password2
+    displayName, email, password, password2
   })
     .then(function (user) {
       req.login(user, function (err) {

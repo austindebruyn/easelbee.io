@@ -52,7 +52,7 @@ module.exports.create = function (req, res, next) {
         subject: 'Reset your easelbee.io account',
         template: 'password-reset',
         values: {
-          username: state.user.username,
+          displayName: state.user.displayName,
           href
         }
       });

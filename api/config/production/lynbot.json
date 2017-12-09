@@ -2,5 +2,6 @@
   "protocol": "https",
   "host": null,
   "port": null,
-  "password": null
+  "password": null,
+  "enabled": true
 }

@@ -23,32 +23,32 @@ describe('createUser', function () {
   });
 
   it('should reject missing password', function () {
-    return expect(createUser({ username: '' }))
+    return expect(createUser({ displayName: '' }))
       .to.eventually.be.rejected.and.have.property('code', 'MISSING_PASSWORD');
   });
 
   it('should reject missing email', function () {
-    return expect(createUser({ username: '', password: 'hey', password2: 'hey', email: '' }))
+    return expect(createUser({ displayName: '', password: 'hey', password2: 'hey', email: '' }))
       .to.eventually.be.rejected.and.have.property('code', 'BAD_EMAIL');
   });
 
   it('should reject bad format email', function () {
-    return expect(createUser({ username: '', password: 'hey', password2: 'hey', email: '@kjsa' }))
+    return expect(createUser({ displayName: '', password: 'hey', password2: 'hey', email: '@kjsa' }))
       .to.eventually.be.rejected.and.have.property('code', 'BAD_EMAIL');
   });
 
   describe('when a user exists', function () {
     beforeEach(function () {
-      return factory.create('user', { username: 'man' });
+      return factory.create('user', { email: 'apple@banana.com' });
     });
 
-    it('should reject used username', function () {
+    it('should reject used email', function () {
       return expect(createUser({
-        username: 'man',
+        displayName: 'man',
         email: 'apple@banana.com',
         password: 'a',
         password2: 'a'
-      })).to.eventually.be.rejected.and.have.property('code', 'USERNAME_NOT_UNIQUE');
+      })).to.eventually.be.rejected.and.have.property('code', 'EMAIL_NOT_UNIQUE');
     });
   });
 
@@ -57,19 +57,19 @@ describe('createUser', function () {
 
     it('should validate model', function () {
       return expect(createUser({
-        username: 'm',
+        displayName: new Array(100).join('a'),
         email: 'apple@banana.com',
         password: 'b',
         password2: 'b'
       })).to.eventually.be.rejected.and.deep.include({
         code: 'VALIDATION',
-        fields: ['username']
+        fields: ['displayName']
       });
     });
 
     it('should create email preferences model', function () {
       return createUser({
-        username: 'man2',
+        displayName: 'man2',
         email: 'peter@pan.com',
         password: 'b',
         password2: 'b'
@@ -91,7 +91,7 @@ describe('createUser', function () {
 
     it('should tell lynbot', function () {
       return createUser({
-        username: 'man2',
+        displayName: 'man2',
         email: 'peter@pan.com',
         password: 'b',
         password2: 'b'
@@ -105,7 +105,7 @@ describe('createUser', function () {
 
     it('should send verify email', function () {
       return createUser({
-        username: 'man2',
+        displayName: 'man2',
         email: 'peter@pan.com',
         password: 'b',
         password2: 'b'
@@ -122,7 +122,7 @@ describe('createUser', function () {
             subject: 'Please verify your email',
             template: 'verify-email',
             values: {
-              username: 'man2',
+              displayName: 'man2',
               href: `http://test-easelbee.io:8000/users/me/emailPreferences/verify?verificationCode=${user.emailPreferences.verificationCode}`
             }
           });

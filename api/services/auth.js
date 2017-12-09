@@ -3,11 +3,13 @@ const LocalStrategy = require('passport-local').Strategy;
 const passwordUtils = require('../domain/users/passwords');
 const User = require('../domain/users/User');
 
-passport.use(new LocalStrategy(
-  function (username, password, done) {
+passport.use(new LocalStrategy({
+    usernameField: 'email'
+  },
+  function (email, password, done) {
     let user;
 
-    User.findOne({ where: { username } }).then(function (record) {
+    User.findOne({ where: { email } }).then(function (record) {
       user = record;
 
       if (!user) {

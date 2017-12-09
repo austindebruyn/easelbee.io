@@ -15,7 +15,7 @@ function sendVerificationEmail(model) {
       subject: 'Please verify your email',
       template: 'verify-email',
       values: {
-        username: model.user.username,
+        displayName: model.user.displayName,
         href
       }
     }).then(resolve).catch(reject);

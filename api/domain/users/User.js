@@ -6,16 +6,11 @@ const User = db.define('user', {
     unique: true,
     allowNull: false
   },
-  username: {
+  displayName: {
     type: db.Sequelize.STRING,
     allowNull: false,
-    unique: true,
     validate: {
-      len: [3, 64],
-      is: {
-        args: /^[\w-]*$/i,
-        msg: 'Only use letters and numbers!'
-      }
+      len: [1, 64]
     }
   },
   password: {
@@ -28,7 +23,7 @@ User.prototype.toJSON = function () {
   return new Promise(resolve => {
     return resolve({
       id: this.get('id'),
-      username: this.get('username'),
+      displayName: this.get('displayName'),
       email: this.get('email'),
       createdAt: this.get('createdAt').toUTCString(),
       updatedAt: this.get('updatedAt').toUTCString()

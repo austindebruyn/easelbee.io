@@ -62,7 +62,7 @@ module.exports.updateUser = function updateUser({ user, attributes = {} }) {
     }
 
     const allowedAttributes = [
-      'username',
+      'displayName',
       'email',
       'password',
       'currentPassword'

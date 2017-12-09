@@ -11,11 +11,11 @@
                 span.input-group-addon
                   i.fa.fa-user-o
                 input.transparent.round.input-lg.form-control(
-                  v-model='username'
+                  v-model='email'
                   type='text'
                   autocomplete='off'
-                  name='username'
-                  placeholder='Username'
+                  name='email'
+                  placeholder='your@email.com'
                   :disabled='shouldDisableForm'
                 )
               .input-group
@@ -59,7 +59,7 @@ export default {
   },
   data: function () {
     return {
-      username: null,
+      email: null,
       password: null
     };
   },
@@ -79,7 +79,7 @@ export default {
       e.preventDefault();
 
       this.$store.dispatch('login', {
-        username: this.username,
+        email: this.email,
         password: this.password
       });
     }

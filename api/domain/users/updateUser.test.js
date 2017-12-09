@@ -27,7 +27,7 @@ describe('updateUser', function () {
   it('throws BAD_ATTRIBUTES', function () {
     return expect(updateUser.updateUser({
       user,
-      attributes: { username: 'asjkdlfjasd', createdAt: null }
+      attributes: { displayName: 'asjkdlfjasd', createdAt: null }
     })).to.eventually.be.rejected.and.deep.include({
       code: 'BAD_ATTRIBUTES',
       fields: ['createdAt']
@@ -43,13 +43,13 @@ describe('updateUser', function () {
     });
   });
 
-  it('should update the username', function () {
+  it('should update the displayName', function () {
     return updateUser.updateUser({
       user,
-      attributes: { username: 'beelzebub' }
+      attributes: { displayName: 'beelzebub' }
     }).then(function (user) {
-      expect(user.username).to.eql('beelzebub');
-      expect(user.previous('username')).to.eql('beelzebub');
+      expect(user.displayName).to.eql('beelzebub');
+      expect(user.previous('displayName')).to.eql('beelzebub');
     });
   });
 
@@ -99,7 +99,7 @@ describe('updateUser', function () {
     it('should not mark the email as un-verified if email isnt changed', function () {
       return updateUser.updateUser({
         user,
-        attributes: { username: 'steven' }
+        attributes: { displayName: 'steven' }
       }).then(function (user) {
         return EmailPreferences.findOne({ where: { userId: user.id } });
       }).then(function (emailPreferences) {

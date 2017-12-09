@@ -4,7 +4,7 @@
       .row
         .col-12
           h1 Index
-          p(v-if='user') Hello {{ user.username }}
+          p(v-if='user') Hello {{ user.displayName }}
           p This is where your commissions will go. :)
 </template>
 

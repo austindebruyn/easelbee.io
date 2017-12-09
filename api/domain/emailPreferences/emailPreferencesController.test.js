@@ -195,7 +195,7 @@ describe('emailPreferencesController', function () {
               template: 'verify-email',
               to: signIn.user.email,
               values: {
-                username: signIn.user.username,
+                displayName: signIn.user.displayName,
                 href: `http://test-easelbee.io:8000/users/me/emailPreferences/verify?verificationCode=${emailPreferences.verificationCode}`
               }
             });

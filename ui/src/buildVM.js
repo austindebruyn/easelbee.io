@@ -13,7 +13,7 @@ export default function (opts) {
 
   store.subscribe(function () {
     if (raven) {
-      raven.setRavenUser(pick(store.state.user.value, 'id', 'username', 'email'));
+      raven.setRavenUser(pick(store.state.user.value, 'id', 'displayName', 'email'));
     }
   });
   store.commit('loginSuccess', user);

@@ -18,20 +18,20 @@ describe('sessionsController', function () {
   });
 
   describe('POST /login', function () {
-    it('should error for wrong username', function () {
+    it('should error for wrong displayName', function () {
       return agent()
         .post('/login')
-        .send({ username: 'apples', password: 'bananas' })
+        .send({ email: 'apples@heb.com', password: 'bananas' })
         .expect(400, {
           ok: false,
-          errors: [{ code: 'WRONG_USERNAME_OR_PASSWORD' }]
+          errors: [{ code: 'WRONG_EMAIL_OR_PASSWORD' }]
         });
     });
 
-    describe('when username is right', function () {
+    describe('when email is right', function () {
       beforeEach(function () {
         return factory.create('user', {
-          username: 'descarte',
+          displayName: 'Renes',
           password: 'politics87',
           email: 'descarte@gov.gov'
         });
@@ -40,22 +40,22 @@ describe('sessionsController', function () {
       it('should error', function () {
         return agent()
           .post('/login')
-          .send({ username: 'descarte', password: 'banana' })
+          .send({ email: 'descarte@gov.gov', password: 'banana' })
           .expect(400, {
             ok: false,
-            errors: [{ code: 'WRONG_USERNAME_OR_PASSWORD' }]
+            errors: [{ code: 'WRONG_EMAIL_OR_PASSWORD' }]
           });
       });
 
       it('should sign in', function () {
         return agent()
           .post('/login')
-          .send({ username: 'descarte', password: 'politics87' })
+          .send({ email: 'descarte@gov.gov', password: 'politics87' })
           .expect(200, {
             ok: true,
             user: {
               id: 1,
-              username: 'descarte',
+              displayName: 'Renes',
               email: 'descarte@gov.gov',
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
@@ -66,7 +66,7 @@ describe('sessionsController', function () {
       it('should tell lynbot', function () {
         return agent()
           .post('/login')
-          .send({ username: 'descarte', password: 'politics87' })
+          .send({ email: 'descarte@gov.gov', password: 'politics87' })
           .expect(200)
           .then(function () {
             const message = '__descarte@gov.gov__ just signed in.';

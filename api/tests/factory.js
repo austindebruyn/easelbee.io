@@ -12,7 +12,7 @@ const { factory } = FactoryGirl;
 factory.setAdapter(adapter);
 
 factory.define('user', User, {
-  username: () => uid(10),
+  displayName: () => uid(10),
   password: () => uid(24),
   email: factory.chance('email')
 }, {

@@ -10,7 +10,7 @@ module.exports.create = function (req, res, next) {
     if (!user) {
       return res.status(400).json({
         ok: false,
-        errors: [{ code: 'WRONG_USERNAME_OR_PASSWORD' }]
+        errors: [{ code: 'WRONG_EMAIL_OR_PASSWORD' }]
       });
     }
 

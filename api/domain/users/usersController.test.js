@@ -29,7 +29,7 @@ describe('usersController', function () {
 
       it('should invoke createUser', function () {
         const postBody = {
-          username: 'turkish',
+          displayName: 'turkish',
           email: 'edgar@allen.poe',
           password: 'allegory',
           password2: 'fighter'
@@ -48,7 +48,7 @@ describe('usersController', function () {
           .post('/api/users')
           .accept('application/json')
           .send({
-            username: 'turkish',
+            displayName: 'turkish',
             email: 'austin@baustin.com',
             password: 'allegory',
             password2: 'allegory'
@@ -57,7 +57,7 @@ describe('usersController', function () {
             ok: true,
             user: {
               id: 1,
-              username: 'turkish',
+              displayName: 'turkish',
               email: 'austin@baustin.com',
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
@@ -75,7 +75,7 @@ describe('usersController', function () {
       return agent()
         .post('/api/users')
         .accept('application/json')
-        .send({ username: 'hey', password: 'austin', password2: 'austin' })
+        .send({ displayName: 'hey', password: 'austin', password2: 'austin' })
         .expect(500, {
           ok: false
         });
@@ -93,7 +93,7 @@ describe('usersController', function () {
 
     describe('when signed in', function () {
       beforeEach(function () {
-        return signIn({ username: 'sasquatch', email: 'austin@baustin.com' });
+        return signIn({ displayName: 'sasquatch', email: 'austin@baustin.com' });
       });
 
       it('should return my user on sign in', function () {
@@ -104,7 +104,7 @@ describe('usersController', function () {
           .redirects(0)
           .expect(200, {
             id: 1,
-            username: 'sasquatch',
+            displayName: 'sasquatch',
             email: 'austin@baustin.com',
             createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
             updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
@@ -118,12 +118,12 @@ describe('usersController', function () {
       return signIn();
     });
 
-    it('should change username', function () {
+    it('should change displayName', function () {
       return agent()
         .put('/api/users/me')
         .accept('application/json')
         .cookiejar()
-        .send({ username: 'elizabeth' })
+        .send({ displayName: 'elizabeth' })
         .expect(200, {
           ok: true,
           user: {
@@ -131,7 +131,7 @@ describe('usersController', function () {
             email: signIn.user.email,
             createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
             updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
-            username: 'elizabeth'
+            displayName: 'elizabeth'
           }
         });
     });

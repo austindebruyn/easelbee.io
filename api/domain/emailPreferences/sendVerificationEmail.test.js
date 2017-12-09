@@ -15,7 +15,7 @@ describe('sendVerificationEmail', function () {
     var emailPreferences, user;
 
     beforeEach(function () {
-      return factory.create('user', { username: 'charles' })
+      return factory.create('user', { displayName: 'charles' })
         .then(function (model) {
           user = model;
           return factory.create('emailPreferences', { userId: user.id });
@@ -36,7 +36,7 @@ describe('sendVerificationEmail', function () {
             template: 'verify-email',
             to: user.email,
             values: {
-              username: 'charles',
+              displayName: 'charles',
               href: `http://test-easelbee.io:8000/users/me/emailPreferences/verify?verificationCode=${emailPreferences.verificationCode}`
             }
           });
