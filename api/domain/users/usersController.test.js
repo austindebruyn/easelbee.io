@@ -2,18 +2,21 @@ const createUser = require('./createUser');
 const agent = require('../../tests/agent');
 const clock = require('../../tests/clock');
 const signIn = require('../../tests/signIn');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const sinon = require('sinon');
+const LynbotAPI = require('../../lib/LynbotAPI');
 
 describe('usersController', function () {
   var sandbox;
 
   beforeEach(function () {
     sandbox = sinon.sandbox.create();
+    sinon.stub(LynbotAPI.prototype, 'send');
   });
 
   afterEach(function () {
     sandbox.restore();
+    LynbotAPI.prototype.send.restore();
   });
 
   clock();

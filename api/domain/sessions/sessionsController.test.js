@@ -2,9 +2,20 @@ const signIn = require('../../tests/signIn');
 const agent = require('../../tests/agent');
 const factory = require('../../tests/factory');
 const clock = require('../../tests/clock');
+const LynbotAPI = require('../../lib/LynbotAPI');
+const { expect } = require('chai');
+const sinon = require('sinon');
 
 describe('sessionsController', function () {
   clock();
+
+  beforeEach(function () {
+    sinon.stub(LynbotAPI.prototype, 'send');
+  });
+
+  afterEach(function () {
+    LynbotAPI.prototype.send.restore();
+  });
 
   describe('POST /login', function () {
     it('should error for wrong username', function () {
@@ -49,6 +60,18 @@ describe('sessionsController', function () {
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
             }
+          });
+      });
+
+      it('should tell lynbot', function () {
+        return agent()
+          .post('/login')
+          .send({ username: 'descarte', password: 'politics87' })
+          .expect(200)
+          .then(function () {
+            const message = '__descarte@gov.gov__ just signed in.';
+            expect(LynbotAPI.prototype.send)
+              .to.have.been.calledWith(message);
           });
       });
     });

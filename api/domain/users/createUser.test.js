@@ -5,8 +5,18 @@ const { expect } = require('chai');
 const factory = require('../../tests/factory');
 const clock = require('../../tests/clock');
 const queue = require('kue').createQueue();
+const LynbotAPI = require('../../lib/LynbotAPI');
+const sinon = require('sinon');
 
 describe('createUser', function () {
+  beforeEach(function () {
+    sinon.stub(LynbotAPI.prototype, 'send');
+  });
+
+  afterEach(function () {
+    LynbotAPI.prototype.send.restore();
+  });
+
   it('should reject non matching passwords', function () {
     return expect(createUser({ password: 'apples', password2: 'bananas' }))
       .to.eventually.be.rejected.and.have.property('code', 'PASSWORDS_DONT_MATCH');
@@ -76,6 +86,20 @@ describe('createUser', function () {
             updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
             userId: 1
           });
+        });
+    });
+
+    it('should tell lynbot', function () {
+      return createUser({
+        username: 'man2',
+        email: 'peter@pan.com',
+        password: 'b',
+        password2: 'b'
+      })
+        .then(user => {
+          const expected = 'A new user __peter@pan.com__ just signed up!';
+          expect(LynbotAPI.prototype.send)
+            .to.have.been.calledWith(expected);
         });
     });
 

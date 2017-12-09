@@ -9,7 +9,7 @@ import stubI18n from './support/stubI18n';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-es6promise.polyfill();
+es6promise.polyfill()
 chai.use(sinonChai);
 global.expect = expect;
 
