@@ -2,6 +2,7 @@ const usersController = require('../domain/users/usersController');
 const sessionsController = require('../domain/sessions/sessionsController');
 const passwordResetsController = require('../domain/passwordResets/passwordResetsController');
 const emailPreferencesController = require('../domain/emailPreferences/emailPreferencesController');
+const commissionsController = require('../domain/commissions/commissionsController');
 const homeController = require('../domain/home/homeController');
 const errorHandler = require('./errorHandler');
 
@@ -38,6 +39,7 @@ module.exports = function (app) {
   app.get('/api/users/me/emailPreferences', ensureAuthenticated, emailPreferencesController.get);
   app.patch('/api/users/me/emailPreferences', emailPreferencesController.update);
   app.post('/api/users/me/emailPreferences/sendVerificationEmail', ensureAuthenticated, emailPreferencesController.sendVerificationEmail);
+  app.get('/api/users/me/commissions', ensureAuthenticated, commissionsController.index);
   app.get('*', homeController.index);
 
   app.use(errorHandler);

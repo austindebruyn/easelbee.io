@@ -10,7 +10,7 @@
 
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
-import { isLoaded } from 'store/Resource';
+import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'home-index-page',
