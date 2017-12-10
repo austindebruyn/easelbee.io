@@ -5,6 +5,7 @@ const hashPassword = require('../domain/users/passwords').hash;
 const User = require('../domain/users/User');
 const EmailPreferences = require('../domain/emailPreferences/EmailPreferences');
 const Commission = require('../domain/commissions/Commission');
+const Form = require('../domain/forms/Form');
 const adapter = new FactoryGirl.SequelizeAdapter();
 const uid = require('uid-safe');
 
@@ -32,7 +33,14 @@ factory.define('emailPreferences', EmailPreferences, {
 
 factory.define('commission', Commission, {
   email: factory.chance('email'),
-  body: factory.chance('paragraph', { sentences: 2 })
+  body: factory.chance('paragraph', { sentences: 2 }),
+  userId: factory.assoc('user', 'id')
+});
+
+factory.define('form', Form, {
+  slug: factory.chance('word'),
+  name: factory.chance('word'),
+  userId: factory.assoc('user', 'id')
 });
 
 afterEach(function () {

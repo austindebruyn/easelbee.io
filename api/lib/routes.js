@@ -3,6 +3,7 @@ const sessionsController = require('../domain/sessions/sessionsController');
 const passwordResetsController = require('../domain/passwordResets/passwordResetsController');
 const emailPreferencesController = require('../domain/emailPreferences/emailPreferencesController');
 const commissionsController = require('../domain/commissions/commissionsController');
+const formsController = require('../domain/forms/formsController');
 const homeController = require('../domain/home/homeController');
 const errorHandler = require('./errorHandler');
 
@@ -41,6 +42,8 @@ module.exports = function (app) {
   app.post('/api/users/me/emailPreferences/sendVerificationEmail', ensureAuthenticated, emailPreferencesController.sendVerificationEmail);
   app.get('/api/users/me/commissions', ensureAuthenticated, commissionsController.index);
   app.post('/api/users/me/commissions', ensureAuthenticated, commissionsController.create);
+  app.get('/api/users/me/forms', ensureAuthenticated, formsController.index);
+  app.post('/api/users/me/forms', ensureAuthenticated, formsController.create);
   app.get('*', homeController.index);
 
   app.use(errorHandler);

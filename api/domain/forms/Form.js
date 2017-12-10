@@ -2,11 +2,13 @@ const db = require('../../services/db');
 const User = require('../users/User');
 
 const Form = db.define('forms', {
-  email: {
-    type: db.Sequelize.STRING
+  name: {
+    type: db.Sequelize.STRING,
+    allowNull: false
   },
-  body: {
-    type: db.Sequelize.STRING
+  slug: {
+    type: db.Sequelize.STRING,
+    allowNull: false
   }
 }, {
   tableName: 'forms',
