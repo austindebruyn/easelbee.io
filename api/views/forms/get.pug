@@ -1,0 +1,20 @@
+if isOwnerView
+  div(style='background-color:yellow;')
+    p This is your form. Some fancy admin controls will go here :)
+    p Visit this page incognito and these won't be here.
+h1= form.name
+p
+  | This is
+  |
+  = form.user.displayName
+  |
+  | (
+  = form.user.email
+  | )
+  | 's form.
+hr
+h3 Questions
+ol
+  li Some questions will go here.
+  li Some questions will go here.
+  li Some questions will go here.

@@ -30,6 +30,8 @@ function ensureAnonymous(req, res, next) {
 module.exports = function (app) {
   app.get('/', homeController.index);
 
+  app.get('/forms/:slug', formsController.get);
+
   app.post('/login', sessionsController.create);
   app.post('/logout', sessionsController.destroy);
   app.post('/api/users', usersController.create);
