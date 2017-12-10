@@ -1,6 +1,6 @@
 module.exports = {
   up: function (q, Sequelize) {
-    return q.createTable('commissions', {
+    return q.createTable('forms', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -22,15 +22,17 @@ module.exports = {
           key: 'id'
         }
       },
-      email: {
-        type: Sequelize.STRING
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      body: {
-        type: Sequelize.STRING
+      slug: {
+        type: Sequelize.STRING,
+        allowNull: false
       }
     });
   },
   down: function (q, Sequelize) {
-    return q.dropTable('commissions');
+    return q.dropTable('forms');
   }
 };

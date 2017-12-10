@@ -1,8 +1,7 @@
 const db = require('../../services/db');
 const User = require('../users/User');
-const Form = require('../forms/Form');
 
-const Commission = db.define('commissions', {
+const Form = db.define('forms', {
   email: {
     type: db.Sequelize.STRING
   },
@@ -10,38 +9,36 @@ const Commission = db.define('commissions', {
     type: db.Sequelize.STRING
   }
 }, {
-  tableName: 'commissions',
+  tableName: 'forms',
   freezeTableName: true,
   name: {
-    singular: 'commissions'
+    singular: 'form'
   }
 });
 
-Commission.prototype.toJSON = function () {
+Form.prototype.toJSON = function () {
   return new Promise(resolve => {
     const {
       id,
       userId,
       createdAt,
       updatedAt,
-      email,
-      body
+      name,
+      slug
     } = this.get();
 
     return resolve({
       id,
       userId,
-      email,
-      body,
+      name,
+      slug,
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });
   });
 };
 
-Commission.belongsTo(User);
-Commission.belongsTo(Form);
-User.hasOne(Commission);
-Form.hasMany(Commission);
+Form.belongsTo(User);
+User.hasOne(Form);
 
-module.exports = Commission;
+module.exports = Form;
