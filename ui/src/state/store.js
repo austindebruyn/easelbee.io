@@ -10,6 +10,7 @@ const initialState = {
   passwordReset: new Resource(),
   completePasswordReset: new Resource(),
   emailPreferences: new Resource(),
+  commissions: new Resource(),
   i18n: new Resource()
 };
 
@@ -59,13 +60,37 @@ export default new Vuex.Store({
       state.completePasswordReset.errors = errors;
     },
 
+    fetchCommissionsStart: function (state) {
+      state.commissions.status = STATUS.MUTATING;
+    },
+    fetchCommissionsSuccess: function (state, json) {
+      state.commissions.status = STATUS.LOADED;
+      state.commissions.value = json;
+    },
+    fetchCommissionsFailure: function (state, errors) {
+      state.commissions.status = STATUS.ERRORED;
+      state.commissions.errors = errors;
+    },
+
+    createCommissionStart: function (state) {
+      state.commissions.status = STATUS.MUTATING;
+    },
+    createCommissionSuccess: function (state, json) {
+      state.commissions.status = STATUS.LOADED;
+      state.commissions.value.push(json);
+    },
+    createCommissionFailure: function (state, errors) {
+      state.commissions.status = STATUS.ERRORED;
+      state.commissions.errors = errors;
+    },
+
     set_emailPreferences: function (state, emailPreferences) {
       return state.emailPreferences = emailPreferences;
     }
   },
 
   actions: {
-    fetch_emailPreferences ({ state, commit }) {
+    fetchEmailPreferences ({ state, commit }) {
       const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -76,8 +101,23 @@ export default new Vuex.Store({
         .then(data => data.json())
         .then(function (json) {
           if (json.ok) {
-            return commit('set_emailPreferences', json.record);
+            return commit('set_email_preferences', json.record);
           }
+        });
+    },
+    fetchCommissions ({ state, commit }) {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      const url = '/api/users/me/commissions';
+
+      return axios.get(url, { credentials: 'same-origin', headers })
+        .then(({ data }) => {
+          commit('fetchCommissionsSuccess', data.records);
+        })
+        .catch(({ response: { data } }) => {
+          commit('fetchCommissionsError', data.errors);
         });
     },
     login: function ({ state, commit }, { email, password }) {
@@ -161,6 +201,27 @@ export default new Vuex.Store({
         .catch(function (err) {
           const errors = err.response && err.response.data.errors;
           commit('completePasswordResetFailure', errors);
+        });
+    },
+    createCommission ({ state, commit }, payload) {
+      const { email, body } = payload;
+      commit('createCommissionStart');
+
+      return axios.post('/api/users/me/commissions', {
+        email,
+        body
+      }, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(({ data }) => {
+          commit('createCommissionSuccess', data.record);
+        })
+        .catch(({ response: { data } }) => {
+          commit('createCommissionFailure', data.errors);
         });
     }
   }

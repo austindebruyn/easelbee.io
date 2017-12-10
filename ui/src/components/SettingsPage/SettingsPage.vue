@@ -45,7 +45,7 @@ export default {
   },
   mounted: function () {
     if (!this.email_preferences) {
-      return this.$store.dispatch('fetch_email_preferences');
+      return this.$store.dispatch('fetchEmailPreferences');
     }
   }
 };

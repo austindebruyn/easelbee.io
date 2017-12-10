@@ -3,14 +3,14 @@
     span.input-group-addon(v-if='icon')
       i.fa(:class='iconClass')
     input.form-control(
-      :type='type || "text"'
+      v-model='value'
+      type='text'
       @focus='handleFocus'
       @blur='handleBlur'
       autocomplete='off'
       :name='name'
       :placeholder='placeholder'
       :disabled='disabled'
-      :value='value'
     )
 </template>
 
@@ -30,22 +30,19 @@ export default {
       type: Boolean,
       default: null
     },
-    type: {
-      type: String,
-      default: 'text'
-    },
     icon: {
       type: String,
       default: null
     },
-    value: {
+    defaultValue: {
       type: String,
-      default: null
+      default: void 0
     }
   },
   data: function () {
     return {
-      focus: false
+      focus: false,
+      value: this.defaultValue
     };
   },
   computed: {

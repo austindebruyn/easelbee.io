@@ -5,17 +5,20 @@
         .col-12
           h1 Index
           p(v-if='user') Hello {{ user.displayName }}
-          p This is where your commissions will go. :)
+          hr
+          commissions-list
 </template>
 
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
 import { isLoaded } from 'state/Resource';
+import CommissionsList from 'components/dashboard/CommissionsList';
 
 export default {
   name: 'home-index-page',
   components: {
-    'loading-spinner': LoadingSpinner
+    'loading-spinner': LoadingSpinner,
+    'commissions-list': CommissionsList
   },
   computed: {
     user: function () {
