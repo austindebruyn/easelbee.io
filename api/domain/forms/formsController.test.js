@@ -169,6 +169,7 @@ describe('formsController', function () {
               expect(res.body.record).to.include({
                 id: 1,
                 slug: 'some-form',
+                publicUrl: 'http://test-easelbee.io:8000/forms/some-form',
                 name: 'Some Form',
                 userId: signIn.user.id
               });

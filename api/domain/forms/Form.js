@@ -1,5 +1,6 @@
 const db = require('../../services/db');
 const User = require('../users/User');
+const buildUrl = require('../../lib/buildUrl');
 
 const Form = db.define('forms', {
   name: {
@@ -34,6 +35,7 @@ Form.prototype.toJSON = function () {
       userId,
       name,
       slug,
+      publicUrl: buildUrl(`forms/${slug}`),
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });

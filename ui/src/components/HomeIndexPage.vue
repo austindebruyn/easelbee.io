@@ -7,18 +7,21 @@
           p(v-if='user') Hello {{ user.displayName }}
           hr
           commissions-list
+          forms-list
 </template>
 
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionsList from 'components/dashboard/CommissionsList';
+import FormsList from 'components/dashboard/FormsList';
 import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'home-index-page',
   components: {
     'loading-spinner': LoadingSpinner,
-    'commissions-list': CommissionsList
+    'commissions-list': CommissionsList,
+    'forms-list': FormsList
   },
   computed: {
     user: function () {

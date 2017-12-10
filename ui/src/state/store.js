@@ -11,6 +11,7 @@ const initialState = {
   completePasswordReset: new Resource(),
   emailPreferences: new Resource(),
   commissions: new Resource(),
+  forms: new Resource(),
   i18n: new Resource()
 };
 
@@ -84,6 +85,18 @@ export default new Vuex.Store({
       state.commissions.errors = errors;
     },
 
+    fetchFormsStart: function (state) {
+      state.forms.status = STATUS.MUTATING;
+    },
+    fetchFormsSuccess: function (state, json) {
+      state.forms.status = STATUS.LOADED;
+      state.forms.value = json;
+    },
+    fetchFormsFailure: function (state, errors) {
+      state.forms.status = STATUS.ERRORED;
+      state.forms.errors = errors;
+    },
+
     set_emailPreferences: function (state, emailPreferences) {
       return state.emailPreferences = emailPreferences;
     }
@@ -106,6 +119,8 @@ export default new Vuex.Store({
         });
     },
     fetchCommissions ({ state, commit }) {
+      commit('fetchCommissionsStart');
+
       const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -118,6 +133,23 @@ export default new Vuex.Store({
         })
         .catch(({ response: { data } }) => {
           commit('fetchCommissionsError', data.errors);
+        });
+    },
+    fetchForms ({ state, commit }) {
+      commit('fetchFormsStart');
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      const url = '/api/users/me/forms';
+
+      return axios.get(url, { credentials: 'same-origin', headers })
+        .then(({ data }) => {
+          commit('fetchFormsSuccess', data.records);
+        })
+        .catch(({ response: { data } }) => {
+          commit('fetchFormsError', data.errors);
         });
     },
     login: function ({ state, commit }, { email, password }) {
