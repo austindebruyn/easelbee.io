@@ -21,7 +21,6 @@ describe('VInputText', function () {
 
   it('should render correct input', function () {
     const wrapper = mount(VInputText, { propsData: {
-      type: 'email',
       name: 'username',
       placeholder: 'Enter Username'
     }
@@ -30,7 +29,7 @@ describe('VInputText', function () {
 
     expect(input.getAttribute('name')).to.eql('username');
     expect(input.getAttribute('placeholder')).to.eql('Enter Username');
-    expect(input.getAttribute('type')).to.eql('email');
+    expect(input.getAttribute('type')).to.eql('text');
   });
 
   it('should store focus', function () {
