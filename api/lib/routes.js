@@ -40,6 +40,7 @@ module.exports = function (app) {
   app.patch('/api/users/me/emailPreferences', emailPreferencesController.update);
   app.post('/api/users/me/emailPreferences/sendVerificationEmail', ensureAuthenticated, emailPreferencesController.sendVerificationEmail);
   app.get('/api/users/me/commissions', ensureAuthenticated, commissionsController.index);
+  app.post('/api/users/me/commissions', ensureAuthenticated, commissionsController.create);
   app.get('*', homeController.index);
 
   app.use(errorHandler);
