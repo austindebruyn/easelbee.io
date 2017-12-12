@@ -3,7 +3,7 @@
   "cookieSecret": "Pq)jaNg3*[QssiU7}4]",
   "sessionDriver": "file",
   "protocol": "http",
-  "host": "dev-easelbee.io",
+  "host": "local-easelbee.io",
   "port": 3000,
   "listenPort": 3000,
   "logging": true,

@@ -1,22 +1,91 @@
 const Form = require('./Form');
 const User = require('../users/User');
+const Commission = require('../commissions/Commission');
+
+class FormsControllerError extends Error {
+  constructor(code, data = {}) {
+    super();
+    this.name = 'FormsControllerError';
+    this.code = code;
+    Object.assign(this, data);
+  }
+
+  toJSON() {
+    if (this.fields) {
+      return { code: this.code, fields: this.fields };
+    }
+    return { code: this.code };
+  }
+}
 
 module.exports.get = function (req, res, next) {
   const { slug } = req.params;
+  const state = {};
+
+  if (!req.accepts('html')) {
+    return res.sendStatus(406);
+  }
 
   return Form.findOne({ where: { slug }, include: [User] })
     .then(function (record) {
-      if (req.accepts('html')) {
-        if (!record) {
-          return res.status(404).render('notFound');
-        }
-        return res.render('forms/get', {
-          form: record,
-          isOwnerView: req.user && req.user.id === record.user.id
-        });
+      if (!record) {
+        throw new FormsControllerError('NOT_FOUND');
       }
+      state.form = record;
+      state.user = record.user;
+      return record;
     })
-    .catch(next);
+    .then(record => record.toJSON())
+    .then(function (record) {
+      return res.render('forms/get', {
+        form: record,
+        user: state.user,
+        isOwnerView: req.user && req.user.id === record.userId
+      });
+    })
+    .catch(function (err) {
+      if (err.code === 'NOT_FOUND') {
+        return res.status(404).render('notFound');
+      }
+      return next(err);
+    });
+};
+
+module.exports.submit = function (req, res, next) {
+  const { slug } = req.params;
+  const state = {};
+
+  if (!req.accepts('html')) {
+    return res.sendStatus(406);
+  }
+
+  return Form.findOne({ where: { slug }, include: [User] })
+    .then(function (record) {
+      state.form = record;
+
+      if (!record) {
+        return res.status(404).render('notFound');
+      }
+      return record;
+    })
+    .then(function (record) {
+      const { email, body } = req.body;
+
+      return Commission.create({
+        formId: record.id,
+        userId: record.userId,
+        email,
+        body
+      });
+    })
+    .then(function () {
+      return res.render('forms/submit', {
+        user: state.form.user
+      });
+    })
+    .catch(function () {
+      return res.status(500).render('forms/error');
+    });
 };
 
 module.exports.index = function (req, res, next) {

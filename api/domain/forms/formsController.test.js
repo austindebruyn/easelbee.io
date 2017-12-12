@@ -4,6 +4,7 @@ const clock = require('../../tests/clock');
 const factory = require('../../tests/factory');
 const expect = require('chai').expect;
 const Form = require('./Form');
+const Commission = require('../commissions/Commission');
 const User = require('../users/User');
 const sinon = require('sinon');
 
@@ -175,6 +176,62 @@ describe('formsController', function () {
               });
             });
         });
+      });
+    });
+  });
+
+  describe('POST /users/me/forms/submit', function () {
+    beforeEach(function () {
+      return factory.create('form', { slug: 'some-form' }).then(record => {
+        this.form = record;
+      });
+    });
+
+    it('should 404', function () {
+      return agent()
+        .post('/forms/not-existing-form/submit')
+        .send({ email: 'whatever@email.com' })
+        .accept('text/html')
+        .expect(404);
+    });
+
+    it('should submit', function () {
+      return agent()
+        .post('/forms/some-form/submit')
+        .send({ email: 'whatever@email.com', body: 'Please draw this.' })
+        .accept('text/html')
+        .expect(200)
+        .then(res => {
+          expect(res.text).to.include('<h1>Thanks for submitting!</h1>');
+
+          return Commission.findOne({ where: { formId: this.form.id } });
+        })
+        .then(function (commission) {
+          expect(commission).to.include({
+            email: 'whatever@email.com',
+            body: 'Please draw this.'
+          });
+        });
+    });
+
+    describe('when creating fails', function () {
+      beforeEach(function () {
+        sinon.stub(Commission, 'create').rejects();
+      });
+
+      afterEach(function () {
+        Commission.create.restore();
+      });
+
+      it('should 500', function () {
+        return agent()
+          .post('/forms/some-form/submit')
+          .send({ email: 'whatever@email.com', body: 'Please draw this.' })
+          .accept('text/html')
+          .expect(500)
+          .then(res => {
+            expect(res.text).to.include('<h1>Server Error!</h1>');
+          });
       });
     });
   });

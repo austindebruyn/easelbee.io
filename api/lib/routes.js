@@ -31,6 +31,7 @@ module.exports = function (app) {
   app.get('/', homeController.index);
 
   app.get('/forms/:slug', formsController.get);
+  app.post('/forms/:slug/submit', formsController.submit);
 
   app.post('/login', sessionsController.create);
   app.post('/logout', sessionsController.destroy);

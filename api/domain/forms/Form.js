@@ -36,6 +36,7 @@ Form.prototype.toJSON = function () {
       name,
       slug,
       publicUrl: buildUrl(`forms/${slug}`),
+      submitUrl: buildUrl(`forms/${slug}/submit`),
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });

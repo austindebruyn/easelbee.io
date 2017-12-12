@@ -6,15 +6,19 @@ h1= form.name
 p
   | This is
   |
-  = form.user.displayName
+  = user.displayName
   |
   | (
-  = form.user.email
+  = user.email
   | )
   | 's form.
 hr
 h3 Questions
-ol
-  li Some questions will go here.
-  li Some questions will go here.
-  li Some questions will go here.
+form(method='POST', action=form.submitUrl)
+  fieldset
+    label(for='email') What's your email?
+    input(id='email', type='text', name='email', placeholder='person@cool.com')
+  fieldset
+    label(for='body') What drawing do you want?
+    input(id='body', type='text', name='body', placeholder='I want this...')
+  button(type='submit') Submit
