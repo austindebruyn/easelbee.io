@@ -1,6 +1,5 @@
 <template lang="pug">
   .forms-list
-    h3 forms
     loading-spinner(v-if='loading')
     div(v-else=true)
       p(v-if='forms.length < 1') No forms yet :)

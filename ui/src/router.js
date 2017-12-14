@@ -8,7 +8,8 @@ import CreateAccountPage from 'components/auth/CreateAccountPage';
 import NewPasswordResetPage from 'components/auth/passwordResets/NewPasswordResetPage';
 import CompletePasswordResetPage from 'components/auth/passwordResets/CompletePasswordResetPage';
 import VerifyEmailPage from 'components/auth/VerifyEmailPage';
-import HomeIndexPage from 'components/HomeIndexPage';
+import CommissionsIndexPage from 'components/CommissionsIndexPage';
+import FormsIndexPage from 'components/FormsIndexPage';
 import NotFoundPage from 'components/NotFoundPage';
 import SettingsPage from 'components/SettingsPage/SettingsPage';
 
@@ -45,8 +46,13 @@ export default new VueRouter({
     },
     { path: '/users/me/emailPreferences/verify', component: VerifyEmailPage },
     {
-      path: '/home',
-      component: HomeIndexPage,
+      path: '/commissions',
+      component: CommissionsIndexPage,
+      beforeEnter: ensureAuthenticated
+    },
+    {
+      path: '/forms',
+      component: FormsIndexPage,
       beforeEnter: ensureAuthenticated
     },
     {

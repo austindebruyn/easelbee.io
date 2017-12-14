@@ -4,13 +4,12 @@
     loading-spinner(v-if='loading')
     div(v-else=true)
       p(v-if='commissions.length < 1') No commissions yet :)
-      ul(v-else=true)
-        li(v-for='commission in commissions', key='commission.id')
-          | You have a commission from
-          strong {{ commission.email }}
-          | :
-          br
-          q {{ commission.body }}
+      ul.list-unstyled(v-else=true)
+        commissions-list-item(
+          v-for='commission in commissions'
+          key='commission.id'
+          :commission='commission'
+        )
     hr
     h3 Create new commission
       form(
@@ -33,13 +32,15 @@
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
 import VInputText from 'components/controls/VInputText';
+import CommissionsListItem from './CommissionsListItem';
 import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'commissions-list',
   components: {
     'loading-spinner': LoadingSpinner,
-    'v-input-text': VInputText
+    'v-input-text': VInputText,
+    'commissions-list-item': CommissionsListItem
   },
   computed: {
     loading: function () {
@@ -67,4 +68,9 @@ export default {
 
 <style lang="scss">
   @import 'src/styles/colors';
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+  }
 </style>

@@ -1,27 +1,26 @@
 <template lang="pug">
-  .container
-    .dashboard
+  dashboard-layout
+    .container
       .row
         .col-12
           h1 Index
           p(v-if='user') Hello {{ user.displayName }}
           hr
           commissions-list
-          forms-list
 </template>
 
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
-import CommissionsList from 'components/dashboard/CommissionsList';
-import FormsList from 'components/dashboard/FormsList';
+import CommissionsList from 'components/commissions/CommissionsList';
+import DashboardLayout from 'components/dashboard/DashboardLayout';
 import { isLoaded } from 'state/Resource';
 
 export default {
-  name: 'home-index-page',
+  name: 'commissions-index-page',
   components: {
+    'dashboard-layout': DashboardLayout,
     'loading-spinner': LoadingSpinner,
-    'commissions-list': CommissionsList,
-    'forms-list': FormsList
+    'commissions-list': CommissionsList
   },
   computed: {
     user: function () {
@@ -36,8 +35,4 @@ export default {
 
 <style lang="scss">
   @import 'src/styles/colors';
-
-  .dashboard {
-    padding-top: 40px;
-  }
 </style>
