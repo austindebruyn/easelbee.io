@@ -70,8 +70,8 @@ export default {
     }
   },
   updated: function () {
-    if (isLoaded(this.user)) {
-      this.$router.push('/home');
+    if (isLoaded(this.user) && this.user.value) {
+      this.$router.push('/commissions');
     }
   },
   methods: {

@@ -3,10 +3,9 @@
     .container
       .row
         .col-12
-          h1 Index
-          p(v-if='user') Hello {{ user.displayName }}
-          hr
-          commissions-list
+          h2 In progress
+          loading-spinner(v-if='loading', size='xl')
+          commissions-list(v-else=true, :commissions='commissions')
 </template>
 
 <script>
@@ -23,12 +22,15 @@ export default {
     'commissions-list': CommissionsList
   },
   computed: {
-    user: function () {
-      if (!isLoaded(this.$store.state.user)) {
-        return null;
-      }
-      return this.$store.state.user.value;
+    loading: function () {
+      return !isLoaded(this.$store.state.commissions);
+    },
+    commissions: function () {
+      return this.$store.state.commissions.value;
     }
+  },
+  mounted: function () {
+    this.$store.dispatch('fetchCommissions');
   }
 };
 </script>

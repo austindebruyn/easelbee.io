@@ -13,7 +13,7 @@ export default function () {
     name: 'router-link',
     props: { to: String },
     render: function (h) {
-      return h('div');
+      return h('div', this.$slots.default);
     }
   };
 

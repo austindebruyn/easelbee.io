@@ -17,6 +17,7 @@
     "mocha": true
   },
   "globals": {
-    "expect": false
+    "expect": false,
+    "RouterLink": false
   }
 }

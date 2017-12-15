@@ -9,6 +9,7 @@ import NewPasswordResetPage from 'components/auth/passwordResets/NewPasswordRese
 import CompletePasswordResetPage from 'components/auth/passwordResets/CompletePasswordResetPage';
 import VerifyEmailPage from 'components/auth/VerifyEmailPage';
 import CommissionsIndexPage from 'components/CommissionsIndexPage';
+import CommissionsDetailsPage from 'components/CommissionsDetailsPage';
 import FormsIndexPage from 'components/FormsIndexPage';
 import NotFoundPage from 'components/NotFoundPage';
 import SettingsPage from 'components/SettingsPage/SettingsPage';
@@ -48,6 +49,11 @@ export default new VueRouter({
     {
       path: '/commissions',
       component: CommissionsIndexPage,
+      beforeEnter: ensureAuthenticated
+    },
+    {
+      path: '/commissions/:id',
+      component: CommissionsDetailsPage,
       beforeEnter: ensureAuthenticated
     },
     {
