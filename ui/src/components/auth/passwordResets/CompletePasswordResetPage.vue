@@ -103,7 +103,7 @@ export default {
   },
   updated: function () {
     if (isLoaded(this.completePasswordReset)) {
-      this.$router.push('/home');
+      this.$router.push('/commissions');
     }
   },
   methods: {

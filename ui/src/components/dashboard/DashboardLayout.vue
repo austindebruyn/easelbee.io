@@ -9,22 +9,32 @@
           v-link.nav-item.nav-link.active(to='/commissions') Commissions
           v-link.nav-item.nav-link(to='/forms') Forms
           v-link.nav-item.nav-link.disabled(to='#', disabled=true) Settings
+    .container(v-if='breadcrumbs')
+      dashboard-breadcrumbs(:breadcrumbs='breadcrumbs')
     .content
       slot
 </template>
 
 <script>
 import VLink from 'components/controls/VLink';
+import DashboardBreadcrumbs, { BreadcrumbsPropType } from 'components/dashboard/DashboardBreadcrumbs';
 
 export default {
   name: 'dashboard-layout',
   components: {
-    'v-link': VLink
+    'v-link': VLink,
+    'dashboard-breadcrumbs': DashboardBreadcrumbs
+  },
+  props: {
+    /* eslint-disable vue/require-default-prop */
+    breadcrumbs: BreadcrumbsPropType
   }
 };
 </script>
 
 <style lang="scss" scoped>
+  @import 'src/styles/fonts';
+
   .navbar {
     font-family: 'sinkinsans', sans-serif;
   }

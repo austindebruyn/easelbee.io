@@ -2,8 +2,8 @@
   .container
     .row
       .col-12
-        h1.title.title-up Error 404
-        h3 This page doesn't exist!
+        h1.title.title-up {{ $t('not-found.title') }}
+        h3 {{ $t('not-found.body') }}
 </template>
 
 <script>

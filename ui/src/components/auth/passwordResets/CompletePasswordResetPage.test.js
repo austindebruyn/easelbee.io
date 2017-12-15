@@ -68,7 +68,7 @@ describe('CompletePasswordResetPage', function () {
     });
 
     it('disabled all inputs', function () {
-      function shouldBeDisabled (input) {
+      function shouldBeDisabled(input) {
         expect(input.element.getAttribute('disabled')).to.eql('disabled');
       }
       this.wrapper.find('input').forEach(shouldBeDisabled);
@@ -115,7 +115,7 @@ describe('CompletePasswordResetPage', function () {
       this.store.commit('completePasswordResetSuccess');
 
       nextTick(() => {
-        expect(this.router.push).to.have.been.calledWith('/home');
+        expect(this.router.push).to.have.been.calledWith('/commissions');
         done();
       });
     });

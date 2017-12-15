@@ -33,16 +33,55 @@ describe('CommissionsDetailsPage', function () {
     });
 
     it('should fetch', function () {
-      mount(CommissionsDetailsPage, { store: this.store });
+      mount(CommissionsDetailsPage, {
+        store: this.store,
+        i18n: this.i18n,
+        globals: {
+          $route: {
+            path: '/commissions/1',
+            params: { id: 1 }
+          }
+        }
+      });
 
       expect(this.actions.fetchCommissions).to.have.been.called;
     });
 
     it('should render spinner', function () {
-      const wrapper = mount(CommissionsDetailsPage, { store: this.store });
+      const wrapper = mount(CommissionsDetailsPage, {
+        store: this.store,
+        i18n: this.i18n,
+        globals: {
+          $route: {
+            path: '/commissions/1',
+            params: { id: 1 }
+          }
+        }
+      });
       expect(wrapper.contains(LoadingSpinner)).to.be.true;
       expect(wrapper.contains(CommissionDetails)).to.be.false;
       expect(wrapper.contains('.not-found')).to.be.false;
+    });
+
+    it('should have breadcrumbs', function () {
+      const wrapper = mount(CommissionsDetailsPage, {
+        propsData: {
+          commission: commissionsFixture.basic
+        },
+        store: this.store,
+        i18n: this.i18n,
+        globals: {
+          $route: {
+            path: '/commissions/1',
+            params: { id: 1 }
+          }
+        }
+      });
+
+      expect(wrapper.vm.breadcrumbs).to.eql([
+        { name: 'All Commissions', to: '/commissions' },
+        { name: 'Commission #1' }
+      ]);
     });
   });
 
@@ -57,6 +96,7 @@ describe('CommissionsDetailsPage', function () {
     it('should not render spinner', function () {
       const wrapper = mount(CommissionsDetailsPage, {
         store: this.store,
+        i18n: this.i18n,
         globals: {
           $route: {
             path: '/commissions/1',
@@ -79,6 +119,7 @@ describe('CommissionsDetailsPage', function () {
       it('should render not found', function () {
         const wrapper = mount(CommissionsDetailsPage, {
           store: this.store,
+          i18n: this.i18n,
           globals: {
             $route: {
               path: '/commissions/222',

@@ -33,15 +33,29 @@ describe('CommissionsIndexPage', function () {
     });
 
     it('should fetch', function () {
-      mount(CommissionsIndexPage, { store: this.store });
+      mount(CommissionsIndexPage, { store: this.store, i18n: this.i18n });
 
       expect(this.actions.fetchCommissions).to.have.been.called;
     });
 
     it('should render spinner', function () {
-      const wrapper = mount(CommissionsIndexPage, { store: this.store });
+      const wrapper = mount(CommissionsIndexPage, {
+        store: this.store,
+        i18n: this.i18n
+      });
       expect(wrapper.contains(LoadingSpinner)).to.be.true;
       expect(wrapper.contains(CommissionsList)).to.be.false;
+    });
+
+    it('should have breadcrumbs', function () {
+      const wrapper = mount(CommissionsIndexPage, {
+        store: this.store,
+        i18n: this.i18n
+      });
+
+      expect(wrapper.vm.breadcrumbs).to.eql([
+        { name: 'All Commissions' }
+      ]);
     });
   });
 
@@ -55,7 +69,8 @@ describe('CommissionsIndexPage', function () {
 
     it('should not render spinner', function () {
       const wrapper = mount(CommissionsIndexPage, {
-        store: this.store
+        store: this.store,
+        i18n: this.i18n
       });
 
       expect(wrapper.contains(LoadingSpinner)).to.be.false;

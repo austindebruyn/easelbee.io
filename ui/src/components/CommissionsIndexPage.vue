@@ -1,5 +1,5 @@
 <template lang="pug">
-  dashboard-layout
+  dashboard-layout(:breadcrumbs='breadcrumbs')
     .container
       .row
         .col-12
@@ -27,6 +27,11 @@ export default {
     },
     commissions: function () {
       return this.$store.state.commissions.value;
+    },
+    breadcrumbs: function () {
+      return [
+        { name: this.$t('commissions.index.title') }
+      ];
     }
   },
   mounted: function () {

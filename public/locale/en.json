@@ -32,5 +32,17 @@
     "code-placeholder": "Code",
     "new-password": "New Password",
     "confirm-new-password": "Confirm New Password"
+  },
+  "commissions": {
+    "index": {
+      "title": "All Commissions"
+    },
+    "details": {
+      "title": "Commission #{{id}}"
+    }
+  },
+  "not-found": {
+    "title": "Error 404!",
+    "body": "That page wasn't found!"
   }
 }

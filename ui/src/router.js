@@ -25,7 +25,7 @@ const ensureAuthenticated = function (to, from, next) {
 
 const ensureAnonymous = function (to, from, next) {
   if (store.state.user.value) {
-    return next('/home');
+    return next('/commissions');
   }
   return next();
 };

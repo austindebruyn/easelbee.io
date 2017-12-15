@@ -1,5 +1,5 @@
 <template lang="pug">
-  dashboard-layout
+  dashboard-layout(:breadcrumbs='breadcrums')
     .container
       .row
         .col-12
@@ -18,6 +18,13 @@ export default {
     'dashboard-layout': DashboardLayout,
     'loading-spinner': LoadingSpinner,
     'forms-list': FormsList
+  },
+  computed: {
+    breadcrumbs: function () {
+      return [
+        { name: this.$t('forms.index.title') }
+      ];
+    }
   }
 };
 </script>

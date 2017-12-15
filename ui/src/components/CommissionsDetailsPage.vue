@@ -1,5 +1,5 @@
 <template lang="pug">
-  dashboard-layout
+  dashboard-layout(:breadcrumbs='breadcrumbs')
     .container
       .row
         .col-12
@@ -20,8 +20,8 @@
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionDetails from 'components/commissions/CommissionDetails';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
-import { isLoaded } from 'state/Resource';
 import find from 'lodash.find';
+import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'commissions-details-page',
@@ -34,12 +34,21 @@ export default {
     loading: function () {
       return !isLoaded(this.$store.state.commissions);
     },
+    id: function () {
+      return parseInt(this.$route.params.id);
+    },
     commission: function () {
-      const id = parseInt(this.$route.params.id);
-
       if (this.loading) return null;
 
-      return find(this.$store.state.commissions.value, { id });
+      return find(this.$store.state.commissions.value, {
+        id: this.id
+      });
+    },
+    breadcrumbs: function () {
+      return [
+        { name: this.$t('commissions.index.title'), to: '/commissions' },
+        { name: this.$t('commissions.details.title', { id: this.id }) }
+      ];
     }
   },
   mounted: function () {

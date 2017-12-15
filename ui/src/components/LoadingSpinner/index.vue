@@ -8,16 +8,13 @@
 </template>
 
 <script>
-import oneOf from 'lib/oneOf';
+import VueTypes from 'vue-types';
 
 export default {
   name: 'loading-spinner',
   props: {
-    size: {
-      type: String,
-      validator: oneOf(['sm', 'xl']),
-      default: 'sm'
-    }
+    /* eslint-disable vue/require-default-prop */
+    size: VueTypes.oneOf(['sm', 'xl']).def('sm').isRequired
   }
 };
 </script>

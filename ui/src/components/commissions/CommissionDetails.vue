@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     title: function () {
-      return `Commission #${this.commission.id}`;
+      return this.$t('commissions.details.title', { id: this.commission.id });
     }
   }
 };
