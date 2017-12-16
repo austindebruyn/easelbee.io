@@ -1,16 +1,17 @@
 <template lang="pug">
-  dashboard-layout(:breadcrumbs='breadcrums')
+  dashboard-layout(:breadcrumbs='breadcrumbs')
     .container
       .row
         .col-12
-          h1 Forms
-          forms-list
+          loading-spinner(v-if='loading', size='xl')
+          forms-list(v-else=true, :forms='forms')
 </template>
 
 <script>
-import LoadingSpinner from 'components/LoadingSpinner';
-import FormsList from 'components/dashboard/FormsList';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
+import LoadingSpinner from 'components/LoadingSpinner';
+import FormsList from 'components/forms/FormsList';
+import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'forms-index-page',
@@ -20,11 +21,20 @@ export default {
     'forms-list': FormsList
   },
   computed: {
+    loading: function () {
+      return !isLoaded(this.$store.state.forms);
+    },
+    forms: function () {
+      return this.$store.state.forms.value;
+    },
     breadcrumbs: function () {
       return [
         { name: this.$t('forms.index.title') }
       ];
     }
+  },
+  mounted: function () {
+    this.$store.dispatch('fetchForms');
   }
 };
 </script>

@@ -14,7 +14,7 @@ export default {
   name: 'loading-spinner',
   props: {
     /* eslint-disable vue/require-default-prop */
-    size: VueTypes.oneOf(['sm', 'xl']).def('sm').isRequired
+    size: VueTypes.oneOf(['sm', 'xl']).def('sm')
   }
 };
 </script>

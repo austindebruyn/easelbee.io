@@ -11,6 +11,7 @@ import VerifyEmailPage from 'components/auth/VerifyEmailPage';
 import CommissionsIndexPage from 'components/CommissionsIndexPage';
 import CommissionsDetailsPage from 'components/CommissionsDetailsPage';
 import FormsIndexPage from 'components/FormsIndexPage';
+import FormsDetailsPage from 'components/FormsDetailsPage';
 import NotFoundPage from 'components/NotFoundPage';
 import SettingsPage from 'components/SettingsPage/SettingsPage';
 
@@ -54,6 +55,11 @@ export default new VueRouter({
     {
       path: '/commissions/:id',
       component: CommissionsDetailsPage,
+      beforeEnter: ensureAuthenticated
+    },
+    {
+      path: '/forms/:id',
+      component: FormsDetailsPage,
       beforeEnter: ensureAuthenticated
     },
     {

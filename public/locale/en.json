@@ -41,6 +41,11 @@
       "title": "Commission #{{id}}"
     }
   },
+  "forms": {
+    "index": {
+      "title": "Your Forms"
+    }
+  },
   "not-found": {
     "title": "Error 404!",
     "body": "That page wasn't found!"
