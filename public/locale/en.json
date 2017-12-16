@@ -38,7 +38,20 @@
       "title": "All Commissions"
     },
     "details": {
-      "title": "Commission #{{id}}"
+      "title": "Commission #{{id}}",
+      "status": "Status",
+      "statuses": {
+        "incoming": "Incoming",
+        "incoming-description": "You haven't accepted this commission yet.",
+        "inprogress": "In Progress",
+        "inprogress-description": "You're working on this one!",
+        "inreview": "In Review",
+        "inreview-description": "The work is done, but you need to close the loop with the client.",
+        "finished": "Finished",
+        "finished-description": "This commission is finished.",
+        "canceled": "Canceled",
+        "canceled-description": "You canceled this commission."
+      }
     }
   },
   "forms": {

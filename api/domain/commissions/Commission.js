@@ -1,6 +1,7 @@
 const db = require('../../services/db');
 const User = require('../users/User');
 const Form = require('../forms/Form');
+const invert = require('lodash.invert');
 
 const Commission = db.define('commissions', {
   email: {
@@ -8,6 +9,11 @@ const Commission = db.define('commissions', {
   },
   body: {
     type: db.Sequelize.STRING
+  },
+  status: {
+    type: db.Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   }
 }, {
   tableName: 'commissions',
@@ -17,6 +23,14 @@ const Commission = db.define('commissions', {
   }
 });
 
+Commission.STATUS = {
+  incoming: 0,
+  inProgress: 10,
+  inReview: 20,
+  finished: 30,
+  canceled: 2
+};
+
 Commission.prototype.toJSON = function () {
   return new Promise(resolve => {
     const {
@@ -25,7 +39,8 @@ Commission.prototype.toJSON = function () {
       createdAt,
       updatedAt,
       email,
-      body
+      body,
+      status
     } = this.get();
 
     return resolve({
@@ -33,6 +48,7 @@ Commission.prototype.toJSON = function () {
       userId,
       email,
       body,
+      status: invert(Commission.STATUS)[status],
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });
