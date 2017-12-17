@@ -25,8 +25,8 @@ const Commission = db.define('commissions', {
 
 Commission.STATUS = {
   incoming: 0,
-  inProgress: 10,
-  inReview: 20,
+  inprogress: 10,
+  inreview: 20,
   finished: 30,
   canceled: 2
 };

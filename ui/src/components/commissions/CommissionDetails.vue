@@ -5,17 +5,21 @@
     q {{ commission.body }}
     hr
     section
-      strong {{ $t('commissions.details.status') }}:&nbsp;
-      span {{ statusLabel }}
-      div
-        small.text-muted {{ statusLabelDescription }}
+      commission-details-status(
+        :commissionId='this.commission.id'
+        :status='this.commission.status'
+      )
 </template>
 
 <script>
 import { commissionShape } from 'components/shapes';
+import CommissionDetailsStatus from 'components/commissions/CommissionDetailsStatus';
 
 export default {
   name: 'commissions-details',
+  components: {
+    'commission-details-status': CommissionDetailsStatus
+  },
   props: {
     /* eslint-disable vue/require-default-prop */
     commission: commissionShape.isRequired
@@ -23,19 +27,14 @@ export default {
   computed: {
     title: function () {
       return this.$t('commissions.details.title', { id: this.commission.id });
-    },
-    statusLabel: function () {
-      const prefix = 'commissions.details.statuses';
-      return this.$t(`${prefix}.${this.commission.status}`);
-    },
-    statusLabelDescription: function () {
-      const prefix = 'commissions.details.statuses';
-      return this.$t(`${prefix}.${this.commission.status}-description`);
     }
   }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import 'src/styles/colors';
+
+  .commission-details {
+  }
 </style>

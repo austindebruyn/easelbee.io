@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import omit from 'lodash.omit';
 import Resource, { STATUS } from 'state/Resource';
 
 Vue.use(Vuex);
@@ -81,6 +82,28 @@ export default new Vuex.Store({
       state.commissions.value.push(json);
     },
     createCommissionFailure: function (state, errors) {
+      state.commissions.status = STATUS.ERRORED;
+      state.commissions.errors = errors;
+    },
+
+    updateCommissionStart: function (state) {
+      state.commissions.status = STATUS.MUTATING;
+    },
+    updateCommissionSuccess: function (state, json) {
+      state.commissions.status = STATUS.LOADED;
+
+      const newValue = [];
+      state.commissions.value.forEach(function (existing) {
+        if (existing.id === json.id) {
+          newValue.push(json);
+        } else {
+          newValue.push({ ...existing });
+        }
+      });
+
+      state.commissions.value = newValue;
+    },
+    updateCommissionFailure: function (state, errors) {
       state.commissions.status = STATUS.ERRORED;
       state.commissions.errors = errors;
     },
@@ -254,6 +277,27 @@ export default new Vuex.Store({
         })
         .catch(({ response: { data } }) => {
           commit('createCommissionFailure', data.errors);
+        });
+    },
+    updateCommission ({ state, commit }, payload) {
+      const body = omit(payload, 'id');
+      commit('updateCommissionStart');
+
+      return axios.patch(`/api/users/me/commissions/${payload.id}`, body, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(function ({ data }) {
+          commit('updateCommissionSuccess', data.record);
+        })
+        .catch(function (err) {
+          const errors = err.response
+            ? err.response.data.errors
+            : [];
+          commit('updateCommissionFailure', errors);
         });
     }
   }

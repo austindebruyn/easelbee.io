@@ -18,8 +18,8 @@ export const commissionShape = VueTypes.shape({
   body: VueTypes.string.isRequired,
   status: VueTypes.oneOf([
     'incoming',
-    'inProgress',
-    'inReview',
+    'inprogress',
+    'inreview',
     'finished',
     'canceled'
   ]).isRequired,
