@@ -20,7 +20,7 @@
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionDetails from 'components/commissions/CommissionDetails';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
-import find from 'lodash.find';
+import _find from 'lodash.find';
 import { isLoaded } from 'state/Resource';
 
 export default {
@@ -40,7 +40,7 @@ export default {
     commission: function () {
       if (this.loading) return null;
 
-      return find(this.$store.state.commissions.value, {
+      return _find(this.$store.state.commissions.value, {
         id: this.id
       });
     },

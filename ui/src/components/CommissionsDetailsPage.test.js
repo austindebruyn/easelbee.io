@@ -65,9 +65,6 @@ describe('CommissionsDetailsPage', function () {
 
     it('should have breadcrumbs', function () {
       const wrapper = mount(CommissionsDetailsPage, {
-        propsData: {
-          commission: commissionsFixture.basic
-        },
         store: this.store,
         i18n: this.i18n,
         globals: {

@@ -37,8 +37,10 @@ module.exports.create = function (req, res, next) {
 
 module.exports.destroy = function (req, res) {
   req.logout();
-  if (req.accepts('json')) {
-    return res.json({ ok: true });
+
+  if (req.accepts('html')) {
+    return res.redirect('/');
   }
-  return res.redirect('/');
+
+  return res.json({ ok: true });
 };

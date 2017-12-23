@@ -2,15 +2,6 @@
   .dashboard-layout
     dashboard-navbar
     .navbar-padding
-      nav.navbar.navbar-expand-lg.navbar-light.bg-light
-        a.navbar-brand(href='#') easelbee.io
-        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavAltMarkup', aria-controls='navbarNavAltMarkup', aria-expanded='false', aria-label='Toggle navigation')
-          span.navbar-toggler-icon
-        #navbarNavAltMarkup.collapse.navbar-collapse
-          .navbar-nav
-            v-link.nav-item.nav-link.active(to='/commissions') Commissions
-            v-link.nav-item.nav-link(to='/forms') Forms
-            v-link.nav-item.nav-link.disabled(to='#', disabled=true) Settings
       .container(v-if='breadcrumbs')
         dashboard-breadcrumbs(:breadcrumbs='breadcrumbs')
       .content
@@ -34,6 +25,7 @@ export default {
     breadcrumbs: BreadcrumbsPropType
   }
 };
+
 </script>
 
 <style lang="scss" scoped>

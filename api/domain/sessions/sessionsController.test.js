@@ -77,15 +77,28 @@ describe('sessionsController', function () {
     });
   });
 
-  describe('POST /logout', function () {
+  describe('POST /signout', function () {
     beforeEach(function () {
       return signIn();
     });
 
     it('should sign user out', function () {
       return agent()
-        .post('/logout')
-        .expect(200);
+        .post('/signout')
+        .accept('application/json')
+        .expect(200, {
+          ok: true
+        });
+    });
+
+    it('should sign user out and redirect if using form', function () {
+      return agent()
+        .post('/signout')
+        .accept('text/html')
+        .expect(302)
+        .then(function (res) {
+          expect(res.header.location).to.eql('/');
+        });
     });
   });
 });

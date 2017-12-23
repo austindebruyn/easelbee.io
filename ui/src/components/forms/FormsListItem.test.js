@@ -3,7 +3,7 @@ import { mount } from 'avoriaz';
 import formsFixture from 'fixtures/forms';
 
 describe('FormsListItem', function () {
-  it('should render correct linkl', function () {
+  it('should render correct link', function () {
     const wrapper = mount(FormsListItem, {
       propsData: {
         form: formsFixture.basic

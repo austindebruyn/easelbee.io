@@ -34,7 +34,7 @@ module.exports = function (app) {
   app.post('/forms/:slug/submit', formsController.submit);
 
   app.post('/login', sessionsController.create);
-  app.post('/logout', sessionsController.destroy);
+  app.post('/signout', sessionsController.destroy);
   app.post('/api/users', usersController.create);
   app.post('/api/passwordResets', ensureAnonymous, passwordResetsController.create);
   app.post('/api/passwordResets/complete', ensureAnonymous, passwordResetsController.complete);
