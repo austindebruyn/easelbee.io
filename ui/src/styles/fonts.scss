@@ -13,7 +13,15 @@
     src: url('./fonts/sinkinsans/sinkinsans-500medium-webfont.woff2') format('woff2'),
          url('./fonts/sinkinsans/sinkinsans-500medium-webfont.woff') format('woff'),
          url('./fonts/sinkinsans/sinkinsans-500medium-webfont.ttf') format('truetype');
-    font-weight: medium;
+    font-weight: 500;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'sinkinsans';
+    src: url('./fonts/sinkinsans/sinkinsans-700bold-webfont.woff') format('woff');
+    font-weight: 700;
     font-style: normal;
 
 }

@@ -9,9 +9,9 @@ describe('CommissionsList', function () {
     }});
 
     expect(wrapper.find('.commissions-list ul')).to.have.length(0);
-    expect(wrapper.first('.commissions-list > p').text()).to.eql(
-      'No commissions yet :)'
-    );
+
+    const zds = wrapper.first('.commissions-list .commissions-zero-data-state');
+    expect(zds.text()).to.eql('Nothing here!');
   });
 
   it('should render list', function () {

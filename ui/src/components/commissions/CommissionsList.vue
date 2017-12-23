@@ -1,29 +1,32 @@
 <template lang="pug">
   .commissions-list
-    p(v-if='commissions.length < 1') No commissions yet :)
+    .commissions-zero-data-state(v-if='commissions.length < 1')
+      .fa.fa-spinner
+      h3 Nothing here!
     ul.list-unstyled(v-else=true)
       commissions-list-item(
         v-for='commission in commissions'
         key='commission.id'
         :commission='commission'
       )
-    hr
-    h3 Create new commission
-      form(
-        @submit='handleFormSubmit'
-      )
-        .form-group
-          v-input-text(
-            name='email',
-            placeholder='customers@email.com'
-          )
-        .form-group
-          v-input-text(
-            name='body',
-            placeholder='Some message.'
-          )
-        .form-group
-          button.btn.btn-primary(type='submit') Submit
+    div(hidden=true)
+      hr
+      h3 Create new commission
+        form(
+          @submit='handleFormSubmit'
+        )
+          .form-group
+            v-input-text(
+              name='email',
+              placeholder='customers@email.com'
+            )
+          .form-group
+            v-input-text(
+              name='body',
+              placeholder='Some message.'
+            )
+          .form-group
+            button.btn.btn-primary(type='submit') Submit
 </template>
 
 <script>
@@ -58,8 +61,28 @@ export default {
 <style lang="scss" scoped>
   @import 'src/styles/colors';
 
+  .commissions-list {
+    padding-top: 2rem;
+  }
+
   ul {
     display: flex;
     flex-wrap: wrap;
+  }
+
+  .commissions-zero-data-state {
+    color: $gray;
+    text-align: center;
+    border: 4px dashed $gray;
+    padding: 4rem;
+
+    .fa {
+      font-size: 3rem;
+      padding-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+    }
   }
 </style>

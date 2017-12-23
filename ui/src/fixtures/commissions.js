@@ -8,6 +8,15 @@ export default {
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   },
+  inprogress: {
+    id: 2,
+    userId: 1,
+    email: 'abraham@lincon.com',
+    body: 'He is on the penny.',
+    status: 'inprogress',
+    createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
+    updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
+  },
   long: {
     id: 4,
     userId: 1,

@@ -1,11 +1,22 @@
 <template lang="pug">
   dashboard-layout(:breadcrumbs='breadcrumbs')
     .container
-      .row
+      .row(v-if='loading')
         .col-12
-          h2 In progress
-          loading-spinner(v-if='loading', size='xl')
-          commissions-list(v-else=true, :commissions='commissions')
+          loading-spinner(size='xl')
+      .row(v-else=true)
+        .col-8
+          h2 In Progress
+          hr
+          commissions-list(
+            :commissions='commissionsByStatus("inprogress")'
+          )
+        .col-4
+          h2 Incoming
+          hr
+          commissions-list(
+            :commissions='commissionsByStatus("incoming")'
+          )
 </template>
 
 <script>
@@ -36,10 +47,21 @@ export default {
   },
   mounted: function () {
     this.$store.dispatch('fetchCommissions');
+  },
+  methods: {
+    commissionsByStatus: function (status) {
+      return this.commissions.filter(function (commission) {
+        return commission.status === status;
+      });
+    }
   }
 };
 </script>
 
 <style lang="scss">
   @import 'src/styles/colors';
+
+  h2 {
+    font-size: 1.6rem;
+  }
 </style>

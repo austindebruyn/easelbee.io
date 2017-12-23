@@ -63,7 +63,11 @@ describe('CommissionsIndexPage', function () {
     beforeEach(function () {
       storeFactory.call(this, {
         status: STATUS.LOADED,
-        value: [ commissionsFixture.basic, commissionsFixture.long ]
+        value: [
+          commissionsFixture.inprogress,
+          commissionsFixture.basic,
+          commissionsFixture.long
+        ]
       });
     });
 
@@ -76,9 +80,23 @@ describe('CommissionsIndexPage', function () {
       expect(wrapper.contains(LoadingSpinner)).to.be.false;
       expect(wrapper.contains(CommissionsList)).to.be.true;
       expect(wrapper.contains('.not-found')).to.be.false;
+    });
 
-      const child = wrapper.first(CommissionsList);
-      expect(child.propsData()).to.eql({
+    it('should render lists by status', function () {
+      const wrapper = mount(CommissionsIndexPage, {
+        store: this.store,
+        i18n: this.i18n
+      });
+
+      const lists = wrapper.find(CommissionsList);
+
+      expect(lists).to.have.length(2);
+
+      expect(lists[0].propsData()).to.eql({
+        commissions: [commissionsFixture.inprogress]
+      });
+
+      expect(lists[1].propsData()).to.eql({
         commissions: [commissionsFixture.basic, commissionsFixture.long]
       });
     });
