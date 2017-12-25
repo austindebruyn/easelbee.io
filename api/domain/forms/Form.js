@@ -19,8 +19,29 @@ const Form = db.define('forms', {
   }
 });
 
+/**
+ * Promises to ensure that `questions` are eager loaded on this instance.
+ * @returns {Promise}
+ */
+Form.prototype.ensureQuestions = function () {
+  return new Promise((resolve, reject) => {
+    if (this.questions) return resolve(this);
+
+    return this.getQuestions()
+      .then(questions => {
+        this.questions = questions;
+        return resolve(this);
+      })
+      .catch(reject);
+  });
+};
+
+/**
+ * Promises to serialize this Form instance as a JSON.
+ * @returns {Promise}
+ */
 Form.prototype.toJSON = function () {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const {
       id,
       userId,
@@ -30,16 +51,24 @@ Form.prototype.toJSON = function () {
       slug
     } = this.get();
 
-    return resolve({
-      id,
-      userId,
-      name,
-      slug,
-      publicUrl: buildUrl(`forms/${slug}`),
-      submitUrl: buildUrl(`forms/${slug}/submit`),
-      createdAt: createdAt && createdAt.toUTCString(),
-      updatedAt: updatedAt && updatedAt.toUTCString()
-    });
+    return this.ensureQuestions().then(() => {
+      const jsons = this.questions.map(q => q.toJSON());
+
+      return Promise.all(jsons).then(questions => {
+        return resolve({
+          id,
+          userId,
+          name,
+          slug,
+          publicUrl: buildUrl(`forms/${slug}`),
+          submitUrl: buildUrl(`forms/${slug}/submit`),
+          createdAt: createdAt && createdAt.toUTCString(),
+          updatedAt: updatedAt && updatedAt.toUTCString(),
+          questions
+        });
+      });
+    })
+      .catch(reject);
   });
 };
 

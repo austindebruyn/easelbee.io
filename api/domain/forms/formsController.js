@@ -1,4 +1,6 @@
 const Form = require('./Form');
+const Question = require('./Question');
+const QuestionOption = require('./QuestionOption');
 const User = require('../users/User');
 const Commission = require('../commissions/Commission');
 
@@ -26,7 +28,7 @@ module.exports.get = function (req, res, next) {
     return res.sendStatus(406);
   }
 
-  return Form.findOne({ where: { slug }, include: [User] })
+  return Form.findOne({ where: { slug }, include: [ User, Question ] })
     .then(function (record) {
       if (!record) {
         throw new FormsControllerError('NOT_FOUND');
@@ -89,7 +91,10 @@ module.exports.submit = function (req, res, next) {
 };
 
 module.exports.index = function (req, res, next) {
-  return Form.findAll({ where: { userId: req.user.id } })
+  return Form.findAll(
+    { where: { userId: req.user.id } },
+    { include: [{ model: Question, include: [QuestionOption] }] }
+  )
     .then(function (records) {
       return Promise.all(records.map(r => r.toJSON()));
     })

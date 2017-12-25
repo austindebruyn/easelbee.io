@@ -113,6 +113,7 @@ describe('formsController', function () {
               expect(req.body.ok).to.be.true;
               expect(req.body.records).to.have.length(1);
               expect(req.body.records[0]).to.eql(this.formJson);
+              expect(req.body.records[0]).to.have.property('questions');
             });
         });
       });
@@ -167,12 +168,13 @@ describe('formsController', function () {
             .expect(200)
             .then(res => {
               expect(res.body.ok).to.be.true;
-              expect(res.body.record).to.include({
+              expect(res.body.record).to.deep.include({
                 id: 1,
                 slug: 'some-form',
                 publicUrl: 'http://test-easelbee.io:8000/forms/some-form',
                 name: 'Some Form',
-                userId: signIn.user.id
+                userId: signIn.user.id,
+                questions: []
               });
             });
         });

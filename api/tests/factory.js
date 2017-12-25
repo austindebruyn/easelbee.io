@@ -6,6 +6,8 @@ const User = require('../domain/users/User');
 const EmailPreferences = require('../domain/emailPreferences/EmailPreferences');
 const Commission = require('../domain/commissions/Commission');
 const Form = require('../domain/forms/Form');
+const Question = require('../domain/forms/Question');
+const QuestionOption = require('../domain/forms/QuestionOption');
 const adapter = new FactoryGirl.SequelizeAdapter();
 const uid = require('uid-safe');
 
@@ -41,6 +43,22 @@ factory.define('form', Form, {
   slug: factory.chance('word'),
   name: factory.chance('word'),
   userId: factory.assoc('user', 'id')
+});
+
+factory.define('question', Question, {
+  formId: factory.assoc('form', 'id'),
+  title: factory.chance('sentence'),
+  type: function () {
+    const keys = Object.keys(Question.TYPES);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+
+    return Question.TYPES[randomKey];
+  }
+});
+
+factory.define('questionOption', QuestionOption, {
+  questionId: factory.assoc('question', 'id'),
+  text: factory.chance('word')
 });
 
 afterEach(function () {
