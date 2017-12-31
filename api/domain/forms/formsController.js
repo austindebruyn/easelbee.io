@@ -2,7 +2,6 @@ const Form = require('./Form');
 const Question = require('./Question');
 const QuestionOption = require('./QuestionOption');
 const User = require('../users/User');
-const Commission = require('../commissions/Commission');
 const FormSubmitter = require('./FormSubmitter');
 const { NotFoundError } = require('../../core/errors');
 

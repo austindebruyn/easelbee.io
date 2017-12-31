@@ -30,7 +30,7 @@ describe.only('FormSubmitter', function () {
         return factory.create('question', {
           formId: this.form.id,
           type: Question.TYPES.string
-        })
+        });
       }).then(question => {
         this.question = question;
       });
@@ -45,7 +45,7 @@ describe.only('FormSubmitter', function () {
         return Commission.findOne({
           where: { id: commission.id },
           include: [{ model: Answer, include: [{ model: AnswerTextValue }] }]
-        })
+        });
       }).then(commission => {
         expect(commission.answers).to.have.length(1);
         const { answerTextValues } = commission.answers[0];

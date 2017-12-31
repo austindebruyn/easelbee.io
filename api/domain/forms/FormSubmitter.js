@@ -5,7 +5,6 @@ const Question = require('./Question');
 const Commission = require('../commissions/Commission');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
-const db = require('../../services/db');
 
 class FormSubmitter {
   /**
@@ -45,7 +44,6 @@ class FormSubmitter {
             value: body[key],
             answerId: answer.id
           }).then(() => answer);
-          break;
         default:
           throw new Error(`Unknown question type ${question.type}`);
       }
