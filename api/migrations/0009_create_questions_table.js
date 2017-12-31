@@ -37,6 +37,10 @@ module.exports = {
       order: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      required: {
+        type: Sequelize.BOOLEAN,
+        default: false
       }
     });
   },

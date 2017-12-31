@@ -19,7 +19,7 @@ const Commission = db.define('commissions', {
   tableName: 'commissions',
   freezeTableName: true,
   name: {
-    singular: 'commissions'
+    singular: 'commission'
   }
 });
 
@@ -29,6 +29,23 @@ Commission.STATUS = {
   inreview: 20,
   finished: 30,
   canceled: 2
+};
+
+/**
+ * Promises to ensure that `answers` are eager loaded on this instance.
+ * @returns {Promise}
+ */
+Commission.prototype.ensureAnswers = function () {
+  return new Promise((resolve, reject) => {
+    if (this.answers) return resolve(this);
+
+    return this.getAnswers()
+      .then(answers => {
+        this.answers = answers;
+        return resolve(this);
+      })
+      .catch(reject);
+  });
 };
 
 Commission.prototype.toJSON = function () {

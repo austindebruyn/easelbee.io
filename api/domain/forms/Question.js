@@ -10,6 +10,10 @@ const Question = db.define('questions', {
     type: db.Sequelize.INTEGER,
     allowNull: false,
     default: 0
+  },
+  required: {
+    type: db.Sequelize.BOOLEAN,
+    default: false
   }
 }, {
   tableName: 'questions',
@@ -57,7 +61,8 @@ Question.prototype.toJSON = function () {
       createdAt,
       updatedAt,
       title,
-      type
+      type,
+      required
     } = this.get();
 
     const attrs = {
@@ -65,6 +70,7 @@ Question.prototype.toJSON = function () {
       formId,
       title,
       type,
+      required,
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     };

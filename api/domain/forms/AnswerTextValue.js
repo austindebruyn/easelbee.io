@@ -1,7 +1,7 @@
 const db = require('../../services/db');
 const Answer = require('./Answer');
 
-const AnswerTextValue = db.define('answer_text_values', {
+const AnswerTextValue = db.define('answerTextValues', {
   value: {
     type: db.Sequelize.TEXT
   }

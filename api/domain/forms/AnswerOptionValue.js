@@ -2,7 +2,7 @@ const db = require('../../services/db');
 const Answer = require('./Answer');
 const QuestionOption = require('./QuestionOption');
 
-const AnswerOptionValue = db.define('answer_option_values', {
+const AnswerOptionValue = db.define('answerOptionValues', {
   questionOptionId: {
     type: db.Sequelize.INTEGER,
     allowNull: false,

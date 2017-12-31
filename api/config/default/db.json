@@ -3,5 +3,6 @@
   "username": "lyn",
   "password": "",
   "database": "easelbee",
-  "dialect": "mysql"
+  "dialect": "mysql",
+  "logging": true
 }

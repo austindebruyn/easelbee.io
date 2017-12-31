@@ -16,6 +16,7 @@ QuestionOption.prototype.toJSON = function () {
     const {
       id,
       userId,
+      value,
       createdAt,
       updatedAt
     } = this.get();
@@ -23,6 +24,7 @@ QuestionOption.prototype.toJSON = function () {
     return resolve({
       id,
       userId,
+      value,
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });

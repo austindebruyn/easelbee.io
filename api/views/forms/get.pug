@@ -15,10 +15,26 @@ p
 hr
 h3 Questions
 form(method='POST', action=form.submitUrl)
-  fieldset
-    label(for='email') What's your email?
-    input(id='email', type='text', name='email', placeholder='person@cool.com')
-  fieldset
-    label(for='body') What drawing do you want?
-    input(id='body', type='text', name='body', placeholder='I want this...')
+  for question in form.questions
+    fieldset
+      -key = 'question' + question.id
+      case question.type
+        when 0
+          -optionName = key + '-option'
+          label(for=key)= question.title
+          for option in question.options
+            -optionKey = optionName + option.id
+            .input-group
+              input(
+                id=optionKey
+                type='radio'
+                name=optionName
+                value=option.id
+              )
+              label(for=optionKey)= option.value
+        when 2
+          label(for=key)= question.title
+          input(id=key, type='text', name=key)
+        default
+          p Unknown question type
   button(type='submit') Submit

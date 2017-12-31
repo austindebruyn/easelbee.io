@@ -1,3 +1,4 @@
 {
-  "dialect": "sqlite"
+  "dialect": "sqlite",
+  "logging": false
 }

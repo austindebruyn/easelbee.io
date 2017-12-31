@@ -3,22 +3,8 @@ const Question = require('./Question');
 const QuestionOption = require('./QuestionOption');
 const User = require('../users/User');
 const Commission = require('../commissions/Commission');
-
-class FormsControllerError extends Error {
-  constructor(code, data = {}) {
-    super();
-    this.name = 'FormsControllerError';
-    this.code = code;
-    Object.assign(this, data);
-  }
-
-  toJSON() {
-    if (this.fields) {
-      return { code: this.code, fields: this.fields };
-    }
-    return { code: this.code };
-  }
-}
+const FormSubmitter = require('./FormSubmitter');
+const { NotFoundError } = require('../../core/errors');
 
 module.exports.get = function (req, res, next) {
   const { slug } = req.params;
@@ -28,10 +14,13 @@ module.exports.get = function (req, res, next) {
     return res.sendStatus(406);
   }
 
-  return Form.findOne({ where: { slug }, include: [ User, Question ] })
+  return Form.findOne({
+    where: { slug },
+    include: [User, { model: Question, include: [QuestionOption] }]
+  })
     .then(function (record) {
       if (!record) {
-        throw new FormsControllerError('NOT_FOUND');
+        throw new NotFoundError();
       }
       state.form = record;
       state.user = record.user;
@@ -46,7 +35,7 @@ module.exports.get = function (req, res, next) {
       });
     })
     .catch(function (err) {
-      if (err.code === 'NOT_FOUND') {
+      if (err.name === 'NotFoundError') {
         return res.status(404).render('notFound');
       }
       return next(err);
@@ -71,30 +60,25 @@ module.exports.submit = function (req, res, next) {
       return record;
     })
     .then(function (record) {
-      const { email, body } = req.body;
+      const submitter = new FormSubmitter(state.form);
 
-      return Commission.create({
-        formId: record.id,
-        userId: record.userId,
-        email,
-        body
-      });
+      return submitter.submit(req.body);
     })
     .then(function () {
       return res.render('forms/submit', {
         user: state.form.user
       });
     })
-    .catch(function () {
+    .catch(function (e) {
       return res.status(500).render('forms/error');
     });
 };
 
 module.exports.index = function (req, res, next) {
-  return Form.findAll(
-    { where: { userId: req.user.id } },
-    { include: [{ model: Question, include: [QuestionOption] }] }
-  )
+  return Form.findAll({
+    where: { userId: req.user.id },
+    include: [{ model: Question, include: [QuestionOption] }]
+  })
     .then(function (records) {
       return Promise.all(records.map(r => r.toJSON()));
     })
