@@ -200,7 +200,7 @@ describe('formsController', function () {
     it('should submit', function () {
       return agent()
         .post('/forms/some-form/submit')
-        .send({ email: 'whatever@email.com', body: 'Please draw this.' })
+        .send({  })
         .accept('text/html')
         .expect(200)
         .then(res => {
@@ -210,8 +210,6 @@ describe('formsController', function () {
         })
         .then(function (commission) {
           expect(commission).to.include({
-            email: 'whatever@email.com',
-            body: 'Please draw this.'
           });
         });
     });

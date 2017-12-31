@@ -1,10 +1,30 @@
 // const Form = require('./Form');
+const _ = require('lodash');
 const { UnprocessableEntityError } = require('../../core/errors');
 const Question = require('./Question');
+const Form = require('./Form');
 // const QuestionOption = require('./QuestionOption');
 const Commission = require('../commissions/Commission');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
+const db = require('../../services/db');
+
+/**
+ * Returns a question id parsed from a string like `question_7`.
+ * @param {String} key
+ * @returns {Number}
+ */
+function getIdFromQuestionKey(key) {
+  const number = key.match(/^question_(\d+)$/);
+  if (!number || !number[1] || !parseInt(number[1])) {
+    const error = new UnprocessableEntityError('bad-attribute', {
+      fields: [key]
+    });
+    throw error;
+  }
+
+  return parseInt(number[1]);
+}
 
 class FormSubmitter {
   /**
@@ -17,36 +37,80 @@ class FormSubmitter {
   /**
    * Promises to return an uncommitted Answer model for the Question provided
    * by searching in the body for the user input.
-   * @param {Question} question 
+   * @param {Object} t transaction
    * @param {Commission} commission
    * @param {Object} body
+   * @param {Question} question 
    * @returns {Promise}
    * @private 
    */
-  createAnswerForQuestion(question, commission, body) {
+  createAnswerForQuestion(t, commission, body, question) {
     const key = `question_${question.id}`;
 
-    return Answer.create({
-      questionId: question.id,
-      commissionId: commission.id
-    }).then(function (answer) {
+    return Answer.create(
+      { questionId: question.id, commissionId: commission.id },
+      { transaction: t }
+    ).then(function (answer) {
       if (!(key in body)) {
         if (question.required) {
           throw new UnprocessableEntityError('missing-required-question', {
             id: question.id
           });
         }
+
+        return Promise.resolve(answer);
       }
 
       switch (question.type) {
         case Question.TYPES.string:
-          return AnswerTextValue.create({
-            value: body[key],
-            answerId: answer.id
-          }).then(() => answer);
+          return AnswerTextValue.create(
+            { value: body[key], answerId: answer.id },
+            { transaction: t }
+          ).then(() => answer);
         default:
           throw new Error(`Unknown question type ${question.type}`);
       }
+    });
+  }
+  /**
+   * Matches the keys present in the request body inputs with questions. Will
+   * reject if it finds something funny:
+   *  - questions that don't exist
+   *  - questions that don't belong to the form's user
+   * @param {Object} body
+   * @returns {Promise}
+   * @private 
+   */
+  findQuestionsForInputs(body) {
+    const keys = Object.keys(body);
+
+    return Promise.all(keys.map(key => {
+      return new Promise((resolve, reject) => {
+        const id = getIdFromQuestionKey(key);
+
+        const formQuestion = _.find(this.form.questions, { id });
+        if (formQuestion) {
+          return resolve(formQuestion);
+        }
+
+        return Question.findOne({ where: { id }, include: [Form] })
+          .then(question => {
+            if (!question || question.form.userId !== this.form.userId) {
+              return reject(new UnprocessableEntityError('question-not-found', {
+                fields: [key]
+              }));
+            }
+
+            return resolve(question);
+          })
+          .catch(reject);
+      });
+    })).then(questions => {
+      // Always concat and dedupe the required questions.
+      return _([
+        ..._.filter(this.form.questions, 'required'),
+        ...questions
+      ]).uniqBy('id').compact().value();
     });
   }
 
@@ -58,29 +122,34 @@ class FormSubmitter {
    * @returns {Promise}
    */
   submit(body) {
-    return this.form.ensureQuestions()
-      .then(() => {
-        return Commission.create({
-          formId: this.form.id,
-          userId: this.form.userId,
-          email: body.email,
-          body: body.body
+    return db.transaction(t => {
+      return this.form.ensureQuestions()
+        .then(() => {
+          return Commission.create({
+            formId: this.form.id,
+            userId: this.form.userId,
+            email: body.email,
+            body: body.body
+          }, { transaction: t });
+        })
+        .then(commission => {
+          this._commission = commission;
+        })
+        .then(() => {
+          return this.findQuestionsForInputs(body);
+        })
+        .then(questions => {
+          return Promise.all(questions.map(q => {
+            return this.createAnswerForQuestion(t, this._commission, body, q);
+          }));
+        })
+        .then(answers => {
+          return this._commission.ensureAnswers();
+        })
+        .then(() => {
+          return this._commission;
         });
-      })
-      .then(commission => {
-        this._commission = commission;
-      })
-      .then(() => {
-        return Promise.all(this.form.questions.map(q => {
-          return this.createAnswerForQuestion(q, this._commission, body);
-        }));
-      })
-      .then(answers => {
-        return this._commission.ensureAnswers();
-      })
-      .then(() => {
-        return this._commission;
-      });
+    });
   }
 }
 

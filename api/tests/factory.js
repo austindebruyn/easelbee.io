@@ -54,6 +54,15 @@ factory.define('question', Question, {
 
     return Question.TYPES[randomKey];
   }
+}, {
+  afterBuild: function (model, attrs) {
+    return Form.findById(attrs.formId).then(function (form) {
+      if (form) {
+        model.userId = form.userId;
+      }
+      return model;
+    });
+  }
 });
 
 factory.define('questionOption', QuestionOption, {
