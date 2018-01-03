@@ -40,10 +40,10 @@ module.exports.getFillout = function (req, res, next) {
 module.exports.create = function (req, res, next) {
   const {
     email,
-    body
+    nickname
   } = req.body;
 
-  return Commission.create({ userId: req.user.id, email, body })
+  return Commission.create({ userId: req.user.id, email, nickname })
     .then(record => record.toJSON())
     .then(function (record) {
       return res.json({

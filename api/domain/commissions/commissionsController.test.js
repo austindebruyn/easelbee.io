@@ -192,7 +192,7 @@ describe('commissionsController', function () {
         it('should return 200', function () {
           return agent()
             .post('/api/users/me/commissions')
-            .send({ email: 'some@client.com', body: 'Hey.' })
+            .send({ email: 'some@client.com', nickname: 'Jeremy' })
             .cookiejar()
             .accept('application/json')
             .expect(200)
@@ -200,7 +200,8 @@ describe('commissionsController', function () {
               expect(res.body.ok).to.be.true;
               expect(res.body.record).to.include({
                 id: 1,
-                email: 'some@client.com'
+                email: 'some@client.com',
+                nickname: 'Jeremy'
               });
             });
         });

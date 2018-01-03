@@ -37,7 +37,7 @@ factory.define('emailPreferences', EmailPreferences, {
 
 factory.define('commission', Commission, {
   email: factory.chance('email'),
-  body: factory.chance('paragraph', { sentences: 2 }),
+  nickname: factory.chance('word'),
   userId: factory.assoc('user', 'id'),
   formId: factory.assoc('form', 'id')
 });

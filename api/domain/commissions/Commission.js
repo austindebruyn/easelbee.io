@@ -7,6 +7,9 @@ const Commission = db.define('commissions', {
   email: {
     type: db.Sequelize.STRING
   },
+  nickname: {
+    type: db.Sequelize.STRING
+  },
   status: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
@@ -70,6 +73,7 @@ Commission.prototype.toJSON = function () {
       createdAt,
       updatedAt,
       email,
+      nickname,
       status
     } = this.get();
 
@@ -77,6 +81,7 @@ Commission.prototype.toJSON = function () {
       id,
       userId,
       email,
+      nickname,
       status: invert(Commission.STATUS)[status],
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()

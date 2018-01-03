@@ -13,6 +13,7 @@ describe('FilloutFetcher', function () {
         this.form = form;
         return factory.create('commission', {
           email: 'happy@customer.com',
+          nickname: 'Happy Customer',
           userId: form.userId
         });
       })
@@ -41,6 +42,7 @@ describe('FilloutFetcher', function () {
         commission: {
           id: 1,
           userId: 1,
+          nickname: 'Happy Customer',
           email: 'happy@customer.com',
           status: 'incoming',
           createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
