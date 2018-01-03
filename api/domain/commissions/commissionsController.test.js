@@ -75,10 +75,10 @@ describe('commissionsController', function () {
     });
   });
 
-  describe('GET /api/users/me/commissions/:id/answers', function () {
+  describe('GET /api/users/me/commissions/:id/fillout', function () {
     it('should 403 if signed out', function () {
       return agent()
-        .get('/api/users/me/commissions/1/answers')
+        .get('/api/users/me/commissions/1/fillout')
         .cookiejar()
         .accept('application/json')
         .expect(403);
@@ -95,7 +95,7 @@ describe('commissionsController', function () {
 
       it('should return not found', function () {
         return agent()
-          .get('/api/users/me/commissions/1/answers')
+          .get('/api/users/me/commissions/1/fillout')
           .cookiejar()
           .accept('application/json')
           .expect(404);
@@ -122,12 +122,12 @@ describe('commissionsController', function () {
 
           it('should return', function () {
             return agent()
-              .get('/api/users/me/commissions/1/answers')
+              .get('/api/users/me/commissions/1/fillout')
               .cookiejar()
               .accept('application/json')
               .expect(200, {
                 ok: true,
-                records: [{ test: 'ok' }]
+                record: [{ test: 'ok' }]
               });
           });
         });
@@ -141,7 +141,7 @@ describe('commissionsController', function () {
 
           it('should return', function () {
             return agent()
-              .get('/api/users/me/commissions/1/answers')
+              .get('/api/users/me/commissions/1/fillout')
               .cookiejar()
               .accept('application/json')
               .expect(422, {

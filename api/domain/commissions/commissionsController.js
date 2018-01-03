@@ -21,7 +21,7 @@ module.exports.index = function (req, res, next) {
     .catch(next);
 };
 
-module.exports.answersIndex = function (req, res, next) {
+module.exports.getFillout = function (req, res, next) {
   return Commission.findById(req.params.id)
     .then(function (commission) {
       if (!commission) {
@@ -31,11 +31,8 @@ module.exports.answersIndex = function (req, res, next) {
       const fetcher = new FilloutFetcher(commission);
       return fetcher.toJSON();
     })
-    .then(function (json) {
-      return res.json({
-        ok: true,
-        records: json
-      });
+    .then(function (record) {
+      return res.json({ ok: true, record });
     })
     .catch(next);
 };

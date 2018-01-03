@@ -15,6 +15,10 @@ const Question = db.define('questions', {
   required: {
     type: db.Sequelize.BOOLEAN,
     default: false
+  },
+  order: {
+    type: db.Sequelize.INTEGER,
+    allowNull: false
   }
 }, {
   tableName: 'questions',
