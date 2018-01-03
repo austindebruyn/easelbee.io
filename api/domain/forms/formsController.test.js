@@ -200,7 +200,7 @@ describe('formsController', function () {
     it('should submit', function () {
       return agent()
         .post('/forms/some-form/submit')
-        .send({  })
+        .send({ })
         .accept('text/html')
         .expect(200)
         .then(res => {

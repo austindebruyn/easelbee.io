@@ -7,9 +7,6 @@ const Commission = db.define('commissions', {
   email: {
     type: db.Sequelize.STRING
   },
-  body: {
-    type: db.Sequelize.STRING
-  },
   status: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
@@ -29,6 +26,23 @@ Commission.STATUS = {
   inreview: 20,
   finished: 30,
   canceled: 2
+};
+
+/**
+ * Promises to ensure that `form` is eager loaded on this instance.
+ * @returns {Promise}
+ */
+Commission.prototype.ensureForm = function () {
+  return new Promise((resolve, reject) => {
+    if (this.form) return resolve(this);
+
+    return this.getForm()
+      .then(form => {
+        this.form = form;
+        return resolve(this);
+      })
+      .catch(reject);
+  });
 };
 
 /**
@@ -56,7 +70,6 @@ Commission.prototype.toJSON = function () {
       createdAt,
       updatedAt,
       email,
-      body,
       status
     } = this.get();
 
@@ -64,7 +77,6 @@ Commission.prototype.toJSON = function () {
       id,
       userId,
       email,
-      body,
       status: invert(Commission.STATUS)[status],
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()

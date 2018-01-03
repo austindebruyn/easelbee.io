@@ -6,9 +6,19 @@ const expect = require('chai').expect;
 const Commission = require('./Commission');
 const User = require('../users/User');
 const sinon = require('sinon');
+const FilloutFetcher = require('../forms/FilloutFetcher');
+const { UnprocessableEntityError } = require('../../core/errors');
 
 describe('commissionsController', function () {
   clock();
+
+  beforeEach(function () {
+    this.sandbox = sinon.sandbox.create();
+  });
+
+  afterEach(function () {
+    this.sandbox.restore();
+  });
 
   describe('GET /api/users/me/commissions', function () {
     it('should 403 if signed out', function () {
@@ -65,6 +75,85 @@ describe('commissionsController', function () {
     });
   });
 
+  describe('GET /api/users/me/commissions/:id/answers', function () {
+    it('should 403 if signed out', function () {
+      return agent()
+        .get('/api/users/me/commissions/1/answers')
+        .cookiejar()
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(function () {
+        return factory.create('user')
+          .then(user => {
+            this.user = user;
+            return signIn(user);
+          });
+      });
+
+      it('should return not found', function () {
+        return agent()
+          .get('/api/users/me/commissions/1/answers')
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      describe('and commission exists', function () {
+        beforeEach(function () {
+          return factory.create('commission', { userId: signIn.user.id })
+            .then(commission => {
+              this.commission = commission;
+            });
+        });
+
+        describe('success', function () {
+          beforeEach(function () {
+            this.sandbox.stub(FilloutFetcher.prototype, 'toJSON').resolves([
+              { test: 'ok' }
+            ]);
+            return factory.create('commission', { userId: signIn.user.id })
+              .then(commission => {
+                this.commission = commission;
+              });
+          });
+
+          it('should return', function () {
+            return agent()
+              .get('/api/users/me/commissions/1/answers')
+              .cookiejar()
+              .accept('application/json')
+              .expect(200, {
+                ok: true,
+                records: [{ test: 'ok' }]
+              });
+          });
+        });
+
+        describe('on error', function () {
+          beforeEach(function () {
+            this.sandbox.stub(FilloutFetcher.prototype, 'toJSON').rejects(
+              new UnprocessableEntityError('some-error')
+            );
+          });
+
+          it('should return', function () {
+            return agent()
+              .get('/api/users/me/commissions/1/answers')
+              .cookiejar()
+              .accept('application/json')
+              .expect(422, {
+                ok: false,
+                code: 'some-error'
+              });
+          });
+        });
+      });
+    });
+  });
+
   describe('POST /api/users/me/commissions', function () {
     it('should 403 if signed out', function () {
       return agent()
@@ -86,11 +175,7 @@ describe('commissionsController', function () {
 
       describe('on error', function () {
         beforeEach(function () {
-          sinon.stub(Commission, 'create').rejects();
-        });
-
-        afterEach(function () {
-          Commission.create.restore();
+          this.sandbox.stub(Commission, 'create').rejects();
         });
 
         it('should return 422', function () {
@@ -115,8 +200,7 @@ describe('commissionsController', function () {
               expect(res.body.ok).to.be.true;
               expect(res.body.record).to.include({
                 id: 1,
-                email: 'some@client.com',
-                body: 'Hey.'
+                email: 'some@client.com'
               });
             });
         });
@@ -168,11 +252,7 @@ describe('commissionsController', function () {
 
       describe('on error', function () {
         beforeEach(function () {
-          sinon.stub(Commission.prototype, 'save').rejects();
-        });
-
-        afterEach(function () {
-          Commission.prototype.save.restore();
+          this.sandbox.stub(Commission.prototype, 'save').rejects();
         });
 
         it('should return 500', function () {

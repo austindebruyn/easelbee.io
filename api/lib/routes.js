@@ -46,6 +46,7 @@ module.exports = function (app) {
   app.get('/api/users/me/commissions', ensureAuthenticated, commissionsController.index);
   app.post('/api/users/me/commissions', ensureAuthenticated, commissionsController.create);
   app.patch('/api/users/me/commissions/:id', ensureAuthenticated, commissionsController.update);
+  app.get('/api/users/me/commissions/:id/answers', ensureAuthenticated, commissionsController.answersIndex);
   app.get('/api/users/me/forms', ensureAuthenticated, formsController.index);
   app.post('/api/users/me/forms', ensureAuthenticated, formsController.create);
   app.get('*', homeController.index);

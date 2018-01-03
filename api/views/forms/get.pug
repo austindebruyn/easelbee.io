@@ -17,7 +17,7 @@ h3 Questions
 form(method='POST', action=form.submitUrl)
   for question in form.questions
     fieldset
-      -key = 'question' + question.id
+      -key = 'question_' + question.id
       case question.type
         when 0
           -optionName = key + '-option'

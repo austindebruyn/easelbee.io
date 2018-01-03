@@ -1,5 +1,6 @@
-const Commission = require('./Commission');
 const _ = require('lodash');
+const Commission = require('./Commission');
+const FilloutFetcher = require('../forms/FilloutFetcher');
 const {
   NotFoundError,
   UnauthorizedError,
@@ -10,6 +11,25 @@ module.exports.index = function (req, res, next) {
   return Commission.findAll({ where: { userId: req.user.id } })
     .then(function (records) {
       return Promise.all(records.map(r => r.toJSON()));
+    })
+    .then(function (json) {
+      return res.json({
+        ok: true,
+        records: json
+      });
+    })
+    .catch(next);
+};
+
+module.exports.answersIndex = function (req, res, next) {
+  return Commission.findById(req.params.id)
+    .then(function (commission) {
+      if (!commission) {
+        throw new NotFoundError();
+      }
+
+      const fetcher = new FilloutFetcher(commission);
+      return fetcher.toJSON();
     })
     .then(function (json) {
       return res.json({
