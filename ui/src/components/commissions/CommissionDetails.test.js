@@ -1,21 +1,34 @@
 import CommissionDetails from './CommissionDetails';
-import { shallow } from 'avoriaz';
 import commissionsFixture from 'fixtures/commissions';
+import CommissionTimeline from './CommissionTimeline';
+import CommissionDetailsActions from './CommissionDetailsActions';
+import { shallow } from 'avoriaz';
 
 describe('CommissionDetails', function () {
-  it('should render text', function () {
-    const wrapper = shallow(CommissionDetails, {
+  beforeEach(function () {
+    this.wrapper = shallow(CommissionDetails, {
       propsData: {
         commission: commissionsFixture.basic
       },
       i18n: this.i18n
     });
+  });
 
-    const titleText = wrapper.first('.commission-details > h1').text();
-    expect(titleText).to.contain('Commission #1');
+  it('should render text', function () {
+    const cardText = this.wrapper.first('.commission-details .card').text();
+    expect(cardText).to.contain('elon@musk.com');
+  });
 
-    const cardText = wrapper.first('.commission-details').text();
-    expect(cardText).to.contain('From: elon@musk.com');
-    expect(cardText).to.contain('Draw me a tesla.');
+  it('should render children', function () {
+    const timelineComponent = this.wrapper.first(CommissionTimeline);
+    expect(timelineComponent.propsData()).to.include({
+      commission: commissionsFixture.basic
+    });
+
+    const actionsComponent = this.wrapper.first(CommissionDetailsActions);
+    expect(actionsComponent.propsData()).to.include({
+      commissionId: commissionsFixture.basic.id,
+      status: commissionsFixture.basic.status
+    });
   });
 });

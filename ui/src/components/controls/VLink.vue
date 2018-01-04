@@ -1,8 +1,15 @@
 <template lang="pug">
   router-link.v-link(
+    v-if='to'
     :to='to'
     :event='event'
     :class='classes'
+  )
+    slot
+  a.v-link(
+    v-else=true
+    href='javascript:;'
+    @click='handleClick'
   )
     slot
 </template>
@@ -12,8 +19,8 @@ export default {
   name: 'v-link',
   props: {
     to: {
-      required: true,
-      type: String
+      type: String,
+      default: null
     },
     disabled: {
       type: Boolean,
@@ -28,6 +35,11 @@ export default {
       return {
         disabled: this.disabled
       };
+    }
+  },
+  methods: {
+    handleClick: function (e) {
+      this.$emit('click', e);
     }
   }
 };

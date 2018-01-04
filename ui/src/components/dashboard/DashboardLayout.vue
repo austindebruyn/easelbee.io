@@ -2,10 +2,12 @@
   .dashboard-layout
     dashboard-navbar
     .navbar-padding
-      .container(v-if='breadcrumbs')
-        dashboard-breadcrumbs(:breadcrumbs='breadcrumbs')
-      .content
-        slot
+      section.top-section
+        .container(v-if='breadcrumbs')
+          dashboard-breadcrumbs(:breadcrumbs='breadcrumbs')
+      section.content-section
+        .content
+          slot
 </template>
 
 <script>
@@ -41,5 +43,11 @@ export default {
 
   .content {
     padding-top: 40px;
+  }
+
+  section.top-section {
+    background-color: white;
+    padding-top: 3rem;
+    padding-bottom: 0.25rem;
   }
 </style>

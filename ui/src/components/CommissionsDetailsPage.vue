@@ -17,11 +17,11 @@
 </template>
 
 <script>
+import _find from 'lodash.find';
+import { isLoaded } from 'state/Resource';
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionDetails from 'components/commissions/CommissionDetails';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
-import _find from 'lodash.find';
-import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'commissions-details-page',

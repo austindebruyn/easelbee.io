@@ -57,7 +57,7 @@ export default {
       }
 
       &:hover {
-        color: $blue-light;
+        color: yellow;
       }
     }
   }

@@ -21,7 +21,8 @@ describe('CommissionsDetailsPage', function () {
   function storeFactory (resourceOpts = {}) {
     this.store = new Vuex.Store({
       state: {
-        commissions: new Resource(resourceOpts)
+        commissions: new Resource(resourceOpts),
+        fillouts: {}
       },
       actions: this.actions
     });
@@ -58,7 +59,7 @@ describe('CommissionsDetailsPage', function () {
           }
         }
       });
-      expect(wrapper.contains(LoadingSpinner)).to.be.true;
+      expect(wrapper.find('.col-12 > .loading-container')).to.have.length(1);
       expect(wrapper.contains(CommissionDetails)).to.be.false;
       expect(wrapper.contains('.not-found')).to.be.false;
     });
@@ -102,7 +103,7 @@ describe('CommissionsDetailsPage', function () {
         }
       });
 
-      expect(wrapper.contains(LoadingSpinner)).to.be.false;
+      expect(wrapper.find('.col-12 > .loading-container')).to.have.length(0);
       expect(wrapper.contains(CommissionDetails)).to.be.true;
       expect(wrapper.contains('.not-found')).to.be.false;
 
@@ -125,7 +126,7 @@ describe('CommissionsDetailsPage', function () {
           }
         });
 
-        expect(wrapper.contains(LoadingSpinner)).to.be.false;
+        expect(wrapper.find('.col-12 > .loading-container')).to.have.length(0);
         expect(wrapper.contains(CommissionDetails)).to.be.false;
         expect(wrapper.contains('.not-found')).to.be.true;
       });

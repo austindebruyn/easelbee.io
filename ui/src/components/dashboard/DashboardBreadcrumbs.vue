@@ -37,6 +37,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import 'src/styles/colors';
+
+  .breadcrumb {
+    background: none;
+    color: $gray-light;
+    font-size: 1.2rem;
+
+    padding: 0;
+  }
+
   .dashboard-breadcrumbs {
     font-family: 'sinkinsans', sans-serif;
   }

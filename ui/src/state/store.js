@@ -12,6 +12,7 @@ const initialState = {
   completePasswordReset: new Resource(),
   emailPreferences: new Resource(),
   commissions: new Resource(),
+  fillouts: {},
   forms: new Resource(),
   i18n: new Resource()
 };
@@ -72,6 +73,27 @@ export default new Vuex.Store({
     fetchCommissionsFailure: function (state, errors) {
       state.commissions.status = STATUS.ERRORED;
       state.commissions.errors = errors;
+    },
+
+    fetchFilloutStart: function (state, id) {
+      const fillouts = { ...state.fillouts };
+      if (!fillouts[id]) {
+        fillouts[id] = new Resource();
+      }
+      fillouts[id].status = STATUS.MUTATING;
+      state.fillouts = fillouts;
+    },
+    fetchFilloutSuccess: function (state, { id, json }) {
+      const fillouts = { ...state.fillouts };
+      fillouts[id].status = STATUS.LOADED;
+      fillouts[id].value = json;
+      state.fillouts = fillouts;
+    },
+    fetchFilloutFailure: function (state, { id, errors }) {
+      const fillouts = { ...state.fillouts };
+      fillouts[id].status = STATUS.ERRORED;
+      fillouts[id].errors = errors;
+      state.fillouts = fillouts;
     },
 
     createCommissionStart: function (state) {
@@ -155,7 +177,25 @@ export default new Vuex.Store({
           commit('fetchCommissionsSuccess', data.records);
         })
         .catch(({ response: { data } }) => {
-          commit('fetchCommissionsError', data.errors);
+          commit('fetchCommissionsFailure', data.errors);
+        });
+    },
+    fetchFillout ({ state, commit }, id) {
+      commit('fetchFilloutStart', id);
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      const url = `/api/users/me/commissions/${id}/fillout`;
+
+      return axios.get(url, { credentials: 'same-origin', headers })
+        .then(({ data }) => {
+          commit('fetchFilloutSuccess', { id, json: data.record });
+        })
+        .catch(({ response }) => {
+          const errors = response && response.data && response.data.errors;
+          commit('fetchFilloutFailure', { id, errors });
         });
     },
     fetchForms ({ state, commit }) {
@@ -172,7 +212,7 @@ export default new Vuex.Store({
           commit('fetchFormsSuccess', data.records);
         })
         .catch(({ response: { data } }) => {
-          commit('fetchFormsError', data.errors);
+          commit('fetchFormsFailure', data.errors);
         });
     },
     login: function ({ state, commit }, { email, password }) {

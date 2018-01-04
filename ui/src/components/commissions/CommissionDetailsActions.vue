@@ -1,58 +1,60 @@
 <template lang="pug">
   .commission-details-status
-    strong {{ $t('commissions.details.status') }}:&nbsp;
-    span {{ statusLabel }}
-    .mb-2
-      small.text-muted {{ statusLabelDescription }}
-    .well
-      button.btn.btn-sm.btn-primary(
+    .status-actions
+      button.btn.btn-lg.btn-block.btn-primary(
         v-if='this.status === "incoming"'
         type='button'
         @click='handlePromote("inprogress")'
       ) Accept
-      button.btn.btn-sm.btn-primary(
+      button.btn.btn-lg.btn-block.btn-primary(
         v-if='this.status === "inprogress"'
         type='button'
         @click='handlePromote("inreview")'
       ) Mark In Review
-      button.btn.btn-sm.btn-primary(
+      button.btn.btn-lg.btn-block.btn-primary(
         v-if='this.status === "inreview"'
         type='button'
         @click='handlePromote("finished")'
       ) Mark Finished
-      button.btn.btn-sm.btn-link(
-        v-if='this.status !== "canceled" && this.status !== "finished"'
-        type='button'
-        @click='handleCancel'
-      ) Cancel
-      hr
-      button.btn.btn-link(
-        v-if='this.status === "inprogress"'
-        type='button'
-        @click='handleDemote("incoming")'
-      ) Un-accept (move back to incoming)
-      button.btn.btn-link(
-        v-if='this.status === "inreview"'
-        type='button'
-        @click='handleDemote("inprogress")'
-      ) Move back to In Progress
-      button.btn.btn-link(
-        v-if='this.status === "finished"'
-        type='button'
-        @click='handleDemote("inreview")'
-      ) Move back to In Review
-      button.btn.btn-link(
+      button.btn.btn-lg.btn-block.btn-secondary(
         v-if='this.status === "canceled"'
         type='button'
         @click='handlePromote("inprogress")'
-      ) Un-cancel this commission and move back to In Progress
+      ) Un-cancel
+
+      v-link(
+        v-if='this.status === "inprogress"'
+        @click='handleDemote("incoming")'
+      ) Un-accept (move back to incoming)
+      v-link(
+        v-if='this.status === "inreview"'
+        @click='handleDemote("inprogress")'
+      ) Move back to In Progress
+      v-link(
+        v-if='this.status === "finished"'
+        @click='handleDemote("inreview")'
+      ) Move back to In Review
+    .secondary-actions
+      v-link(to='', disabled=true) Export to Trello
+      v-link(to='', disabled=true) Send an update
+      v-link(to='', disabled=true) Send an invoice
+      v-link(to='', disabled=true) Some other action
+      v-link.danger-link(
+        disabled=true
+        v-if='this.status !== "canceled"'
+        @click='handleCancel'
+      ) Cancel
 </template>
 
 <script>
 import VueTypes from 'vue-types';
+import VLink from 'components/controls/VLink';
 
 export default {
-  name: 'commissions-details-status',
+  name: 'commissions-details-actions',
+  components: {
+    'v-link': VLink
+  },
   props: {
     /* eslint-disable vue/require-default-prop */
     status: VueTypes.string.isRequired,
@@ -97,6 +99,35 @@ export default {
   .commission-details-status {
     button {
       cursor: pointer;
+    }
+
+    a {
+      text-decoration: underline;
+    }
+
+    .status-actions {
+      padding-bottom: 3rem;
+
+      .btn-block {
+        margin-bottom: 1rem;
+      }
+    }
+
+    .secondary-actions {
+      a {
+        color: $blue-dark;
+        text-decoration: underline;
+        font-size: 1.2rem;
+        display: block;
+      }
+
+      .danger-link {
+        color: $red;
+
+        &:hover {
+          color: $red-dark;
+        }
+      }
     }
   }
 </style>
