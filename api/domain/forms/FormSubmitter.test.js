@@ -5,20 +5,29 @@ const Commission = require('../commissions/Commission');
 const Question = require('./Question');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
+const AnswerOptionValue = require('./AnswerOptionValue');
 const factory = require('../../tests/factory');
 
 function reloadCommissionWithAssociations(commission) {
   return Commission.findOne({
     where: { id: commission.id },
-    include: [{ model: Answer, include: [{ model: AnswerTextValue }] }]
+    include: [{
+      model: Answer,
+      include: [ AnswerTextValue, AnswerOptionValue ]
+    }]
   });
 }
+
+const contact = {
+  email: 'walt@disney.com',
+  nickname: 'Walt Disney'
+};
 
 /**
  * Shared example for expecting not to create any records ie. transaction
  * rollback.
  */
-function itShouldNotCreateAnyRecords(body = {}) {
+function itShouldNotCreateAnyRecords(body = contact) {
   it('should not create commission or answers', function () {
     const submitter = new FormSubmitter(this.form);
     return submitter.submit(body).catch(_.noop)
@@ -44,7 +53,7 @@ describe('FormSubmitter', function () {
 
     it('should create commission with no answers', function () {
       const submitter = new FormSubmitter(this.form);
-      return submitter.submit({}).then(commission => {
+      return submitter.submit({ ...contact }).then(commission => {
         expect(commission.answers).to.eql([]);
         expect(commission.formId).to.eql(this.form.id);
       });
@@ -67,7 +76,7 @@ describe('FormSubmitter', function () {
 
     it('should create no answer', function () {
       const submitter = new FormSubmitter(this.form);
-      const body = {};
+      const body = { ...contact };
 
       return submitter.submit(body)
         .then(reloadCommissionWithAssociations)
@@ -79,6 +88,7 @@ describe('FormSubmitter', function () {
     it('should create answer with value', function () {
       const submitter = new FormSubmitter(this.form);
       const body = {
+        ...contact,
         [`question_${this.question.id}`]: 'Jiminy Cricket'
       };
       return submitter.submit(body)
@@ -99,7 +109,7 @@ describe('FormSubmitter', function () {
 
       it('should reject', function () {
         const submitter = new FormSubmitter(this.form);
-        return expect(submitter.submit({})).to.eventually.be.rejected
+        return expect(submitter.submit({ ...contact })).to.eventually.be.rejected
           .and.include({ code: 'missing-required-question' });
       });
 
@@ -110,7 +120,10 @@ describe('FormSubmitter', function () {
       describe('malformed key', function () {
         it('should reject', function () {
           const submitter = new FormSubmitter(this.form);
-          return expect(submitter.submit({ 'question_haha': 'Hey' }))
+          return expect(submitter.submit({
+            ...contact,
+            question_haha: 'Hey'
+          }))
             .to.eventually.be.rejected
             .and.deep.include({
               code: 'bad-attribute',
@@ -124,7 +137,7 @@ describe('FormSubmitter', function () {
       describe('and does not exist', function () {
         it('should reject', function () {
           const submitter = new FormSubmitter(this.form);
-          return expect(submitter.submit({ 'question_777': 'Hey' }))
+          return expect(submitter.submit({ ...contact, question_777: 'Hey' }))
             .to.eventually.be.rejected
             .and.deep.include({
               code: 'question-not-found',
@@ -132,7 +145,7 @@ describe('FormSubmitter', function () {
             });
         });
 
-        itShouldNotCreateAnyRecords({ 'question_777': 'Hey' });
+        itShouldNotCreateAnyRecords({ ...contact, question_777: 'Hey' });
       });
 
       describe('and belongs to someone else', function () {
@@ -145,7 +158,7 @@ describe('FormSubmitter', function () {
 
         it('should reject', function () {
           const submitter = new FormSubmitter(this.form);
-          return expect(submitter.submit({ question_800: 'Hey' }))
+          return expect(submitter.submit({ ...contact, question_800: 'Hey' }))
             .to.eventually.be.rejected
             .and.deep.include({
               code: 'question-not-found',
@@ -153,8 +166,49 @@ describe('FormSubmitter', function () {
             });
         });
 
-        itShouldNotCreateAnyRecords({ 'question_800': 'Hey' });
+        itShouldNotCreateAnyRecords({ ...contact, question_800: 'Hey' });
       });
+    });
+  });
+
+  describe('with radio question', function () {
+    beforeEach(function () {
+      return factory.create('form').then(form => {
+        this.form = form;
+
+        return factory.create('question', {
+          formId: this.form.id,
+          type: Question.TYPES.radio
+        });
+      }).then(question => {
+        this.question = question;
+        return factory.createMany('questionOption', 4, {
+          question: question.id
+        });
+      }).then(questionOptions => {
+        this.questionOptions = questionOptions;
+      });
+    });
+
+    it('should create answers with value', function () {
+      const submitter = new FormSubmitter(this.form);
+      const body = {
+        ...contact,
+        [`question_${this.question.id}`]: this.questionOptions[0].id
+      };
+      return submitter.submit(body)
+        .then(reloadCommissionWithAssociations)
+        .then(commission => {
+          expect(commission.email).to.eql('walt@disney.com');
+          expect(commission.nickname).to.eql('Walt Disney');
+          const { answers } = commission;
+          expect(answers).to.have.length(1);
+          expect(answers[0].answerOptionValues).to.have.length(1);
+          return answers[0].answerOptionValues[0].getQuestionOption();
+        })
+        .then(questionOption => {
+          expect(questionOption.id).to.eql(this.questionOptions[0].id);
+        });
     });
   });
 
@@ -175,6 +229,7 @@ describe('FormSubmitter', function () {
     it('should create answers with value', function () {
       const submitter = new FormSubmitter(this.form);
       const body = {
+        ...contact,
         [`question_${this.questions[0].id}`]: 'Jiminy Cricket',
         [`question_${this.questions[1].id}`]: 'Donald Duck',
         [`question_${this.questions[2].id}`]: 'Abraham Lincoln'
@@ -182,6 +237,8 @@ describe('FormSubmitter', function () {
       return submitter.submit(body)
         .then(reloadCommissionWithAssociations)
         .then(commission => {
+          expect(commission.email).to.eql('walt@disney.com');
+          expect(commission.nickname).to.eql('Walt Disney');
           expect(commission.answers).to.have.length(3);
           const answerTextValues = commission.answers
             .map(a => a.answerTextValues[0]);

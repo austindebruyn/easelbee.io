@@ -48,6 +48,18 @@ const GET_VALUE_HANDLERS = {
         }
         return answerTextValues[0].value;
       });
+  },
+  [Question.TYPES.radio]: function () {
+    return this.getAnswerOptionValues()
+      .then(answerOptionValues => {
+        if (answerOptionValues.length !== 1) {
+          throw new Error(
+            `Expected 1 AnswerOptionValue for <Answer #${this.id}>, found ` +
+            `${answerOptionValues.length} instead.`
+          );
+        }
+        return answerOptionValues[0].questionOptionId;
+      });
   }
 };
 

@@ -23,10 +23,12 @@ module.exports = {
         }
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       body: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       }
     });
   },

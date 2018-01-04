@@ -200,7 +200,7 @@ describe('formsController', function () {
     it('should submit', function () {
       return agent()
         .post('/forms/some-form/submit')
-        .send({ })
+        .send({ email: 'tinker@bell.com', nickname: 'Peter Pan' })
         .accept('text/html')
         .expect(200)
         .then(res => {
@@ -230,7 +230,7 @@ describe('formsController', function () {
           .accept('text/html')
           .expect(500)
           .then(res => {
-            expect(res.text).to.include('<h1>Server Error!</h1>');
+            expect(res.text).to.include('<title>Error</title>');
           });
       });
     });

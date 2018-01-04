@@ -1,5 +1,6 @@
 /* global afterEach */
 
+const _ = require('lodash');
 const FactoryGirl = require('factory-girl');
 const hashPassword = require('../domain/users/passwords').hash;
 const User = require('../domain/users/User');
@@ -9,6 +10,7 @@ const Form = require('../domain/forms/Form');
 const Question = require('../domain/forms/Question');
 const Answer = require('../domain/forms/Answer');
 const AnswerTextValue = require('../domain/forms/AnswerTextValue');
+const AnswerOptionValue = require('../domain/forms/AnswerOptionValue');
 const QuestionOption = require('../domain/forms/QuestionOption');
 const adapter = new FactoryGirl.SequelizeAdapter();
 const uid = require('uid-safe');
@@ -71,7 +73,7 @@ factory.define('question', Question, {
 
 factory.define('questionOption', QuestionOption, {
   questionId: factory.assoc('question', 'id'),
-  text: factory.chance('word')
+  value: factory.chance('word')
 });
 
 factory.define('answer', Answer, {
@@ -81,6 +83,14 @@ factory.define('answer', Answer, {
   afterCreate: function (model, attrs, buildOpts = {}) {
     return Question.findById(attrs.questionId).then(function (question) {
       switch (question.type) {
+        case Question.TYPES.radio:
+          return question.getQuestionOptions()
+            .then(questionOptions => {
+              return AnswerOptionValue.create({
+                answerId: model.id,
+                questionOptionId: buildOpts.value || _.sample(questionOptions).id
+              });
+            }).then(() => model);
         case Question.TYPES.string:
           return AnswerTextValue.create({
             answerId: model.id,
@@ -94,7 +104,8 @@ factory.define('answer', Answer, {
 });
 
 afterEach(function () {
-  return factory.cleanUp();
+  return AnswerOptionValue.destroy({ truncate: true })
+    .then(() => factory.cleanUp());
 });
 
 module.exports = factory;

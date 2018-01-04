@@ -2,11 +2,13 @@
 const _ = require('lodash');
 const { UnprocessableEntityError } = require('../../core/errors');
 const Question = require('./Question');
+const QuestionOption = require('./QuestionOption');
 const Form = require('./Form');
 // const QuestionOption = require('./QuestionOption');
 const Commission = require('../commissions/Commission');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
+const AnswerOptionValue = require('./AnswerOptionValue');
 const db = require('../../services/db');
 
 /**
@@ -62,6 +64,21 @@ class FormSubmitter {
       }
 
       switch (question.type) {
+        case Question.TYPES.radio:
+          const id = body[key];
+          return QuestionOption.findOne({ where: { id } })
+            .then(questionOption => {
+              if (!questionOption) {
+                throw new UnprocessableEntityError('invalid-question-option', {
+                  id
+                });
+              }
+
+              return AnswerOptionValue.create(
+                { questionOptionId: questionOption.id, answerId: answer.id },
+                { transaction: t }
+              );
+            }).then(() => answer);
         case Question.TYPES.string:
           return AnswerTextValue.create(
             { value: body[key], answerId: answer.id },
@@ -82,7 +99,9 @@ class FormSubmitter {
    * @private 
    */
   findQuestionsForInputs(body) {
-    const keys = Object.keys(body);
+    const keys = Object.keys(body).filter(function (key) {
+      return !['email', 'nickname'].includes(key);
+    });
 
     return Promise.all(keys.map(key => {
       return new Promise((resolve, reject) => {
@@ -129,7 +148,7 @@ class FormSubmitter {
             formId: this.form.id,
             userId: this.form.userId,
             email: body.email,
-            body: body.body
+            nickname: body.nickname
           }, { transaction: t });
         })
         .then(commission => {

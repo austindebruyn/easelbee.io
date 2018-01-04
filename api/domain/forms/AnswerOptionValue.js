@@ -12,7 +12,7 @@ const AnswerOptionValue = db.define('answerOptionValues', {
     }
   }
 }, {
-  tableName: 'answer_text_values',
+  tableName: 'answer_option_values',
   freezeTableName: true
 });
 

@@ -15,20 +15,21 @@ p
 hr
 h3 Questions
 form(method='POST', action=form.submitUrl)
+  input(type='text', name='email', placeholder='your@email.com')
+  input(type='text', name='nickname', placeholder='Nickname')
   for question in form.questions
     fieldset
       -key = 'question_' + question.id
       case question.type
         when 0
-          -optionName = key + '-option'
           label(for=key)= question.title
           for option in question.options
-            -optionKey = optionName + option.id
+            -optionKey = optionName + '-option' + option.id
             .input-group
               input(
                 id=optionKey
                 type='radio'
-                name=optionName
+                name=key
                 value=option.id
               )
               label(for=optionKey)= option.value

@@ -5,10 +5,12 @@ const invert = require('lodash.invert');
 
 const Commission = db.define('commissions', {
   email: {
-    type: db.Sequelize.STRING
+    type: db.Sequelize.STRING,
+    allowNull: false
   },
   nickname: {
-    type: db.Sequelize.STRING
+    type: db.Sequelize.STRING,
+    allowNull: false
   },
   status: {
     type: db.Sequelize.INTEGER,

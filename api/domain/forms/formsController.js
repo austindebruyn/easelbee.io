@@ -69,7 +69,7 @@ module.exports.submit = function (req, res, next) {
       });
     })
     .catch(function (e) {
-      return res.status(500).render('forms/error');
+      return next(e);
     });
 };
 

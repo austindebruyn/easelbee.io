@@ -15,7 +15,7 @@ export const commissionShape = VueTypes.shape({
   id: VueTypes.number.isRequired,
   userId: VueTypes.number.isRequired,
   email: VueTypes.string.isRequired,
-  body: VueTypes.string.isRequired,
+  nickname: VueTypes.string.isRequired,
   status: VueTypes.oneOf([
     'incoming',
     'inprogress',
