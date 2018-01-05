@@ -3,7 +3,6 @@ import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
 import Resource, { STATUS } from 'state/Resource';
-import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionDetails from 'components/commissions/CommissionDetails';
 import commissionsFixture from 'fixtures/commissions';
 

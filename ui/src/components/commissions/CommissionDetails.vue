@@ -12,20 +12,20 @@
           :status='this.commission.status'
         )
       .col-12.col-md-7.col-xl-9
-        commission-timeline(:commission='commission')
+        timeline(:commission='commission')
 </template>
 
 <script>
 import { commissionShape } from 'components/shapes';
 import CommissionDetailsActions from './CommissionDetailsActions';
-import CommissionTimeline from './CommissionTimeline';
+import Timeline from 'components/commissions/timeline/Timeline';
 import LoadingSpinner from 'components/LoadingSpinner';
 
 export default {
   name: 'commissions-details',
   components: {
     'commission-details-actions': CommissionDetailsActions,
-    'commission-timeline': CommissionTimeline,
+    'timeline': Timeline,
     'loading-spinner': LoadingSpinner
   },
   props: {

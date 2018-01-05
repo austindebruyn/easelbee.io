@@ -1,6 +1,6 @@
 import CommissionDetails from './CommissionDetails';
 import commissionsFixture from 'fixtures/commissions';
-import CommissionTimeline from './CommissionTimeline';
+import Timeline from 'components/commissions/timeline/Timeline';
 import CommissionDetailsActions from './CommissionDetailsActions';
 import { shallow } from 'avoriaz';
 
@@ -20,7 +20,7 @@ describe('CommissionDetails', function () {
   });
 
   it('should render children', function () {
-    const timelineComponent = this.wrapper.first(CommissionTimeline);
+    const timelineComponent = this.wrapper.first(Timeline);
     expect(timelineComponent.propsData()).to.include({
       commission: commissionsFixture.basic
     });
