@@ -187,7 +187,7 @@ export default new Vuex.Store({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       };
-      const url = `/api/users/me/commissions/${id}/fillout`;
+      const url = `/api/commissions/${id}/fillout`;
 
       return axios.get(url, { credentials: 'same-origin', headers })
         .then(({ data }) => {

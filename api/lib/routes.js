@@ -45,8 +45,9 @@ module.exports = function (app) {
   app.post('/api/users/me/emailPreferences/sendVerificationEmail', ensureAuthenticated, emailPreferencesController.sendVerificationEmail);
   app.get('/api/users/me/commissions', ensureAuthenticated, commissionsController.index);
   app.post('/api/users/me/commissions', ensureAuthenticated, commissionsController.create);
-  app.patch('/api/users/me/commissions/:id', ensureAuthenticated, commissionsController.update);
-  app.get('/api/users/me/commissions/:id/fillout', ensureAuthenticated, commissionsController.getFillout);
+  app.patch('/api/commissions/:id', ensureAuthenticated, commissionsController.update);
+  app.get('/api/commissions/:id/fillout', ensureAuthenticated, commissionsController.getFillout);
+  app.get('/api/commissions/:id/events', ensureAuthenticated, commissionsController.getEvents);
   app.get('/api/users/me/forms', ensureAuthenticated, formsController.index);
   app.post('/api/users/me/forms', ensureAuthenticated, formsController.create);
   app.get('*', homeController.index);

@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const Commission = require('./Commission');
+const TimelineEvent = require('./TimelineEvent');
+const TimelineEventMeta = require('./TimelineEventMeta');
 const FilloutFetcher = require('../forms/FilloutFetcher');
 const {
   NotFoundError,
@@ -33,6 +35,26 @@ module.exports.getFillout = function (req, res, next) {
     })
     .then(function (record) {
       return res.json({ ok: true, record });
+    })
+    .catch(next);
+};
+
+module.exports.getEvents = function (req, res, next) {
+  return Commission.findById(req.params.id, {
+    include: [{
+      model: TimelineEvent,
+      include: [TimelineEventMeta]
+    }]
+  })
+    .then(function (commission) {
+      if (!commission) {
+        throw new NotFoundError();
+      }
+
+      return Promise.all(commission.timelineEvents.map(e => e.toJSON()));
+    })
+    .then(function (records) {
+      return res.json({ ok: true, records });
     })
     .catch(next);
 };

@@ -75,10 +75,10 @@ describe('commissionsController', function () {
     });
   });
 
-  describe('GET /api/users/me/commissions/:id/fillout', function () {
+  describe('GET /api/commissions/:id/fillout', function () {
     it('should 403 if signed out', function () {
       return agent()
-        .get('/api/users/me/commissions/1/fillout')
+        .get('/api/commissions/1/fillout')
         .cookiejar()
         .accept('application/json')
         .expect(403);
@@ -95,7 +95,7 @@ describe('commissionsController', function () {
 
       it('should return not found', function () {
         return agent()
-          .get('/api/users/me/commissions/1/fillout')
+          .get('/api/commissions/1/fillout')
           .cookiejar()
           .accept('application/json')
           .expect(404);
@@ -122,7 +122,7 @@ describe('commissionsController', function () {
 
           it('should return', function () {
             return agent()
-              .get('/api/users/me/commissions/1/fillout')
+              .get('/api/commissions/1/fillout')
               .cookiejar()
               .accept('application/json')
               .expect(200, {
@@ -141,12 +141,87 @@ describe('commissionsController', function () {
 
           it('should return', function () {
             return agent()
-              .get('/api/users/me/commissions/1/fillout')
+              .get('/api/commissions/1/fillout')
               .cookiejar()
               .accept('application/json')
               .expect(422, {
                 ok: false,
                 code: 'some-error'
+              });
+          });
+        });
+      });
+    });
+  });
+
+  describe('GET /api/commissions/:id/events', function () {
+    it('should 403 if signed out', function () {
+      return agent()
+        .get('/api/commissions/1/events')
+        .cookiejar()
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(function () {
+        return factory.create('user')
+          .then(user => {
+            this.user = user;
+            return signIn(user);
+          });
+      });
+
+      it('should return not found', function () {
+        return agent()
+          .get('/api/commissions/1/events')
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      describe('and commission exists', function () {
+        beforeEach(function () {
+          return factory.create('commission', { userId: signIn.user.id })
+            .then(commission => {
+              this.commission = commission;
+            });
+        });
+
+        it('should return empty set', function () {
+          return agent()
+            .get('/api/commissions/1/events')
+            .cookiejar()
+            .accept('application/json')
+            .expect(200, {
+              ok: true,
+              records: []
+            });
+        });
+
+        describe('and events exist', function () {
+          beforeEach(function () {
+            return factory.create('timelineEvent', {
+              commissionId: this.commission.id,
+              key: 'something-cool'
+            });
+          });
+
+          it('should return records', function () {
+            return agent()
+              .get('/api/commissions/1/events')
+              .cookiejar()
+              .accept('application/json')
+              .expect(200, {
+                ok: true,
+                records: [{
+                  id: 1,
+                  commissionId: 1,
+                  key: 'something-cool',
+                  metas: [],
+                  createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
+                  updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
+                }]
               });
           });
         });
@@ -209,7 +284,7 @@ describe('commissionsController', function () {
     });
   });
 
-  describe('PATCH /api/users/me/commissions/:id', function () {
+  describe('PATCH /api/commissions/:id', function () {
     beforeEach(function () {
       return factory.createMany('commission', 2).then(records => {
         this.commission1 = records[0];
@@ -219,7 +294,7 @@ describe('commissionsController', function () {
 
     it('should 403 if signed out', function () {
       return agent()
-        .patch(`/api/users/me/commissions/${this.commission1.id}`)
+        .patch(`/api/commissions/${this.commission1.id}`)
         .send({ status: 'inprogress' })
         .cookiejar()
         .accept('application/json')
@@ -233,7 +308,7 @@ describe('commissionsController', function () {
 
       it('should 404 if not exists', function () {
         return agent()
-          .patch(`/api/users/me/commissions/123456`)
+          .patch(`/api/commissions/123456`)
           .send({ status: 'inprogress' })
           .cookiejar()
           .accept('application/json')
@@ -244,7 +319,7 @@ describe('commissionsController', function () {
         expect(this.commission1.userId).to.not.equal(this.commission2.userId);
 
         return agent()
-          .patch(`/api/users/me/commissions/${this.commission2.id}`)
+          .patch(`/api/commissions/${this.commission2.id}`)
           .send({ status: 'inprogress' })
           .cookiejar()
           .accept('application/json')
@@ -258,7 +333,7 @@ describe('commissionsController', function () {
 
         it('should return 500', function () {
           return agent()
-            .patch(`/api/users/me/commissions/${this.commission1.id}`)
+            .patch(`/api/commissions/${this.commission1.id}`)
             .send({ status: 'inprogress' })
             .cookiejar()
             .accept('application/json')
@@ -269,7 +344,7 @@ describe('commissionsController', function () {
       describe('on success', function () {
         it('should return 422 when no status', function () {
           return agent()
-            .patch(`/api/users/me/commissions/${this.commission1.id}`)
+            .patch(`/api/commissions/${this.commission1.id}`)
             .send({ status: 'whatever' })
             .cookiejar()
             .accept('application/json')
@@ -281,7 +356,7 @@ describe('commissionsController', function () {
 
         it('should return 200', function () {
           return agent()
-            .patch(`/api/users/me/commissions/${this.commission1.id}`)
+            .patch(`/api/commissions/${this.commission1.id}`)
             .send({ status: 'inprogress' })
             .cookiejar()
             .accept('application/json')
