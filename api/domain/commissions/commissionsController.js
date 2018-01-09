@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const Commission = require('./Commission');
+const CommissionUpdater = require('./CommissionUpdater');
 const TimelineEvent = require('./TimelineEvent');
 const TimelineEventMeta = require('./TimelineEventMeta');
 const FilloutFetcher = require('../forms/FilloutFetcher');
@@ -90,26 +91,8 @@ module.exports.update = function (req, res, next) {
         throw new UnauthorizedError();
       }
 
-      const attributeKeys = Object.keys(req.body);
-      const allowedAttributes = [ 'status' ];
-      const forbiddenAttributes = _.difference(attributeKeys, allowedAttributes);
-      if (forbiddenAttributes.length > 0) {
-        throw new UnprocessableEntityError('bad-attributes', {
-          fields: forbiddenAttributes
-        });
-      }
-      const { body } = req;
-      if ('status' in body) {
-        if (!Object.keys(Commission.STATUS).includes(body.status)) {
-          throw new UnprocessableEntityError('no-such-status', {
-            status: body.status
-          });
-        }
-        body.status = Commission.STATUS[body.status];
-      }
-
-      Object.assign(record, body);
-      return record.save();
+      const updater = new CommissionUpdater(record);
+      return updater.update(req.body);
     })
     .then(function (record) {
       return record.toJSON();

@@ -7,6 +7,7 @@ const Commission = require('./Commission');
 const User = require('../users/User');
 const sinon = require('sinon');
 const FilloutFetcher = require('../forms/FilloutFetcher');
+const CommissionUpdater = require('./CommissionUpdater');
 const { UnprocessableEntityError } = require('../../core/errors');
 
 describe('commissionsController', function () {
@@ -328,7 +329,7 @@ describe('commissionsController', function () {
 
       describe('on error', function () {
         beforeEach(function () {
-          this.sandbox.stub(Commission.prototype, 'save').rejects();
+          this.sandbox.stub(CommissionUpdater.prototype, 'update').rejects();
         });
 
         it('should return 500', function () {
@@ -342,15 +343,19 @@ describe('commissionsController', function () {
       });
 
       describe('on success', function () {
-        it('should return 422 when no status', function () {
+        beforeEach(function () {
+          this.sandbox.spy(CommissionUpdater.prototype, 'update');
+        });
+
+        it('should call update', function () {
           return agent()
             .patch(`/api/commissions/${this.commission1.id}`)
             .send({ status: 'whatever' })
             .cookiejar()
             .accept('application/json')
-            .expect(422, {
-              ok: false,
-              code: 'no-such-status'
+            .then(function () {
+              expect(CommissionUpdater.prototype.update)
+                .to.have.been.calledWith({ status: 'whatever' });
             });
         });
 
