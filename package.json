@@ -93,8 +93,14 @@
     "vue-template-compiler": "^2.3.4",
     "vue-types": "^1.0.2",
     "vuex": "3.0.1",
+    "wdio-mocha-framework": "^0.5.12",
+    "wdio-spec-reporter": "^0.1.3",
+    "webdriverio": "^4.10.0",
     "webpack": "^3.5.3",
     "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "selenium-standalone": "^6.12.0"
   },
   "scripts": {
     "build": "cd ui; webpack",
@@ -104,10 +110,13 @@
     "lint:api:fix": "eslint api --fix",
     "lint:ui": "eslint --ext .js --ext .vue ui",
     "lint:ui:fix": "eslint ui --ext .js --ext .vue --fix",
+    "lint:integration": "eslint --ext .js --ext .vue integration",
+    "lint:integration:fix": "eslint integration --ext .js --fix",
     "test:api": "NODE_ENV=test mocha --exit --recursive 'api/**/*.test.js'",
     "test:api:cover": "nyc --reporter=lcov --reporter=text npm run test:api",
     "test:ui:watch": "cd ui && karma start --debug",
     "test:ui": "cd ui && karma start --single-run",
+    "test:integration": "/bin/bash ./bin/is-trusted-build.sh && NODE_ENV=test wdio wdio.conf.js",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   }
 }

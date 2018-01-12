@@ -9,13 +9,19 @@ node_js:
 script:
   - yarn lint:api
   - yarn lint:ui
+  - yarn lint:integration
   - yarn test:api:cover
   - yarn test:ui
+  - yarn test:integration
 services:
   - redis-server
 after_success:
   - yarn coveralls
   - sh bin/touch-lynbot.sh
+addons:
+  sauce_connect: true
+  hosts:
+    - test-easelbee.io
 notifications:
   webhooks:
     urls:

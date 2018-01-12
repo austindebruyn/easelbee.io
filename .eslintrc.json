@@ -15,6 +15,7 @@
     "mocha": true
   },
   "globals": {
-    "expect": false
+    "expect": false,
+    "browser": false
   }
 }
