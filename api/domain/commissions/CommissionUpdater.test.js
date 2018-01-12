@@ -59,7 +59,7 @@ describe('CommissionUpdater', function () {
     });
 
     it('doesnt create event if same status', async function () {
-      await this.updater.update({ status: 'incoming' })
+      await this.updater.update({ status: 'incoming' });
       expect(this.commission.status).to.eql(Commission.STATUS.incoming);
       expect(TimelineEvent.findAll({
         where: { commissionId: this.commission.id }
@@ -67,7 +67,7 @@ describe('CommissionUpdater', function () {
     });
 
     it('doesnt create event if no status', async function () {
-      await this.updater.update({ })
+      await this.updater.update({ });
       expect(this.commission.status).to.eql(Commission.STATUS.incoming);
       expect(TimelineEvent.findAll({
         where: { commissionId: this.commission.id }

@@ -39,7 +39,18 @@
     },
     "details": {
       "title": "Commission #{{id}}"
+    },
+    "statuses": {
+      "incoming": "Incoming",
+      "inprogress": "In Progress",
+      "inreview": "In Review",
+      "finished": "Finished",
+      "canceled": "Canceled"
     }
+  },
+  "events": {
+    "unknown": "Some unknown event happened.",
+    "status-change": "You moved this commission from {{old}} to {{new}}."
   },
   "forms": {
     "index": {

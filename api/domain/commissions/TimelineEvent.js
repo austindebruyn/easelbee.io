@@ -5,9 +5,6 @@ const TimelineEvent = db.define('timelineEvents', {
   key: {
     type: db.Sequelize.STRING,
     allowNull: false
-  },
-  value: {
-    type: db.Sequelize.STRING
   }
 }, {
   tableName: 'timeline_events',

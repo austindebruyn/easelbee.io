@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Commission = require('./Commission');
 const CommissionUpdater = require('./CommissionUpdater');
 const TimelineEvent = require('./TimelineEvent');

@@ -1,29 +1,36 @@
 <template lang="pug">
   .commission-timeline
-    .date-row
-      .date-bubble
-        .count 1
-        .span months ago
-      .date-label
-        | {{ commission.nickname }} filled out your form.
-    .date-content
-      .card
+    timeline-item(:date='commission.createdAt')
+      span(slot='label') {{ commission.nickname }} filled out your form.
+      .card(slot='content')
         .card-body
           timeline-fillout(v-if='isFilloutLoaded', :fillout='fillout')
           loading-spinner(v-else=true)
+    .timeline-event-items(v-if='areEventsLoaded')
+      timeline-item(
+        v-for='event in events'
+        key='event.id'
+        :date='event.createdAt'
+        bubble=false
+      )
+        span(slot='label') {{ labelFor(event) }}
+    loading-spinner(v-else=true)
 </template>
 
 <script>
 import { commissionShape } from 'components/shapes';
 import { isLoaded } from 'state/Resource';
+import find from 'lodash.find';
 import LoadingSpinner from 'components/LoadingSpinner';
 import TimelineFillout from './TimelineFillout';
+import TimelineItem from './TimelineItem';
 
 export default {
   name: 'timeline',
   components: {
     'loading-spinner': LoadingSpinner,
-    'timeline-fillout': TimelineFillout
+    'timeline-fillout': TimelineFillout,
+    'timeline-item': TimelineItem
   },
   props: {
     /* eslint-disable vue/require-default-prop */
@@ -37,10 +44,32 @@ export default {
     isFilloutLoaded: function () {
       const resource = this.$store.state.fillouts[this.commission.id];
       return resource && isLoaded(resource);
+    },
+    events: function () {
+      const resource = this.$store.state.events[this.commission.id];
+      return resource && resource.value;
+    },
+    areEventsLoaded: function () {
+      const resource = this.$store.state.events[this.commission.id];
+      return resource && isLoaded(resource);
+    }
+  },
+  methods: {
+    labelFor: function (event) {
+      switch (event.key) {
+        case 'status-change':
+          return this.$t('events.status-change', {
+            old: this.$t(`commissions.statuses.${find(event.metas, { key: 'old' }).value}`),
+            new: this.$t(`commissions.statuses.${find(event.metas, { key: 'new' }).value}`)
+          });
+        default:
+          return this.$t('events.unknown');
+      }
     }
   },
   mounted: function () {
     this.$store.dispatch('fetchFillout', this.commission.id);
+    this.$store.dispatch('fetchEvents', this.commission.id);
   }
 };
 </script>
@@ -51,52 +80,6 @@ export default {
   .commission-timeline {
     .fillout-card {
       padding: 4rem;
-    }
-
-    .date-row {
-      display: flex;
-      align-items: center;
-    }
-
-    $date-content-gutter: 18px;
-
-    .date-bubble {
-      font-family: 'sinkinsans', sans-serif;
-      background-color: $blue-dark;
-      color: $white;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      align-items: center;
-      justify-content: center;
-      margin-right: $date-content-gutter;
-
-      .count {
-        font-size: 2rem;
-        line-height: 2rem;
-        display: block;
-      }
-
-      .span {
-        font-size: 0.75rem;
-      }
-    }
-
-    .date-content {
-      $border-thickness: 4px;
-
-      margin-left: 50px - ($border-thickness/2);
-      border-left: $border-thickness solid $blue-dark;
-      padding-left: 50px - ($border-thickness/2) + $date-content-gutter;
-      padding-bottom: 40px;
-    }
-
-    .date-label {
-      font-size: 1.5rem;
-      color: $blue-dark;
     }
   }
 </style>

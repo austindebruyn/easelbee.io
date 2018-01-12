@@ -1,7 +1,6 @@
 const { expect } = require('chai');
 const User = require('../api/domain/users/User');
 const createUser = require('../api/domain/users/createUser');
-const LynbotAPI = require('../api/lib/LynbotAPI');
 
 describe('login page', function () {
   afterEach(function () {
@@ -18,8 +17,6 @@ describe('login page', function () {
     browser.click('button=Submit');
 
     browser.waitForEnabled('input[name=email]');
-    // browser.waitForExist('.alert');
-    // expect(browser.element('.alert').getText()).to.eql('Wrong email or password.');
   });
 
   it('should create me an account', function () {

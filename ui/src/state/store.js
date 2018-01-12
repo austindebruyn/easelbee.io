@@ -13,6 +13,7 @@ const initialState = {
   emailPreferences: new Resource(),
   commissions: new Resource(),
   fillouts: {},
+  events: {},
   forms: new Resource(),
   i18n: new Resource()
 };
@@ -94,6 +95,27 @@ export default new Vuex.Store({
       fillouts[id].status = STATUS.ERRORED;
       fillouts[id].errors = errors;
       state.fillouts = fillouts;
+    },
+
+    fetchEventsStart: function (state, id) {
+      const events = { ...state.events };
+      if (!events[id]) {
+        events[id] = new Resource();
+      }
+      events[id].status = STATUS.MUTATING;
+      state.events = events;
+    },
+    fetchEventsSuccess: function (state, { id, json }) {
+      const events = { ...state.events };
+      events[id].status = STATUS.LOADED;
+      events[id].value = json;
+      state.events = events;
+    },
+    fetchEventsFailure: function (state, { id, errors }) {
+      const events = { ...state.events };
+      events[id].status = STATUS.ERRORED;
+      events[id].errors = errors;
+      state.events = events;
     },
 
     createCommissionStart: function (state) {
@@ -196,6 +218,24 @@ export default new Vuex.Store({
         .catch(({ response }) => {
           const errors = response && response.data && response.data.errors;
           commit('fetchFilloutFailure', { id, errors });
+        });
+    },
+    fetchEvents ({ state, commit }, id) {
+      commit('fetchEventsStart', id);
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      const url = `/api/commissions/${id}/events`;
+
+      return axios.get(url, { credentials: 'same-origin', headers })
+        .then(({ data }) => {
+          commit('fetchEventsSuccess', { id, json: data.records });
+        })
+        .catch(({ response }) => {
+          const errors = response && response.data && response.data.errors;
+          commit('fetchEventsFailure', { id, errors });
         });
     },
     fetchForms ({ state, commit }) {
@@ -323,7 +363,7 @@ export default new Vuex.Store({
       const body = omit(payload, 'id');
       commit('updateCommissionStart');
 
-      return axios.patch(`/api/users/me/commissions/${payload.id}`, body, {
+      return axios.patch(`/api/commissions/${payload.id}`, body, {
         credentials: 'same-origin',
         headers: {
           'Accept': 'application/json',
