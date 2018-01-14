@@ -44,6 +44,8 @@ export default {
   @import 'src/styles/colors';
 
   .commission-details {
+    padding-bottom: 60px;
+
     .card {
       font-size: 1.4rem;
       border: none;

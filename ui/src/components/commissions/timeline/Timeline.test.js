@@ -1,13 +1,14 @@
 import sinon from 'sinon';
 import questionsFixture from 'fixtures/questions';
 import commissionsFixture from 'fixtures/commissions';
-import eventsFixture from 'fixtures/events';
+import eventsFixture, { buildEvent } from 'fixtures/events';
 import Timeline from './Timeline';
 import TimelineItem from './TimelineItem';
 import TimelineFillout from './TimelineFillout';
 import Vuex from 'vuex';
 import Resource, { STATUS } from 'state/Resource';
 import { mount } from 'avoriaz';
+import clock from '../../../../../api/tests/clock';
 
 function storeFactory (fillouts = {}, events = {}) {
   this.store = new Vuex.Store({
@@ -19,7 +20,7 @@ function storeFactory (fillouts = {}, events = {}) {
   });
 }
 
-function wrapperFactory() {
+function wrapperFactory () {
   return mount(Timeline, {
     propsData: {
       commission: commissionsFixture.basic
@@ -49,7 +50,7 @@ describe('Timeline', function () {
       storeFactory.call(this);
       this.wrapper = wrapperFactory.call(this);
     });
-    
+
     it('should fetch fillout', function () {
       expect(this.actions.fetchFillout).to.have.been.calledWith(
         sinon.match.object,
@@ -98,11 +99,11 @@ describe('Timeline', function () {
       storeFactory.call(this,
         {},
         {
-        [commissionsFixture.basic.id]: new Resource({
-          value: [ eventsFixture.basic ],
-          status: STATUS.LOADED
-        })
-      });
+          [commissionsFixture.basic.id]: new Resource({
+            value: [ eventsFixture.basic ],
+            status: STATUS.LOADED
+          })
+        });
       this.wrapper = wrapperFactory.call(this);
     });
 
@@ -155,9 +156,57 @@ describe('Timeline', function () {
       const child = this.wrapper.find(TimelineItem)[1];
       expect(child.propsData()).to.include({
         date: eventsFixture.basic.createdAt,
-        bubble: false
+        bubble: true
       });
-      expect(child.text()).to.eql('You moved this commission from Incoming to In Progress.');
+      expect(child.text()).to.include('You moved this commission from Incoming to In Progress.');
+    });
+  });
+
+  describe('when loaded with many events', function () {
+    clock();
+
+    beforeEach(function () {
+      this.events = [
+        buildEvent({ createdAt: 'Wed, 30 Aug 2017 06:00:00 GMT' }),
+        buildEvent({ createdAt: 'Wed, 30 Aug 2017 06:01:00 GMT' }),
+        buildEvent({ createdAt: 'Wed, 30 Aug 2017 06:10:00 GMT' }),
+        buildEvent({ createdAt: 'Wed, 30 Aug 2017 07:00:00 GMT' }),
+        buildEvent({ createdAt: 'Wed, 24 Aug 2017 00:00:00 GMT' })
+      ];
+
+      storeFactory.call(this, {
+        [commissionsFixture.basic.id]: new Resource({
+          value: this.fillout,
+          status: STATUS.LOADED
+        })
+      }, {
+        [commissionsFixture.basic.id]: new Resource({
+          value: this.events,
+          status: STATUS.LOADED
+        })
+      });
+
+      this.wrapper = wrapperFactory.call(this);
+    });
+
+    it('should render events in order', function () {
+      const timelineItems = this.wrapper.find(TimelineItem);
+      expect(timelineItems[1].text()).to.include('1weeks ago');
+      expect(timelineItems[2].text()).to.include('18hrs ago');
+    });
+
+    it('should bunch up events that happened within 15 minutes', function () {
+      const timelineItems = this.wrapper.find(TimelineItem);
+      expect(timelineItems[2].text()).to.include('18hrs ago');
+      expect(timelineItems[2].propsData().bubble).to.be.true;
+      expect(timelineItems[3].propsData().bubble).to.be.false;
+      expect(timelineItems[3].contains('.date-bubble')).to.be.false;
+      expect(timelineItems[4].propsData().bubble).to.be.false;
+      expect(timelineItems[4].contains('.date-bubble')).to.be.false;
+
+      expect(timelineItems[5].propsData().bubble).to.be.true;
+      expect(timelineItems[5].contains('.date-bubble')).to.be.true;
+      expect(timelineItems[5].text()).to.include('17hrs ago');
     });
   });
 });

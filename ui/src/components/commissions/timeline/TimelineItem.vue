@@ -53,6 +53,16 @@ export default {
           count: Math.floor(differenceMs / (1000 * 60 * 60 * 24)),
           units: 'days ago'
         };
+      } else if (differenceMs < 60 * 60 * 1000 * 24 * 30) {
+        return {
+          count: Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 7)),
+          units: 'weeks ago'
+        };
+      } else {
+        return {
+          count: Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 30)),
+          units: 'months ago'
+        };
       }
     }
   }
@@ -71,18 +81,18 @@ export default {
     $date-content-gutter: 18px;
 
     .date-small-bubble {
-      font-family: 'sinkinsans', sans-serif;
       background-color: $blue-dark;
       color: $white;
-      width: 100px;
-      height: 100px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
       align-items: center;
       justify-content: center;
-      margin-right: $date-content-gutter;
+      margin-left: 40px;
+      margin-right: 40px + $date-content-gutter;
     }
 
     .date-bubble {
@@ -111,12 +121,8 @@ export default {
     }
 
     .date-content {
-      $border-thickness: 4px;
-
-      margin-left: 50px - ($border-thickness/2);
-      border-left: $border-thickness solid $blue-dark;
-      padding-left: 50px - ($border-thickness/2) + $date-content-gutter;
-      padding-bottom: 40px;
+      padding-left: 100px + $date-content-gutter;
+      padding-bottom: 20px;
     }
 
     .date-label {
