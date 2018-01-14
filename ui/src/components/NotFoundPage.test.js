@@ -6,6 +6,6 @@ describe('NotFoundPage', function () {
     const wrapper = shallow(NotFoundPage, { i18n: this.i18n });
 
     expect(wrapper.text()).to.contain('Error 404');
-    expect(wrapper.text()).to.contain("That page wasn't found!");
+    expect(wrapper.text()).to.contain('That page wasn’t found!');
   });
 });

@@ -8,7 +8,7 @@
       "errors": {
         "missing-code": "You need to enter the password reset code that was emailed.",
         "missing-password": "You need to enter a new password.",
-        "passwords-dont-match": "The new passwords don't match.",
+        "passwords-dont-match": "The new passwords don’t match.",
         "invalid-code": "The code you used was wrong. Please try sending another email.",
         "code-already-used": "The link from your email has already been used. Try sending another."
       }
@@ -19,7 +19,7 @@
       "send-email": "Send Email",
       "errors": {
         "missing-email": "You need to enter an email.",
-        "invalid-email": "This email isn't registered."
+        "invalid-email": "This email isn’t registered."
       }
     },
     "back-to-login": "Back to Login"
@@ -54,11 +54,21 @@
   },
   "forms": {
     "index": {
-      "title": "Your Forms"
+      "title": "Your Forms",
+      "help-card": {
+        "title": "What are these?",
+        "text-1": "You can set up multiple question-and-answer forms for customers to fill out.",
+        "text-2": "When a customer fills a form out from the link you send them, a commission will automatically be created."
+      },
+      "item": {
+        "last-updated-at": "Last edited",
+        "last-submitted-at": "This form was last filled out",
+        "last-submitted-at-never": "So far, no customers have filled this form out."
+      }
     }
   },
   "not-found": {
     "title": "Error 404!",
-    "body": "That page wasn't found!"
+    "body": "That page wasn’t found!"
   }
 }

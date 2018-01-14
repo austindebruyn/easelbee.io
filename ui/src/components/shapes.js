@@ -1,16 +1,5 @@
 import VueTypes from 'vue-types';
 
-export const formShape = VueTypes.shape({
-  id: VueTypes.number.isRequired,
-  userId: VueTypes.number.isRequired,
-  name: VueTypes.string.isRequired,
-  slug: VueTypes.string.isRequired,
-  publicUrl: VueTypes.string.isRequired,
-  submitUrl: VueTypes.string.isRequired,
-  createdAt: VueTypes.string.isRequired,
-  updatedAt: VueTypes.string.isRequired
-});
-
 export const commissionShape = VueTypes.shape({
   id: VueTypes.number.isRequired,
   userId: VueTypes.number.isRequired,
@@ -25,14 +14,6 @@ export const commissionShape = VueTypes.shape({
   ]).isRequired,
   createdAt: VueTypes.string.isRequired,
   updatedAt: VueTypes.string.isRequired
-});
-
-export const filloutShape = VueTypes.shape({
-  commission: commissionShape.isRequired,
-  pairs: VueTypes.arrayOf(VueTypes.shape({
-    question: VueTypes.object.isRequired,
-    value: VueTypes.any
-  })).isRequired
 });
 
 export const questionShape = VueTypes.shape({
@@ -50,4 +31,25 @@ export const questionShape = VueTypes.shape({
   type: VueTypes.oneOf(['radio', 'string']).isRequired,
   createdAt: VueTypes.string.isRequired,
   updatedAt: VueTypes.string.isRequired
+});
+
+export const filloutShape = VueTypes.shape({
+  commission: commissionShape.isRequired,
+  pairs: VueTypes.arrayOf(VueTypes.shape({
+    question: questionShape.isRequired,
+    value: VueTypes.any
+  })).isRequired
+});
+
+export const formShape = VueTypes.shape({
+  id: VueTypes.number.isRequired,
+  userId: VueTypes.number.isRequired,
+  name: VueTypes.string.isRequired,
+  slug: VueTypes.string.isRequired,
+  publicUrl: VueTypes.string.isRequired,
+  submitUrl: VueTypes.string.isRequired,
+  createdAt: VueTypes.string.isRequired,
+  updatedAt: VueTypes.string.isRequired,
+  submittedAt: [String, null],
+  questions: VueTypes.arrayOf(questionShape)
 });

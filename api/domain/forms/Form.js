@@ -10,6 +10,10 @@ const Form = db.define('forms', {
   slug: {
     type: db.Sequelize.STRING,
     allowNull: false
+  },
+  submittedAt: {
+    type: db.Sequelize.DATE,
+    allowNull: true
   }
 }, {
   tableName: 'forms',
@@ -47,6 +51,7 @@ Form.prototype.toJSON = function () {
       userId,
       createdAt,
       updatedAt,
+      submittedAt,
       name,
       slug
     } = this.get();
@@ -64,6 +69,7 @@ Form.prototype.toJSON = function () {
           submitUrl: buildUrl(`forms/${slug}/submit`),
           createdAt: createdAt && createdAt.toUTCString(),
           updatedAt: updatedAt && updatedAt.toUTCString(),
+          submittedAt: submittedAt && submittedAt.toUTCString(),
           questions
         });
       });

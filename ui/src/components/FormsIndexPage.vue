@@ -2,9 +2,15 @@
   dashboard-layout(:breadcrumbs='breadcrumbs')
     .container
       .row
-        .col-12
+        .col-12.col-md-8
           loading-spinner(v-if='loading', size='xl')
           forms-list(v-else=true, :forms='forms')
+        .col-12.col-md-4
+          .card
+            .card-body
+              h5.card-title {{ $t('forms.index.help-card.title') }}
+              p.card-text {{ $t('forms.index.help-card.text-1') }}
+              p.card-text {{ $t('forms.index.help-card.text-2') }}
 </template>
 
 <script>

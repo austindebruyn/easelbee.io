@@ -30,6 +30,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import 'src/styles/colors';
+
+  .forms-list {
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+  }
 </style>
