@@ -60,7 +60,8 @@ factory.define('timelineEventMeta', TimelineEventMeta, {
 factory.define('form', Form, {
   slug: factory.chance('word'),
   name: factory.chance('word'),
-  userId: factory.assoc('user', 'id')
+  userId: factory.assoc('user', 'id'),
+  submittedAt: () => null
 });
 
 factory.define('question', Question, {
