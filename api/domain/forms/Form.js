@@ -69,7 +69,7 @@ Form.prototype.toJSON = function () {
           submitUrl: buildUrl(`forms/${slug}/submit`),
           createdAt: createdAt && createdAt.toUTCString(),
           updatedAt: updatedAt && updatedAt.toUTCString(),
-          submittedAt: submittedAt && submittedAt.toUTCString(),
+          submittedAt: submittedAt ? submittedAt.toUTCString() : submittedAt,
           questions
         });
       });
