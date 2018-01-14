@@ -22,7 +22,8 @@ export default {
       required: true
     },
     bubble: {
-      type: Boolean
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -37,20 +38,17 @@ export default {
           count: Math.floor(differenceMs / 1000),
           units: 'sec ago'
         };
-      }
-      else if (differenceMs < 60 * 60 * 1000) {
+      } else if (differenceMs < 60 * 60 * 1000) {
         return {
           count: Math.floor(differenceMs / (1000 * 60)),
           units: 'min ago'
         };
-      }
-      else if (differenceMs < 60 * 60 * 1000 * 24) {
+      } else if (differenceMs < 60 * 60 * 1000 * 24) {
         return {
           count: Math.floor(differenceMs / (1000 * 60 * 60)),
           units: 'hrs ago'
         };
-      }
-      else if (differenceMs < 60 * 60 * 1000 * 24 * 7) {
+      } else if (differenceMs < 60 * 60 * 1000 * 24 * 7) {
         return {
           count: Math.floor(differenceMs / (1000 * 60 * 60 * 24)),
           units: 'days ago'

@@ -5,7 +5,7 @@ const { APIError } = require('../core/errors');
 
 module.exports = function errorHandler(err, req, res, next) {
   winston.log('error', err);
-  console.log(err);
+
   if (config.app.sentry.secret) {
     Raven.captureException(err);
   }

@@ -21,7 +21,8 @@ describe('CommissionsDetailsPage', function () {
     this.store = new Vuex.Store({
       state: {
         commissions: new Resource(resourceOpts),
-        fillouts: {}
+        fillouts: {},
+        events: {}
       },
       actions: this.actions
     });

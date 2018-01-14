@@ -1,6 +1,6 @@
 <template lang="pug">
   .commission-timeline
-    timeline-item(:date='commission.createdAt')
+    timeline-item(:date='commission.createdAt', bubble=true)
       span(slot='label') {{ commission.nickname }} filled out your form.
       .card(slot='content')
         .card-body
@@ -54,6 +54,10 @@ export default {
       return resource && isLoaded(resource);
     }
   },
+  mounted: function () {
+    this.$store.dispatch('fetchFillout', this.commission.id);
+    this.$store.dispatch('fetchEvents', this.commission.id);
+  },
   methods: {
     labelFor: function (event) {
       switch (event.key) {
@@ -66,10 +70,6 @@ export default {
           return this.$t('events.unknown');
       }
     }
-  },
-  mounted: function () {
-    this.$store.dispatch('fetchFillout', this.commission.id);
-    this.$store.dispatch('fetchEvents', this.commission.id);
   }
 };
 </script>
