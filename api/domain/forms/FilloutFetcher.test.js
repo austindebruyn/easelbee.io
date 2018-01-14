@@ -55,7 +55,7 @@ describe('FilloutFetcher', function () {
               userId: 1,
               formId: 1,
               title: 'Whatever',
-              type: 2,
+              type: 'string',
               required: null,
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
@@ -68,7 +68,7 @@ describe('FilloutFetcher', function () {
               userId: 1,
               formId: 1,
               title: 'Whatever',
-              type: 2,
+              type: 'string',
               required: null,
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'

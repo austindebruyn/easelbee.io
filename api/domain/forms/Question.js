@@ -1,6 +1,7 @@
 const db = require('../../services/db');
 const Form = require('./Form');
 const User = require('../users/User');
+const invert = require('lodash.invert');
 
 const Question = db.define('questions', {
   title: {
@@ -76,8 +77,8 @@ Question.prototype.toJSON = function () {
       userId,
       formId,
       title,
-      type,
       required,
+      type: invert(Question.TYPES)[type],
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     };

@@ -47,7 +47,7 @@ export const questionShape = VueTypes.shape({
   })),
   required: VueTypes.bool,
   title: VueTypes.string.isRequired,
-  type: VueTypes.number.isRequired,
+  type: VueTypes.oneOf(['radio', 'string']).isRequired,
   createdAt: VueTypes.string.isRequired,
   updatedAt: VueTypes.string.isRequired
 });

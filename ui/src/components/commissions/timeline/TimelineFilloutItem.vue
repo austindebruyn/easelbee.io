@@ -3,12 +3,13 @@
     .question
       .title {{ question.title }}
       .value
-        | {{ value }}
+        | {{ displayValue }}
 </template>
 
 <script>
 import { questionShape } from 'components/shapes';
 import VueTypes from 'vue-types';
+import find from 'lodash.find';
 
 export default {
   name: 'timeline-fillout-item',
@@ -16,6 +17,15 @@ export default {
     /* eslint-disable vue/require-default-prop */
     question: questionShape.isRequired,
     value: VueTypes.any.isRequired
+  },
+  computed: {
+    displayValue: function () {
+      if (this.question.type === 'radio') {
+        return find(this.question.options, { id: this.value }).value;
+      } else if (this.question.type === 'string') {
+        return this.value;
+      }
+    }
   }
 };
 </script>
