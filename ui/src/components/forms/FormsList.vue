@@ -1,12 +1,18 @@
 <template lang="pug">
   .forms-list
-    p(v-if='forms.length < 1') No forms yet :)
+    .forms-zero-data-state(v-if='forms.length < 1')
+      .fa.fa-spinner
+      h3 Nothing here!
     ul(v-else=true)
       forms-list-item(
         v-for='form in forms'
         key='form.id'
         :form='form'
       )
+    .card.new-form-card
+      span
+        .fa.fa-plus-circle
+        | {{ $t('forms.index.new') }}
 </template>
 
 <script>
@@ -37,6 +43,37 @@ export default {
     ul {
       list-style: none;
       padding: 0;
+    }
+  }
+
+  .new-form-card {
+    background: none;
+    border: 4px dashed $gray-lighter;
+    color: $gray;
+
+    text-align: center;
+    padding: 20px;
+
+    font-size: 1.6rem;
+
+    span .fa {
+      margin-right: 10px;
+    }
+  }
+
+  .forms-zero-data-state {
+    color: $gray;
+    text-align: center;
+    border: 4px dashed $gray-lighter;
+    padding: 4rem;
+
+    .fa {
+      font-size: 3rem;
+      padding-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
     }
   }
 </style>

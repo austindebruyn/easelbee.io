@@ -64,7 +64,8 @@
         "last-updated-at": "Last edited",
         "last-submitted-at": "This form was last filled out",
         "last-submitted-at-never": "So far, no customers have filled this form out."
-      }
+      },
+      "new": "Create New Form"
     }
   },
   "not-found": {
