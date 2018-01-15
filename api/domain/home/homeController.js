@@ -1,5 +1,9 @@
 const config = require('../../config');
 
+module.exports.noPath = function (req, res, next) {
+  return res.redirect('/app/');
+};
+
 module.exports.index = function (req, res, next) {
   const context = {
     sentry: {

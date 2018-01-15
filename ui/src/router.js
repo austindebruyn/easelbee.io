@@ -33,6 +33,7 @@ const ensureAnonymous = function (to, from, next) {
 
 export default new VueRouter({
   mode: 'history',
+  base: '/app/',
   routes: [
     { path: '/', component: LoginPage, beforeEnter: ensureAnonymous },
     { path: '/create', component: CreateAccountPage, beforeEnter: ensureAnonymous },

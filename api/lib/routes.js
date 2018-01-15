@@ -28,7 +28,8 @@ function ensureAnonymous(req, res, next) {
 }
 
 module.exports = function (app) {
-  app.get('/', homeController.index);
+  app.get('/', homeController.noPath);
+  app.get('/app/', homeController.index);
 
   app.get('/forms/:slug', formsController.get);
   app.post('/forms/:slug/submit', formsController.submit);
