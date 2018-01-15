@@ -43,6 +43,11 @@ export default {
     ul {
       list-style: none;
       padding: 0;
+      margin-bottom: 0;
+
+      li {
+        margin-bottom: 1.5rem;
+      }
     }
   }
 
@@ -54,6 +59,7 @@ export default {
 
     text-align: center;
     padding: 20px;
+    margin-bottom: 1.5rem;
 
     font-size: 1.6rem;
 
