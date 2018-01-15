@@ -2,15 +2,21 @@
   li.form-list-item
     .card
       .card-body
-        h4.card-title {{ form.name }}
-        .subtitle
-          span.text-muted {{ $t('forms.index.item.last-updated-at') }}
-          span  {{ lastUpdatedAt }}
-        .subtitle(v-if='form.submittedAt')
-          span.text-muted {{ $t('forms.index.item.last-submitted-at') }}
-          span  {{ lastSubmittedAt }}
-        .subtitle(v-else=true)
-          span.text-muted {{ $t('forms.index.item.last-submitted-at-never') }}
+        .title-row
+          .meta
+            h4.card-title {{ form.name }}
+            .subtitle
+              span.text-muted {{ $t('forms.index.item.last-updated-at') }}
+              span  {{ lastUpdatedAt }}
+            .subtitle(v-if='form.submittedAt')
+              span.text-muted {{ $t('forms.index.item.last-submitted-at') }}
+              span  {{ lastSubmittedAt }}
+            .subtitle(v-else=true)
+              span.text-muted {{ $t('forms.index.item.last-submitted-at-never') }}
+          .questions-count
+            h2 {{ count }}
+            strong.text-muted
+              | {{ $t('forms.index.item.question-count', { count: count }) }}
         .controls
           a.control-link.danger-link(href='javascript:;')
             i.fa.fa-trash-o
@@ -31,6 +37,9 @@ export default {
     form: formShape.isRequired
   },
   computed: {
+    count: function () {
+      return this.form.questions.length;
+    },
     editUrl: function () {
       return `/forms/${this.form.id}`;
     },
@@ -48,6 +57,27 @@ export default {
   @import 'src/styles/colors';
 
   .form-list-item {
+    .title-row {
+      display: flex;
+
+      .meta {
+        flex-grow: 8;
+      }
+
+      .questions-count {
+        h2 {
+          margin: 0;
+          text-align: right;
+        }
+
+        strong {
+          text-transform: uppercase;
+          font-family: sinkinsans;
+          font-size: 0.6rem;
+        }
+      }
+    }
+
     .controls {
       padding-top: 16px;
       float: right;

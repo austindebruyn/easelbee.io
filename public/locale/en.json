@@ -63,7 +63,9 @@
       "item": {
         "last-updated-at": "Last edited",
         "last-submitted-at": "This form was last filled out",
-        "last-submitted-at-never": "So far, no customers have filled this form out."
+        "last-submitted-at-never": "So far, no customers have filled this form out.",
+        "question-count": "question",
+        "question-count_plural": "questions"
       },
       "new": "Create New Form"
     }

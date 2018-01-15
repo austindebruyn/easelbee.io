@@ -13,6 +13,12 @@ function wrapperFactory (form) {
 describe('FormsListItem', function () {
   clock();
 
+  it('should have count of questions', function () {
+    wrapperFactory.call(this, formsFixture.basic);
+
+    expect(this.wrapper.first('.questions-count').text()).to.eql('0questions');
+  });
+
   it('should have pencil icon to edit page', function () {
     wrapperFactory.call(this, formsFixture.basic);
 

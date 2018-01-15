@@ -11,7 +11,8 @@ export default {
     submitUrl: 'http://local-easelbee.io:3000/forms/some-form/submit',
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
-    submittedAt: null
+    submittedAt: null,
+    questions: []
   },
   basic2: {
     id: 2,
@@ -22,7 +23,8 @@ export default {
     submitUrl: 'http://local-easelbee.io:3000/forms/expensive-form/submit',
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
-    submittedAt: null
+    submittedAt: null,
+    questions: []
   }
 };
 
@@ -32,6 +34,7 @@ function buildForm (attrs = {}) {
     userId: attrs.userId || chance.integer({ min: 1, max: 1024 }),
     name: attrs.name || chance.word(),
     slug: attrs.name || chance.word(),
+    questions: [],
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
     submittedAt: 'submittedAt' in attrs ? attrs.submittedAt : new Date(chance.timestamp()).toUTCString()
