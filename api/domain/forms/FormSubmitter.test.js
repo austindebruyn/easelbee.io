@@ -7,6 +7,7 @@ const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
 const AnswerOptionValue = require('./AnswerOptionValue');
 const factory = require('../../tests/factory');
+const clock = require('../../tests/clock');
 
 function reloadCommissionWithAssociations(commission) {
   return Commission.findOne({
@@ -45,6 +46,8 @@ function itShouldNotCreateAnyRecords(body = contact) {
 
 describe('FormSubmitter', function () {
   describe('with no questions', function () {
+    clock();
+
     beforeEach(function () {
       return factory.create('form').then(record => {
         this.form = record;
@@ -57,6 +60,13 @@ describe('FormSubmitter', function () {
         expect(commission.answers).to.eql([]);
         expect(commission.formId).to.eql(this.form.id);
       });
+    });
+
+    it('should update form submittedAt timestamp', async function () {
+      const submitter = new FormSubmitter(this.form);
+      const commission = await submitter.submit({ ...contact });
+      await commission.ensureForm();
+      expect(commission.form.submittedAt).to.eql(new Date());
     });
   });
 

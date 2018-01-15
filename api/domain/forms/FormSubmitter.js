@@ -1,10 +1,8 @@
-// const Form = require('./Form');
 const _ = require('lodash');
 const { UnprocessableEntityError } = require('../../core/errors');
 const Question = require('./Question');
 const QuestionOption = require('./QuestionOption');
 const Form = require('./Form');
-// const QuestionOption = require('./QuestionOption');
 const Commission = require('../commissions/Commission');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
@@ -164,6 +162,10 @@ class FormSubmitter {
         })
         .then(answers => {
           return this._commission.ensureAnswers();
+        })
+        .then(() => {
+          this.form.submittedAt = new Date();
+          return this.form.save();
         })
         .then(() => {
           return this._commission;
