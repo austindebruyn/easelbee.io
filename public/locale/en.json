@@ -68,6 +68,14 @@
         "question-count_plural": "questions"
       },
       "new": "Create New Form"
+    },
+    "details": {
+      "created-at": "Created",
+      "fillout-counts-label": "Filled out",
+      "fillout-counts-value": "{{ count }} time",
+      "fillout-counts-value_plural": "{{ count }} times",
+      "revenue-label-1": "You’ve earned",
+      "revenue-label-2": "from this form"
     }
   },
   "not-found": {

@@ -48,7 +48,7 @@ export default {
 
   .new-form-button {
     background: none;
-    border: 4px dashed $gray-lighter;
+    border: 4px dashed $gray;
     color: $gray;
     cursor: pointer;
 
@@ -65,7 +65,7 @@ export default {
   .forms-zero-data-state {
     color: $gray;
     text-align: center;
-    border: 4px dashed $gray-lighter;
+    border: 4px dashed $gray;
     padding: 4rem;
 
     .fa {

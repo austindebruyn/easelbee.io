@@ -1,3 +1,7 @@
+import Chance from 'chance';
+
+const chance = new Chance();
+
 export default {
   basic: {
     id: 1,
@@ -44,3 +48,16 @@ export default {
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   }
 };
+
+export function buildQuestion (attrs = {}) {
+  return {
+    id: attrs.id || chance.integer({ min: 1, max: 1024 }),
+    userId: attrs.userId || chance.integer({ min: 1, max: 1024 }),
+    formId: attrs.formId || chance.integer({ min: 1, max: 1024 }),
+    title: chance.sentence(),
+    type: 'string',
+    required: true,
+    createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
+    updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()
+  };
+}

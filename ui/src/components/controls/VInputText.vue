@@ -11,6 +11,7 @@
       :name='name'
       :placeholder='placeholder'
       :disabled='disabled'
+      :class='inputClasses'
     )
 </template>
 
@@ -37,6 +38,14 @@ export default {
     defaultValue: {
       type: String,
       default: void 0
+    },
+    kind: {
+      type: String,
+      default: null
+    },
+    size: {
+      type: String,
+      default: 'md'
     }
   },
   data: function () {
@@ -46,12 +55,18 @@ export default {
     };
   },
   computed: {
-    classes () {
+    classes: function () {
       return {
-        'input-group-focus': this.focus
+        'input-group-focus': this.focus,
+        'kind-madlibs': this.kind && this.kind === 'madlibs'
       };
     },
-    iconClass () {
+    inputClasses: function () {
+      return {
+        'input-lg': this.size === 'lg'
+      };
+    },
+    iconClass: function () {
       return `fa-${this.icon}`;
     }
   },
@@ -66,5 +81,23 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  @import 'src/styles/colors';
+
+  .kind-madlibs {
+    input {
+      border: none;
+      background: none;
+      border-bottom: 2px dashed $gray;
+
+      &:focus {
+        // border: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .input-lg {
+    font-size: 1.4rem;
+  }
 </style>
