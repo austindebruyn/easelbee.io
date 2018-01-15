@@ -21,7 +21,7 @@ form(method='POST', action=form.submitUrl)
     fieldset
       -key = 'question_' + question.id
       case question.type
-        when 0
+        when 'radio'
           label(for=key)= question.title
           for option in question.options
             -optionKey = optionName + '-option' + option.id
@@ -33,7 +33,7 @@ form(method='POST', action=form.submitUrl)
                 value=option.id
               )
               label(for=optionKey)= option.value
-        when 2
+        when 'string'
           label(for=key)= question.title
           input(id=key, type='text', name=key)
         default
