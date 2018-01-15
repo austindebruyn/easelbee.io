@@ -9,7 +9,7 @@
         key='form.id'
         :form='form'
       )
-    .card.new-form-card
+    button.btn-block.text-center.new-form-button(v-tooltip='$t("feature-not-built")')
       span
         .fa.fa-plus-circle
         | {{ $t('forms.index.new') }}
@@ -46,10 +46,11 @@ export default {
     }
   }
 
-  .new-form-card {
+  .new-form-button {
     background: none;
     border: 4px dashed $gray-lighter;
     color: $gray;
+    cursor: pointer;
 
     text-align: center;
     padding: 20px;

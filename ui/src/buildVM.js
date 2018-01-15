@@ -6,6 +6,8 @@ import router from 'router';
 import store from 'state/store';
 import pick from 'lodash.pick';
 
+import VTooltip from 'v-tooltip';
+
 export default function (opts) {
   // hydrate
   const user = opts.user;
@@ -19,6 +21,7 @@ export default function (opts) {
   store.commit('loginSuccess', user);
 
   Vue.use(VueTween);
+  Vue.use(VTooltip);
 
   const i18n = buildLocale();
 

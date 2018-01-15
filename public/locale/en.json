@@ -73,5 +73,6 @@
   "not-found": {
     "title": "Error 404!",
     "body": "That page wasn’t found!"
-  }
+  },
+  "feature-not-built": "This feature has not been built yet."
 }

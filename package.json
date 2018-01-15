@@ -89,6 +89,7 @@
     "supertest": "^3.0.0",
     "uid-safe": "^2.1.5",
     "umzug": "^2.0.1",
+    "v-tooltip": "^2.0.0-rc.26",
     "vue": "^2.3.4",
     "vue-loader": "13.5.0",
     "vue-router": "3.0.1",
