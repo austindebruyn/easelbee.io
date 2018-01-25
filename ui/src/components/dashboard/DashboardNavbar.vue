@@ -26,7 +26,7 @@ export default {
   @import 'src/styles/fonts';
 
   .dashboard-navbar {
-    background-color: #4b6680;
+    background-color: $blue-dark;
     position: fixed;
     top: 0;
     left: 0;
@@ -57,7 +57,7 @@ export default {
       }
 
       &:hover {
-        color: yellow;
+        color: $blue-light;
       }
     }
   }
