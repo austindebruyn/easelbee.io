@@ -1,15 +1,23 @@
 import QuestionDetails from './QuestionDetails';
 import VInputText from 'components/controls/VInputText';
-import { shallow } from 'avoriaz';
+import { mount } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
+import sinon from 'sinon';
+import Vuex from 'vuex';
 
 describe('QuestionDetails', function () {
   beforeEach(function () {
     this.question = buildQuestion();
 
-    this.wrapper = shallow(QuestionDetails, {
+    this.actions = { updateQuestion: sinon.spy() };
+    this.store = new Vuex.Store({
+      actions: this.actions
+    });
+
+    this.wrapper = mount(QuestionDetails, {
       propsData: { question: this.question },
-      i18n: this.i18n
+      i18n: this.i18n,
+      store: this.store
     });
   });
 
@@ -19,6 +27,16 @@ describe('QuestionDetails', function () {
       kind: 'madlibs',
       size: 'lg',
       defaultValue: this.question.title
+    });
+  });
+
+  it('should dispatch when form is submitted', function () {
+    this.fillIn(this.wrapper.first('input')).with('How old are you?');
+
+    this.wrapper.first('form').trigger('submit');
+    expect(this.actions.updateQuestion.args[0][1]).to.eql({
+      id: this.question.id,
+      title: 'How old are you?'
     });
   });
 });

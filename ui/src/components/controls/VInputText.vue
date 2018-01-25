@@ -5,13 +5,14 @@
     input.form-control(
       v-model='value'
       type='text'
-      @focus='handleFocus'
-      @blur='handleBlur'
       autocomplete='off'
       :name='name'
       :placeholder='placeholder'
       :disabled='disabled'
       :class='inputClasses'
+      @focus='handleFocus'
+      @blur='handleBlur'
+      @keyup='handleKeyup'
     )
 </template>
 
@@ -71,11 +72,17 @@ export default {
     }
   },
   methods: {
-    handleFocus () {
+    handleFocus: function () {
       this.focus = true;
     },
-    handleBlur () {
+    handleBlur: function () {
       this.focus = false;
+    },
+    handleKeyup: function () {
+      this.$emit('keyup');
+    },
+    getValue: function () {
+      return this.value;
     }
   }
 };

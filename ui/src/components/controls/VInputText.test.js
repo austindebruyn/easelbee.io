@@ -1,5 +1,6 @@
 import VInputText from './VInputText';
 import { mount } from 'avoriaz';
+import sinon from 'sinon';
 
 describe('VInputText', function () {
   it('should not render an icon', function () {
@@ -40,5 +41,21 @@ describe('VInputText', function () {
     expect(wrapper.vm.focus).to.be.true;
     wrapper.vm.handleBlur();
     expect(wrapper.vm.focus).to.be.false;
+  });
+
+  it('should fire change', function () {
+    const wrapper = mount(VInputText);
+    sinon.spy(wrapper.vm, '$emit');
+
+    wrapper.first('input').trigger('keyup');
+    expect(wrapper.vm.$emit).to.have.been.called;
+  });
+
+  describe('#getValue', function () {
+    it('should return value of input', function () {
+      const wrapper = mount(VInputText);
+      this.fillIn(wrapper.first('input')).with('bath time!')
+      expect(wrapper.vm.getValue()).to.eql('bath time!');
+    });
   });
 });

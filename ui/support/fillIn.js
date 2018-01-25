@@ -3,6 +3,7 @@ export default function (wrapper) {
     with: function (value) {
       wrapper.element.value = value;
       wrapper.trigger('input');
+      wrapper.trigger('change');
     }
   };
 };

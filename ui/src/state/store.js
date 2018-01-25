@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import omit from 'lodash.omit';
+import flatten from 'lodash.flatten';
 import Resource, { STATUS } from 'state/Resource';
 
 Vue.use(Vuex);
@@ -15,6 +16,7 @@ const initialState = {
   fillouts: {},
   events: {},
   forms: new Resource(),
+  questions: {},
   i18n: new Resource()
 };
 
@@ -158,10 +160,29 @@ export default new Vuex.Store({
     fetchFormsSuccess: function (state, json) {
       state.forms.status = STATUS.LOADED;
       state.forms.value = json;
+
+      flatten(json.map(f => f.questions)).forEach(function (question) {
+        state.questions[question.id] = new Resource({
+          value: question,
+          status: STATUS.LOADED
+        });
+      });
     },
     fetchFormsFailure: function (state, errors) {
       state.forms.status = STATUS.ERRORED;
       state.forms.errors = errors;
+    },
+
+    updateQuestionStart: function (state, id) {
+      state.questions[id].status = STATUS.MUTATING;
+    },
+    updateQuestionSuccess: function (state, { id, json }) {
+      state.questions[id].status = STATUS.LOADED;
+      state.questions[id].value = json;
+    },
+    updateQuestionFailure: function (state, { id, errors }) {
+      state.questions[id].status = STATUS.ERRORED;
+      state.questions[id].errors = errors;
     },
 
     set_emailPreferences: function (state, emailPreferences) {
@@ -251,8 +272,8 @@ export default new Vuex.Store({
         .then(({ data }) => {
           commit('fetchFormsSuccess', data.records);
         })
-        .catch(({ response: { data } }) => {
-          commit('fetchFormsFailure', data.errors);
+        .catch(({ response }) => {
+          commit('fetchFormsFailure', response && response.data.errors);
         });
     },
     login: function ({ state, commit }, { email, password }) {
@@ -379,6 +400,27 @@ export default new Vuex.Store({
             : [];
           commit('updateCommissionFailure', errors);
         });
-    }
+    },
+    updateQuestion ({ state, commit }, payload) {
+      const body = omit(payload, 'id');
+      commit('updateQuestionStart', payload.id);
+
+      return axios.patch(`/api/questions/${payload.id}`, body, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(function ({ data }) {
+          commit('updateQuestionSuccess', data.record);
+        })
+        .catch(function (err) {
+          const errors = err.response
+            ? err.response.data.errors
+            : [];
+          commit('updateQuestionFailure', errors);
+        });
+    },
   }
 });
