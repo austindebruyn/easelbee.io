@@ -421,6 +421,6 @@ export default new Vuex.Store({
             : [];
           commit('updateQuestionFailure', errors);
         });
-    },
+    }
   }
 });

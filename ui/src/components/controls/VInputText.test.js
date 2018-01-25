@@ -54,7 +54,7 @@ describe('VInputText', function () {
   describe('#getValue', function () {
     it('should return value of input', function () {
       const wrapper = mount(VInputText);
-      this.fillIn(wrapper.first('input')).with('bath time!')
+      this.fillIn(wrapper.first('input')).with('bath time!');
       expect(wrapper.vm.getValue()).to.eql('bath time!');
     });
   });
