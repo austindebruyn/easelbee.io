@@ -4,6 +4,7 @@ const passwordResetsController = require('../domain/passwordResets/passwordReset
 const emailPreferencesController = require('../domain/emailPreferences/emailPreferencesController');
 const commissionsController = require('../domain/commissions/commissionsController');
 const formsController = require('../domain/forms/formsController');
+const questionsController = require('../domain/forms/questionsController');
 const homeController = require('../domain/home/homeController');
 const errorHandler = require('./errorHandler');
 
@@ -51,6 +52,7 @@ module.exports = function (app) {
   app.get('/api/commissions/:id/events', ensureAuthenticated, commissionsController.getEvents);
   app.get('/api/users/me/forms', ensureAuthenticated, formsController.index);
   app.post('/api/users/me/forms', ensureAuthenticated, formsController.create);
+  app.patch('/api/questions/:id', ensureAuthenticated, questionsController.update);
   app.get('*', homeController.index);
 
   app.use(errorHandler);

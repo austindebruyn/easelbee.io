@@ -109,11 +109,11 @@ describe('formsController', function () {
             .cookiejar()
             .accept('application/json')
             .expect(200)
-            .then(req => {
-              expect(req.body.ok).to.be.true;
-              expect(req.body.records).to.have.length(1);
-              expect(req.body.records[0]).to.eql(this.formJson);
-              expect(req.body.records[0]).to.have.property('questions');
+            .then(res => {
+              expect(res.body.ok).to.be.true;
+              expect(res.body.records).to.have.length(1);
+              expect(res.body.records[0]).to.eql(this.formJson);
+              expect(res.body.records[0]).to.have.property('questions');
             });
         });
       });
