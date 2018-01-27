@@ -17,7 +17,11 @@ module.exports.update = function (req, res, next) {
       if (!question) {
         throw new NotFoundError();
       }
-      if (question.userId !== req.user.id) {
+
+      return question.ensureForm();
+    })
+    .then(function () {
+      if (question.form.userId !== req.user.id) {
         throw new UnauthorizedError();
       }
 

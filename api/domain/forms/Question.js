@@ -1,6 +1,5 @@
 const db = require('../../services/db');
 const Form = require('./Form');
-const User = require('../users/User');
 const invert = require('lodash.invert');
 
 const Question = db.define('questions', {
@@ -63,7 +62,6 @@ Question.prototype.toJSON = function () {
   return new Promise((resolve, reject) => {
     const {
       id,
-      userId,
       formId,
       createdAt,
       updatedAt,
@@ -74,7 +72,6 @@ Question.prototype.toJSON = function () {
 
     const attrs = {
       id,
-      userId,
       formId,
       title,
       required,
@@ -101,8 +98,6 @@ Question.prototype.toJSON = function () {
   });
 };
 
-Question.belongsTo(User);
-User.hasMany(Question);
 Question.belongsTo(Form);
 Form.hasMany(Question);
 

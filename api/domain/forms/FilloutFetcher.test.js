@@ -52,7 +52,6 @@ describe('FilloutFetcher', function () {
           {
             question: {
               id: 1,
-              userId: 1,
               formId: 1,
               title: 'Whatever',
               type: 'string',
@@ -65,7 +64,6 @@ describe('FilloutFetcher', function () {
           {
             question: {
               id: 2,
-              userId: 1,
               formId: 1,
               title: 'Whatever',
               type: 'string',

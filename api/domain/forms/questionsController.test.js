@@ -15,7 +15,7 @@ describe('questionsController', function () {
       this.question = await factory.create('question', {
         formId: this.form.id
       });
-      this.user = await this.question.getUser();
+      this.user = await this.form.getUser();
 
       this.sandbox = sinon.sandbox.create();
     });
@@ -95,9 +95,11 @@ describe('questionsController', function () {
             .stub(QuestionUpdater.prototype, 'update')
             .resolves(this.question);
 
+          const body = { title: 'What kind of car do you drive?' };
+
           return agent()
             .patch(`/api/questions/${this.question.id}`)
-            .send({ title: 'Have a good time?' })
+            .send(body)
             .cookiejar()
             .accept('application/json')
             .expect(200)
@@ -106,7 +108,7 @@ describe('questionsController', function () {
               expect(res.body.record).to.include({ id: this.question.id });
 
               expect(QuestionUpdater.prototype.update)
-                .to.have.been.calledWith({ title: 'Have a good time?' });
+                .to.have.been.calledWith(body);
             });
         });
       });
