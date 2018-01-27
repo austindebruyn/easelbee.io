@@ -19,6 +19,9 @@ const Question = db.define('questions', {
   order: {
     type: db.Sequelize.INTEGER,
     allowNull: false
+  },
+  deletedAt: {
+    type: db.Sequelize.DATE
   }
 }, {
   tableName: 'questions',
@@ -35,6 +38,23 @@ Question.TYPES = {
   text: 3,
   madlib: 4,
   images: 5
+};
+
+/**
+ * Promises to ensure that `form` is eager loaded on this instance.
+ * @returns {Promise}
+ */
+Question.prototype.ensureForm = function () {
+  return new Promise((resolve, reject) => {
+    if (this.form) return resolve(this);
+
+    return this.getForm()
+      .then(form => {
+        this.form = form;
+        return resolve(this);
+      })
+      .catch(reject);
+  });
 };
 
 /**
@@ -100,5 +120,10 @@ Question.prototype.toJSON = function () {
 
 Question.belongsTo(Form);
 Form.hasMany(Question);
+
+Question.belongsTo(Question, {
+  as: 'originalQuestion',
+  foreignKey: 'originalQuestionId'
+});
 
 module.exports = Question;
