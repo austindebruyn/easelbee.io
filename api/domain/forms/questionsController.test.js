@@ -3,6 +3,8 @@ const signIn = require('../../tests/signIn');
 const clock = require('../../tests/clock');
 const factory = require('../../tests/factory');
 const expect = require('chai').expect;
+const sinon = require('sinon');
+const QuestionUpdater = require('./QuestionUpdater');
 
 describe('questionsController', function () {
   clock();
@@ -14,6 +16,12 @@ describe('questionsController', function () {
         formId: this.form.id
       });
       this.user = await this.question.getUser();
+
+      this.sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function () {
+      this.sandbox.restore();
     });
 
     it('should 403', function () {
@@ -82,7 +90,11 @@ describe('questionsController', function () {
             });
         });
 
-        it('should update title', function () {
+        it('should update model', function () {
+          this.sandbox
+            .stub(QuestionUpdater.prototype, 'update')
+            .resolves(this.question);
+
           return agent()
             .patch(`/api/questions/${this.question.id}`)
             .send({ title: 'Have a good time?' })
@@ -91,10 +103,10 @@ describe('questionsController', function () {
             .expect(200)
             .then(res => {
               expect(res.body.ok).to.be.true;
-              expect(res.body.record).to.include({
-                id: this.question.id,
-                title: 'Have a good time?'
-              });
+              expect(res.body.record).to.include({ id: this.question.id });
+
+              expect(QuestionUpdater.prototype.update)
+                .to.have.been.calledWith({ title: 'Have a good time?' });
             });
         });
       });

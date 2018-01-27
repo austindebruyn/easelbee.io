@@ -5,6 +5,7 @@ const {
   UnauthorizedError,
   UnprocessableEntityError
 } = require('../../core/errors');
+const QuestionUpdater = require('./QuestionUpdater');
 
 module.exports.update = function (req, res, next) {
   let question;
@@ -37,9 +38,7 @@ module.exports.update = function (req, res, next) {
         });
       }
 
-      Object.assign(question, req.body);
-
-      return question.save();
+      return new QuestionUpdater(question).update(req.body);
     })
     .then(() => question.toJSON())
     .then(function (record) {
