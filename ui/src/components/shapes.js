@@ -19,9 +19,9 @@ export const commissionShape = VueTypes.shape({
 export const questionShape = VueTypes.shape({
   id: VueTypes.number.isRequired,
   formId: VueTypes.number.isRequired,
-  userId: VueTypes.number.isRequired,
   options: VueTypes.arrayOf(VueTypes.shape({
     id: VueTypes.number.isRequired,
+    questionId: VueTypes.number.isRequired,
     value: VueTypes.string.isRequired,
     createdAt: VueTypes.string.isRequired,
     updatedAt: VueTypes.string.isRequired

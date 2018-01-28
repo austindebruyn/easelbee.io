@@ -94,13 +94,11 @@ describe('formsController', function () {
       });
 
       describe('when records', function () {
-        beforeEach(function () {
-          return factory.create('form', {
+        beforeEach(async function () {
+          this.form = await factory.create('form', {
             userId: this.user.id
-          }).then(record => record.toJSON())
-            .then(json => {
-              this.formJson = json;
-            });
+          })
+          const formJson = await this.form.toJSON();
         });
 
         it('should return records', function () {
@@ -114,6 +112,23 @@ describe('formsController', function () {
               expect(res.body.records).to.have.length(1);
               expect(res.body.records[0]).to.eql(this.formJson);
               expect(res.body.records[0]).to.have.property('questions');
+            });
+        });
+
+        it('should not return deleted questions', async function () {
+          const deletedQuestion = await factory.create('question', {
+            formId: this.form.id,
+            deletedAt: new Date()
+          });
+          await agent()
+            .get('/api/users/me/forms')
+            .cookiejar()
+            .accept('application/json')
+            .expect(200)
+            .then(res => {
+              const { questions } = res.body.records[0];
+              expect(questions.map(q => q.id))
+                .to.not.include(deletedQuestion.id);
             });
         });
       });

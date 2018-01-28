@@ -44,7 +44,7 @@ module.exports.update = function (req, res, next) {
 
       return new QuestionUpdater(question).update(req.body);
     })
-    .then(() => question.toJSON())
+    .then(result => result.toJSON())
     .then(function (record) {
       return res.json({ ok: true, record });
     })
