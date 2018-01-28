@@ -179,6 +179,28 @@ describe('FormSubmitter', function () {
         itShouldNotCreateAnyRecords({ ...contact, question_800: 'Hey' });
       });
     });
+
+    describe('and some deleted questions', function () {
+      beforeEach(async function () {
+        await factory.createMany('question', 3, {
+          deletedAt: new Date(),
+          formId: this.form.id,
+          required: true
+        });
+      });
+
+      it('should only count the non-deleted one', async function () {
+        const submitter = new FormSubmitter(this.form);
+        const body = {
+          ...contact,
+          [`question_${this.question.id}`]: 'Jiminy Cricket'
+        };
+        const commission = await submitter
+          .submit(body)
+          .then(reloadCommissionWithAssociations);
+        expect(commission.answers).to.have.length(1);
+      });
+    });
   });
 
   describe('with radio question', function () {

@@ -57,7 +57,9 @@ Form.prototype.toJSON = function () {
     } = this.get();
 
     return this.ensureQuestions().then(() => {
-      const jsons = this.questions.map(q => q.toJSON());
+      const jsons = this.questions
+        .filter(q => !q.deletedAt)
+        .map(q => q.toJSON());
 
       return Promise.all(jsons).then(questions => {
         return resolve({

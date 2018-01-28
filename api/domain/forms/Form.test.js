@@ -17,44 +17,46 @@ function fetchFormJSONById(id, eagerLoad) {
 
 describe('#toJSON', function () {
   describe('when no questions', function () {
-    beforeEach(function () {
-      return factory.create('form').then(record => {
-        this.formId = record.id;
-      });
+    beforeEach(async function () {
+      const record = await factory.create('form');
+      this.formId = record.id;
     });
 
-    it('should include empty set', function () {
-      return fetchFormJSONById(this.formId, true)
-        .then(function (json) {
-          expect(json.questions).to.eql([]);
-        });
+    it('should include empty set', async function () {
+      const json = await fetchFormJSONById(this.formId, true);
+      expect(json.questions).to.eql([]);
     });
 
-    it('should include empty set even when not eager loaded', function () {
-      return fetchFormJSONById(this.formId, false)
-        // this Form model does not have `.questions` preloaded
-        .then(function (json) {
-          expect(json.questions).to.eql([]);
-        });
+    it('should include empty set even when not eager loaded', async function () {
+      const json = await fetchFormJSONById(this.formId, false);
+      // this Form model does not have `.questions` preloaded
+      expect(json.questions).to.eql([]);
     });
   });
 
   describe('when there are questions', function () {
-    beforeEach(function () {
-      return factory.create('form').then(record => {
-        this.formId = record.id;
+    beforeEach(async function () {
+      const record = await factory.create('form');
+      this.formId = record.id;
 
-        return factory.createMany('question', 3, {
-          formId: record.id
-        });
+      this.questions = await factory.createMany('question', 3, {
+        formId: record.id
       });
     });
 
-    it('should include objects', function () {
-      return fetchFormJSONById(this.formId, true)
-        .then(function (json) {
-          expect(json.questions).to.have.length(3);
-        });
+    it('should include objects', async function () {
+      const json = await fetchFormJSONById(this.formId, true);
+      expect(json.questions).to.have.length(3);
+    });
+
+    it('should not include deleted questions', async function () {
+      this.questions[1].deletedAt = new Date();
+      await this.questions[1].save();
+
+      const json = await fetchFormJSONById(this.formId, false);
+      expect(json.questions).to.have.length(2);
+      expect(json.questions.map(q => q.id))
+        .to.not.include(this.questions[1].id);
     });
   });
 });

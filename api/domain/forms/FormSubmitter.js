@@ -87,6 +87,17 @@ class FormSubmitter {
       }
     });
   }
+
+  /**
+   * Returns a list of questions that coorespond to the form and are interesting
+   * to us.
+   * @returns {Question[]}
+   * @private
+   */
+  getQuestions() {
+    return this.form.questions.filter(q => !q.deletedAt);
+  }
+
   /**
    * Matches the keys present in the request body inputs with questions. Will
    * reject if it finds something funny:
@@ -105,7 +116,7 @@ class FormSubmitter {
       return new Promise((resolve, reject) => {
         const id = getIdFromQuestionKey(key);
 
-        const formQuestion = _.find(this.form.questions, { id });
+        const formQuestion = _.find(this.getQuestions(), { id });
         if (formQuestion) {
           return resolve(formQuestion);
         }
@@ -125,7 +136,7 @@ class FormSubmitter {
     })).then(questions => {
       // Always concat and dedupe the required questions.
       return _([
-        ..._.filter(this.form.questions, 'required'),
+        ..._.filter(this.getQuestions(), 'required'),
         ...questions
       ]).uniqBy('id').compact().value();
     });
