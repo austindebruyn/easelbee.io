@@ -42,13 +42,18 @@ module.exports.update = function (req, res, next) {
         });
       }
 
+      if (!(req.body.type in Question.TYPES)) {
+        throw new UnprocessableEntityError('bad-type', {
+          fields: { type: req.body.type }
+        });
+      }
+      req.body.type = Question.TYPES[req.body.type];
+
       return new QuestionUpdater(question).update(req.body);
     })
     .then(result => result.toJSON())
     .then(function (record) {
       return res.json({ ok: true, record });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 };

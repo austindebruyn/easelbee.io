@@ -13,7 +13,12 @@
           )
         .form-group
           h4 type
-          p coming soon...
+          select(
+            ref='type'
+            @change='handleChange'
+          )
+            option(value='radio') Multiple-choice
+            option(value='string') Short Text
         .form-group
           h4 options
           p coming soon...
@@ -47,6 +52,7 @@ export default {
       this.$store.dispatch('updateQuestion', {
         id: this.question.id,
         title: this.$refs.title.getValue(),
+        type: this.$refs.type.value,
         options: []
       });
 

@@ -69,11 +69,9 @@ module.exports.submit = function (req, res, next) {
     })
     .then(function (record) {
       const submitter = new FormSubmitter(state.form);
-      console.log(1);
       return submitter.submit(req.body);
     })
     .then(function () {
-      console.log(2);
       return res.render('forms/submit', {
         user: state.form.user
       });

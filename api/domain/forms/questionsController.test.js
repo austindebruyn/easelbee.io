@@ -4,6 +4,7 @@ const clock = require('../../tests/clock');
 const factory = require('../../tests/factory');
 const expect = require('chai').expect;
 const sinon = require('sinon');
+const Question = require('./Question');
 const QuestionUpdater = require('./QuestionUpdater');
 
 describe('questionsController', function () {
@@ -90,6 +91,19 @@ describe('questionsController', function () {
             });
         });
 
+        it('should error on bad type', function () {
+          return agent()
+            .patch(`/api/questions/${this.question.id}`)
+            .send({ title: 'Hello!', type: 'banana' })
+            .cookiejar()
+            .accept('application/json')
+            .expect(422, {
+              ok: false,
+              code: 'bad-type',
+              fields: { type: 'banana' }
+            });
+        });
+
         it('should update model', function () {
           this.sandbox
             .stub(QuestionUpdater.prototype, 'update')
@@ -97,7 +111,8 @@ describe('questionsController', function () {
 
           const body = {
             title: 'What kind of car do you drive?',
-            options: []
+            options: [],
+            type: 'string'
           };
 
           return agent()
@@ -111,7 +126,11 @@ describe('questionsController', function () {
               expect(res.body.record).to.include({ id: this.question.id });
 
               expect(QuestionUpdater.prototype.update)
-                .to.have.been.calledWith(body);
+                .to.have.been.calledWith({
+                  title: 'What kind of car do you drive?',
+                  options: [],
+                  type: Question.TYPES.string
+                });
             });
         });
       });
