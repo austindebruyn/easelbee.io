@@ -130,8 +130,12 @@ describe('questionsController', function () {
           title: 'Having a good time',
           options: []
         });
+        // New question should be a clone more or less.
         expect(result.id).to.not.eql(this.question.id);
-        expect(result.originalQuestionId).to.eql(this.question.id);
+        expect(result).to.include({
+          originalQuestionId: this.question.id,
+          formId: this.question.formId
+        });
         expect(result.questionOptions).to.have.length(0);
 
         // Original question should be intact with all question options.

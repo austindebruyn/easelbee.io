@@ -13,7 +13,6 @@ module.exports = function errorHandler(err, req, res, next) {
   if (req.accepts('html')) {
     return next(err);
   }
-
   if (err instanceof APIError) {
     return res.status(err.statusCode).json({
       ok: false,

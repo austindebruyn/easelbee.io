@@ -4,6 +4,7 @@ const QuestionOption = require('./QuestionOption');
 const User = require('../users/User');
 const FormSubmitter = require('./FormSubmitter');
 const { NotFoundError } = require('../../core/errors');
+const { Op } = require('../../services/db').Sequelize;
 
 module.exports.get = function (req, res, next) {
   const { slug } = req.params;
@@ -15,7 +16,15 @@ module.exports.get = function (req, res, next) {
 
   return Form.findOne({
     where: { slug },
-    include: [User, { model: Question, include: [QuestionOption] }]
+    include: [
+      User,
+      {
+        model: Question,
+        where: { deletedAt: { [Op.eq]: null } },
+        required: false,
+        include: [QuestionOption]
+      }
+    ]
   })
     .then(function (record) {
       if (!record) {
@@ -60,23 +69,27 @@ module.exports.submit = function (req, res, next) {
     })
     .then(function (record) {
       const submitter = new FormSubmitter(state.form);
-
+      console.log(1);
       return submitter.submit(req.body);
     })
     .then(function () {
+      console.log(2);
       return res.render('forms/submit', {
         user: state.form.user
       });
     })
-    .catch(function (e) {
-      return next(e);
-    });
+    .catch(next);
 };
 
 module.exports.index = function (req, res, next) {
   return Form.findAll({
     where: { userId: req.user.id },
-    include: [{ model: Question, include: [QuestionOption] }]
+    include: [{
+      model: Question,
+      where: { deletedAt: { [Op.eq]: null } },
+      include: [QuestionOption],
+      required: false
+    }]
   })
     .then(function (records) {
       return Promise.all(records.map(r => r.toJSON()));

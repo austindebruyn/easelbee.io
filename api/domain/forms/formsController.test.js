@@ -97,8 +97,8 @@ describe('formsController', function () {
         beforeEach(async function () {
           this.form = await factory.create('form', {
             userId: this.user.id
-          })
-          const formJson = await this.form.toJSON();
+          });
+          this.formJson = await this.form.toJSON();
         });
 
         it('should return records', function () {
