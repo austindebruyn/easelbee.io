@@ -41,6 +41,14 @@ Question.TYPES = {
 };
 
 /**
+ * Returns whether or not this question has associated QuestionOption models.
+ * @returns {Boolean}
+ */
+Question.prototype.isMultipleChoice = function () {
+  return [Question.TYPES.checkbox, Question.TYPES.radio].includes(this.type);
+};
+
+/**
  * Promises to ensure that `form` is eager loaded on this instance.
  * @returns {Promise}
  */

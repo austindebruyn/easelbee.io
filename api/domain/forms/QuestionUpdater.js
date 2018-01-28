@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const Question = require('./Question');
 const Answer = require('./Answer');
+const {
+  UnprocessableEntityError
+} = require('../../core/errors');
 
 /**
  * The QuestionUpdater class takes an object of parameters and updates the
@@ -41,6 +44,48 @@ class QuestionUpdater {
   }
 
   /**
+   * @typedef QuestionOption
+   * @property {String} value
+   */
+  /**
+   * @private
+   * @param {QuestionOption[]} options 
+   */
+  async createMissingOptions(options) {
+    await this.question.ensureQuestionOptions();
+    const values = this.question.questionOptions.map(o => o.value);
+
+    for (let i = 0; i < options.length; i++) {
+      const option = options[i];
+
+      if (!values.includes(option.value)) {
+        const newQuestionOption = await this.question.createQuestionOption({
+          value: option.value
+        });
+        this.question.questionOptions.push(newQuestionOption);
+      }
+    }
+  }
+
+  /**
+   * @private
+   * @param {QuestionOption[]} options
+   */
+  async destroyExtraOptions(options = []) {
+    await this.question.ensureQuestionOptions();
+    const { questionOptions } = this.question;
+    const expectedValues = options.map(o => o.value);
+
+    for (let i = 0; i < questionOptions.length; i++) {
+      const questionOption = questionOptions[i];
+      if (!expectedValues.includes(questionOption.value)) {
+        await questionOption.destroy();
+        _.pull(this.question.questionOptions, questionOption);
+      }
+    }
+  }
+
+  /**
    * Promises to update the question with the new parameters provided. Resolves
    * with the new model.
    * @param {Object} body
@@ -53,6 +98,19 @@ class QuestionUpdater {
 
     Object.assign(this.question, body);
     await this.question.save();
+
+    if (this.question.isMultipleChoice()) {
+      if (!body.options || !Array.isArray(body.options)) {
+        throw new UnprocessableEntityError('options-not-array');
+      }
+
+      await this.createMissingOptions(body.options);
+    }
+    // We should destroy missing options even for non-multiple-choice questions
+    // because a Question that has changed type from `radio` to `string` should
+    // have all options removed.
+    await this.destroyExtraOptions(body.options);
+
     return this.question;
   }
 }

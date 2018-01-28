@@ -46,7 +46,8 @@ export default {
 
       this.$store.dispatch('updateQuestion', {
         id: this.question.id,
-        title: this.$refs.title.getValue()
+        title: this.$refs.title.getValue(),
+        options: []
       });
 
       this.dirty = false;

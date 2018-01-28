@@ -31,7 +31,7 @@ module.exports.update = function (req, res, next) {
         throw new UnprocessableEntityError('no-attributes');
       }
 
-      const allowedAttributes = [ 'title' ];
+      const allowedAttributes = [ 'title', 'type', 'options' ];
       const forbiddenAttributes = _.difference(
         attributeKeys,
         allowedAttributes

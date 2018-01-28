@@ -15,7 +15,7 @@ QuestionOption.prototype.toJSON = function () {
   return new Promise(resolve => {
     const {
       id,
-      userId,
+      questionId,
       value,
       createdAt,
       updatedAt
@@ -23,7 +23,7 @@ QuestionOption.prototype.toJSON = function () {
 
     return resolve({
       id,
-      userId,
+      questionId,
       value,
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()

@@ -95,7 +95,10 @@ describe('questionsController', function () {
             .stub(QuestionUpdater.prototype, 'update')
             .resolves(this.question);
 
-          const body = { title: 'What kind of car do you drive?' };
+          const body = {
+            title: 'What kind of car do you drive?',
+            options: []
+          };
 
           return agent()
             .patch(`/api/questions/${this.question.id}`)
