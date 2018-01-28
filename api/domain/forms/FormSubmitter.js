@@ -176,7 +176,7 @@ class FormSubmitter {
         })
         .then(() => {
           this.form.submittedAt = new Date();
-          return this.form.save();
+          return this.form.save({ transaction: t });
         })
         .then(() => {
           return this._commission;
