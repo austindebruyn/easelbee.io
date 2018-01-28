@@ -5,7 +5,7 @@ const QuestionUpdater = require('./QuestionUpdater');
 const Question = require('./Question');
 const QuestionOption = require('./QuestionOption');
 
-describe('questionsController', function () {
+describe('QuestionUpdater', function () {
   clock();
 
   beforeEach(async function () {

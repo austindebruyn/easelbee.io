@@ -69,6 +69,7 @@ factory.define('question', Question, {
   title: factory.chance('sentence'),
   order: factory.chance('integer'),
   deletedAt: () => null,
+  required: () => false,
   type: function () {
     const keys = Object.keys(Question.TYPES);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];

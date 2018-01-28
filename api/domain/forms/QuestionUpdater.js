@@ -39,7 +39,13 @@ class QuestionUpdater {
     this.originalQuestion = this.question;
     this.question = await Question.build({
       originalQuestionId: this.originalQuestion.id,
-      ..._.pick(this.originalQuestion, 'title', 'type', 'order', 'formId')
+      ..._.pick(this.originalQuestion,
+        'title',
+        'type',
+        'order',
+        'formId',
+        'required'
+      )
     });
   }
 

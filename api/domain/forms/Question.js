@@ -14,6 +14,7 @@ const Question = db.define('questions', {
   },
   required: {
     type: db.Sequelize.BOOLEAN,
+    allowNull: false,
     default: false
   },
   order: {
