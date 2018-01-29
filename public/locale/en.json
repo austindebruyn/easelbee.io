@@ -75,12 +75,19 @@
       "fillout-counts-value": "{{ count }} time",
       "fillout-counts-value_plural": "{{ count }} times",
       "revenue-label-1": "You’ve earned",
-      "revenue-label-2": "from this form"
+      "revenue-label-2": "from this form",
+      "questions": {
+        "title": "Question Title",
+        "type": "Type",
+        "options": "Options",
+        "add-option": "Add option"
+      }
     }
   },
   "not-found": {
     "title": "Error 404!",
     "body": "That page wasn’t found!"
   },
-  "feature-not-built": "This feature has not been built yet."
+  "feature-not-built": "This feature has not been built yet.",
+  "save": "Save"
 }

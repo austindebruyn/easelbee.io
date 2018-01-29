@@ -4,6 +4,7 @@ import axios from 'axios';
 import omit from 'lodash.omit';
 import flatten from 'lodash.flatten';
 import Resource, { STATUS } from 'state/Resource';
+import clone from '../lib/clone';
 
 Vue.use(Vuex);
 
@@ -179,6 +180,21 @@ export default new Vuex.Store({
     updateQuestionSuccess: function (state, { id, json }) {
       state.questions[id].status = STATUS.LOADED;
       state.questions[id].value = json;
+
+      state.forms.value = state.forms.value.map(function (form) {
+        if (form.id === json.formId) {
+          const newForm = clone(form);
+          newForm.questions = form.questions.map(function (q) {
+            debugger
+            if (q.id === id) {
+              return json;
+            }
+            return q;
+          });
+          return newForm;
+        }
+        return clone(form);
+      });
     },
     updateQuestionFailure: function (state, { id, errors }) {
       state.questions[id].status = STATUS.ERRORED;
@@ -413,13 +429,13 @@ export default new Vuex.Store({
         }
       })
         .then(function ({ data }) {
-          commit('updateQuestionSuccess', data.record);
+          commit('updateQuestionSuccess', { id: payload.id, json: data.record });
         })
         .catch(function (err) {
           const errors = err.response
             ? err.response.data.errors
             : [];
-          commit('updateQuestionFailure', errors);
+          commit('updateQuestionFailure', { id: payload.id, errors });
         });
     }
   }
