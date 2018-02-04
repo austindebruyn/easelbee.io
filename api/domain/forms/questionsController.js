@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const Form = require('./Form');
 const Question = require('./Question');
 const {
   NotFoundError,
@@ -56,4 +57,34 @@ module.exports.update = function (req, res, next) {
       return res.json({ ok: true, record });
     })
     .catch(next);
+};
+
+module.exports.destroy = function (req, res, next) {
+  async function handle() {
+    const question = await Question.findById(req.params.id, {
+      include: [Form]
+    });
+
+    if (!question) throw new NotFoundError();
+
+    if (question.form.userId !== req.user.id) throw new UnauthorizedError();
+
+    question.deletedAt = new Date();
+    await question.save();
+
+    const otherQuestions = await question.form.getQuestions();
+
+    for (let i = 0; i < otherQuestions.length; i++) {
+      const otherQuestion = otherQuestions[i];
+
+      if (otherQuestion.order > question.order) {
+        otherQuestion.order -= 1;
+        await otherQuestion.save();
+      }
+    }
+
+    return res.sendStatus(204);
+  }
+
+  handle().catch(next);
 };
