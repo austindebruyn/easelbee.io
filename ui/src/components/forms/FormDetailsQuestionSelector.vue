@@ -12,8 +12,14 @@
 export default {
   name: 'form-details-question-selector',
   props: {
-    current: Number,
-    total: Number
+    current: {
+      type: Number,
+      required: true
+    },
+    total: {
+      type: Number,
+      required: true
+    }
   },
   computed: {
     bubbles: function () {
