@@ -2,7 +2,7 @@ import VDropdown from './VDropdown';
 import { mount } from 'avoriaz';
 import sinon from 'sinon';
 
-describe.only('VDropdown', function () {
+describe('VDropdown', function () {
   beforeEach(function () {
     this.options = [
       { label: 'Crimson', value: 'red' },

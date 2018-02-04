@@ -13,12 +13,12 @@
           )
         .form-group
           h4 {{ $t('forms.details.questions.type') }}
-          select(
+          v-dropdown(
             ref='type'
+            :defaultValue='this.question.type'
+            :options='[{ label: "Multiple-choice", value: "radio" }, { label: "Short Text", value: "string" }]'
             @change='handleChange'
           )
-            option(value='radio') Multiple-choice
-            option(value='string') Short Text
         .form-group(v-if='shouldShowOptions')
           h4 {{ $t('forms.details.questions.options') }}
           question-details-options(
@@ -34,6 +34,7 @@
 <script>
 import { questionShape } from 'components/shapes';
 import VInputText from 'components/controls/VInputText';
+import VDropdown from 'components/controls/VDropdown';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
 import clone from '../../../lib/clone';
 import pick from 'lodash.pick';
@@ -42,6 +43,7 @@ export default {
   name: 'question-details',
   components: {
     'v-input-text': VInputText,
+    'v-dropdown': VDropdown,
     'question-details-options': QuestionDetailsOptions
   },
   props: {
@@ -72,14 +74,14 @@ export default {
 
       const options = this.scrubQuestionOptions(
         this.shouldShowOptions
-        ? this.$refs.questionOptions.getValues()
-        : this.question.options || []
+          ? this.$refs.questionOptions.getValues()
+          : this.question.options || []
       );
 
       this.$store.dispatch('updateQuestion', {
         id: this.question.id,
         title: this.$refs.title.getValue(),
-        type: this.$refs.type.value,
+        type: this.$refs.type.getValue(),
         options
       });
 
@@ -92,7 +94,7 @@ export default {
       this.$store.dispatch('updateQuestion', {
         id: this.question.id,
         title: this.$refs.title.getValue(),
-        type: this.$refs.type.value,
+        type: this.$refs.type.getValue(),
         options: this.scrubQuestionOptions(options)
       });
     }

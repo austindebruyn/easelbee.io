@@ -185,7 +185,6 @@ export default new Vuex.Store({
         if (form.id === json.formId) {
           const newForm = clone(form);
           newForm.questions = form.questions.map(function (q) {
-            debugger
             if (q.id === id) {
               return json;
             }

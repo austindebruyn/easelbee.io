@@ -10,7 +10,7 @@ describe('clone', function () {
       g: void 0
     };
     const result = clone(source);
-    debugger
+
     expect(result).to.not.equal(source);
     expect(result).to.eql(source);
   });

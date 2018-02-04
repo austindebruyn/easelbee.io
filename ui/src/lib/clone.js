@@ -1,4 +1,4 @@
-function recurse(source) {
+function recurse (source) {
   if (source === null || typeof source !== 'object') {
     return source;
   }

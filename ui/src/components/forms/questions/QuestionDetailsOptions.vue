@@ -49,8 +49,4 @@ export default {
 
 <style lang="scss" scoped>
   @import 'src/styles/colors';
-
-  .question-details-options {
-    
-  }
 </style>

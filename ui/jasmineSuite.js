@@ -8,6 +8,9 @@ import stubTween from './support/stubTween';
 import stubI18n from './support/stubI18n';
 import Vue from 'vue';
 import Vuex from 'vuex';
+import includes from 'array-includes';
+
+Array.prototype.includes = includes;
 
 es6promise.polyfill();
 chai.use(sinonChai);

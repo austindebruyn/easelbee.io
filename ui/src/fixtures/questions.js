@@ -5,7 +5,6 @@ const chance = new Chance();
 export default {
   basic: {
     id: 1,
-    userId: 1,
     formId: 1,
     title: 'What kind of drawing?',
     type: 'string',
@@ -15,7 +14,6 @@ export default {
   },
   basic2: {
     id: 2,
-    userId: 2,
     formId: 2,
     title: 'What is your name?',
     type: 'string',
@@ -25,7 +23,6 @@ export default {
   },
   basicRadio: {
     id: 3,
-    userId: 2,
     formId: 2,
     title: 'What best fruit?',
     type: 'radio',
@@ -33,12 +30,14 @@ export default {
     options: [
       {
         id: 0,
+        questionId: 3,
         value: 'Apple',
         createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
         updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
       },
       {
         id: 1,
+        questionId: 3,
         value: 'Banana',
         createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
         updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
@@ -50,14 +49,27 @@ export default {
 };
 
 export function buildQuestion (attrs = {}) {
-  return {
+  const question = {
     id: attrs.id || chance.integer({ min: 1, max: 1024 }),
-    userId: attrs.userId || chance.integer({ min: 1, max: 1024 }),
     formId: attrs.formId || chance.integer({ min: 1, max: 1024 }),
     title: chance.sentence(),
-    type: 'string',
+    type: attrs.type || 'string',
     required: true,
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()
   };
+
+  if (question.type === 'radio') {
+    question.options = attrs.options.map(function (option) {
+      return {
+        id: option.id || chance.integer({ min: 1, max: 1024 }),
+        questionId: question.id,
+        value: option.value,
+        createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
+        updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()
+      };
+    });
+  }
+
+  return question;
 }

@@ -36,7 +36,9 @@ describe('QuestionDetails', function () {
     this.wrapper.first('form').trigger('submit');
     expect(this.actions.updateQuestion.args[0][1]).to.eql({
       id: this.question.id,
-      title: 'How old are you?'
+      title: 'How old are you?',
+      type: 'string',
+      options: []
     });
   });
 });

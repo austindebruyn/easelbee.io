@@ -4,6 +4,7 @@ export default function (wrapper) {
       wrapper.element.value = value;
       wrapper.trigger('input');
       wrapper.trigger('change');
+      wrapper.trigger('keyup');
     }
   };
 };
