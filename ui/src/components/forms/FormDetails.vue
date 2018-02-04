@@ -4,6 +4,7 @@
       :current='order'
       :total='this.form.questions.length'
       @click='handleSelectQuestion'
+      @createClick='handleCreateQuestionClick'
     )
     .row
       .col-12.col-md-9
@@ -11,6 +12,7 @@
           v-if='selectedQuestion'
         )
           question-details(
+            :key='selectedQuestion.id'
             :question='selectedQuestion'
           )
       .col-12.col-md-3
@@ -48,6 +50,9 @@ export default {
   methods: {
     handleSelectQuestion: function (order) {
       this.order = order;
+    },
+    handleCreateQuestionClick: function () {
+      this.$store.dispatch('createQuestion', { formId: this.form.id });
     }
   }
 };

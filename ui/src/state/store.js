@@ -200,6 +200,31 @@ export default new Vuex.Store({
       state.questions[id].errors = errors;
     },
 
+    createQuestionStart: function (state) {
+      state.forms.status = STATUS.MUTATING;
+    },
+    createQuestionSuccess: function (state, { formId, json }) {
+      const forms = clone(state.forms);
+
+      forms.status = STATUS.LOADED;
+
+      forms.value.forEach(function (form) {
+        if (form.id === formId) {
+          form.questions.push(json);
+        }
+      });
+
+      const newQuestions = clone(state.questions);
+      newQuestions[json.id] = json;
+
+      state.forms = forms;
+      state.questions = newQuestions;
+    },
+    createQuestionFailure: function (state, errors) {
+      state.forms.status = STATUS.ERRORED;
+      state.forms.errors = errors;
+    },
+
     set_emailPreferences: function (state, emailPreferences) {
       return state.emailPreferences = emailPreferences;
     }
@@ -435,6 +460,24 @@ export default new Vuex.Store({
             ? err.response.data.errors
             : [];
           commit('updateQuestionFailure', { id: payload.id, errors });
+        });
+    },
+    createQuestion ({ state, commit }, payload) {
+      const { formId } = payload;
+      commit('createQuestionStart');
+
+      return axios.post(`/api/forms/${formId}/questions`, {}, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(({ data }) => {
+          commit('createQuestionSuccess', { formId, json: data.record });
+        })
+        .catch(({ response }) => {
+          commit('createQuestionFailure', response && response.data.errors);
         });
     }
   }

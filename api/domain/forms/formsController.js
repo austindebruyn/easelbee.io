@@ -138,7 +138,7 @@ module.exports.createQuestion = function (req, res, next) {
     const question = await Question.create({
       formId: form.id,
       order,
-      type: 'string',
+      type: Question.TYPES.string,
       title: `Question #${order}`,
       required: false
     });

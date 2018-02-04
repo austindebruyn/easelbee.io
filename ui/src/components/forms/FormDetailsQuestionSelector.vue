@@ -6,6 +6,9 @@
       :class='{ selected: bubble.selected }'
       @click='handleClick(bubble.number)'
     ) {{ bubble.number }}
+    button.bubble.create-question(
+      @click='handleCreateClick'
+    ) +
 </template>
 
 <script>
@@ -36,6 +39,9 @@ export default {
   methods: {
     handleClick: function (number) {
       this.$emit('click', number);
+    },
+    handleCreateClick: function () {
+      this.$emit('createClick');
     }
   }
 };
@@ -69,6 +75,11 @@ export default {
       &.selected {
         font-weight: bold;
         background-color: $blue-dark;
+      }
+
+      &.create-question {
+        background-color: white;
+        color: $blue;
       }
     }
   }

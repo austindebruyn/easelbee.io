@@ -320,6 +320,7 @@ describe('formsController', function () {
                 order: 1,
                 required: false,
                 title: 'Question #1',
+                type: 'string',
                 createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
                 updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
               }

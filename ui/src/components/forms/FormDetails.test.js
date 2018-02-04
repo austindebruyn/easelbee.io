@@ -6,14 +6,20 @@ import QuestionDetails from './questions/QuestionDetails';
 import FormDetailsQuestionSelector from './FormDetailsQuestionSelector';
 import { buildQuestion } from 'fixtures/questions';
 import { nextTick } from 'vue';
+import sinon from 'sinon';
+import Vuex from 'vuex';
 
 describe('FormDetails', function () {
   beforeEach(function () {
     this.form = buildForm();
 
+    this.actions = { createQuestion: sinon.spy() };
+    this.store = new Vuex.Store({ actions: this.actions });
+
     this.wrapper = shallow(FormDetails, {
       propsData: { form: this.form },
-      i18n: this.i18n
+      i18n: this.i18n,
+      store: this.store
     });
   });
 
@@ -36,7 +42,8 @@ describe('FormDetails', function () {
 
       this.wrapper = shallow(FormDetails, {
         propsData: { form: this.form },
-        i18n: this.i18n
+        i18n: this.i18n,
+        store: this.store
       });
     });
 
@@ -71,6 +78,16 @@ describe('FormDetails', function () {
         });
         done();
       });
+    });
+
+    it('should dispatch create new question when (+) clicked', function () {
+      const questionSelector = this.wrapper.first(FormDetailsQuestionSelector);
+
+      questionSelector.vm.$emit('createClick');
+      expect(this.actions.createQuestion).to.have.been.calledWith(
+        sinon.match.object,
+        { formId: this.form.id }
+      );
     });
   });
 });
