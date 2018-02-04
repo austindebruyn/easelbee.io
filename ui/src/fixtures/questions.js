@@ -9,6 +9,7 @@ export default {
     title: 'What kind of drawing?',
     type: 'string',
     required: true,
+    order: 1,
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   },
@@ -18,6 +19,7 @@ export default {
     title: 'What is your name?',
     type: 'string',
     required: true,
+    order: 2,
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   },
@@ -27,6 +29,7 @@ export default {
     title: 'What best fruit?',
     type: 'radio',
     required: true,
+    order: 3,
     options: [
       {
         id: 0,
@@ -55,6 +58,7 @@ export function buildQuestion (attrs = {}) {
     title: chance.sentence(),
     type: attrs.type || 'string',
     required: true,
+    order: attrs.order || chance.integer({ min: 1, max: 99 }),
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()
   };

@@ -27,6 +27,7 @@ export const questionShape = VueTypes.shape({
     updatedAt: VueTypes.string.isRequired
   })),
   required: VueTypes.bool,
+  order: VueTypes.number.isRequired,
   title: VueTypes.string.isRequired,
   type: VueTypes.oneOf(['radio', 'string']).isRequired,
   createdAt: VueTypes.string.isRequired,

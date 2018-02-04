@@ -22,7 +22,8 @@ describe('FilloutFetcher', function () {
         return factory.createMany('question', 2, {
           formId: this.form.id,
           title: 'Whatever',
-          type: Question.TYPES.string
+          type: Question.TYPES.string,
+          order: 1
         });
       })
       .then(questions => {
@@ -56,6 +57,7 @@ describe('FilloutFetcher', function () {
               title: 'Whatever',
               type: 'string',
               required: false,
+              order: 1,
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
             },
@@ -68,6 +70,7 @@ describe('FilloutFetcher', function () {
               title: 'Whatever',
               type: 'string',
               required: false,
+              order: 1,
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
             },

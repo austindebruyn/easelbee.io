@@ -96,7 +96,8 @@ Question.prototype.toJSON = function () {
       updatedAt,
       title,
       type,
-      required
+      required,
+      order
     } = this.get();
 
     const attrs = {
@@ -104,6 +105,7 @@ Question.prototype.toJSON = function () {
       formId,
       title,
       required,
+      order,
       type: invert(Question.TYPES)[type],
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
