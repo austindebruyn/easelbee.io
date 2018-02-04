@@ -4,6 +4,7 @@ const clock = require('../../tests/clock');
 const factory = require('../../tests/factory');
 const expect = require('chai').expect;
 const Form = require('./Form');
+const Question = require('./Question');
 const Commission = require('../commissions/Commission');
 const User = require('../users/User');
 const sinon = require('sinon');
@@ -247,6 +248,99 @@ describe('formsController', function () {
           .then(res => {
             expect(res.text).to.include('<title>Error</title>');
           });
+      });
+    });
+  });
+
+  describe('POST /api/forms/:id/questions', function () {
+    beforeEach(async function () {
+      this.user = await factory.create('user');
+      this.form = await factory.create('form', { id: 1, userId: this.user.id });
+      this.otherForm = await factory.create('form', { id: 2 });
+    });
+
+    it('should 403 if signed out', function () {
+      return agent()
+        .post('/api/forms/1/questions')
+        .cookiejar()
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(async function () {
+        await signIn(this.user);
+      });
+
+      it('should 404 when no record', function () {
+        return agent()
+          .post('/api/forms/9999/questions')
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      it('should 403 when not owned', function () {
+        return agent()
+          .post('/api/forms/2/questions')
+          .cookiejar()
+          .accept('application/json')
+          .expect(403);
+      });
+
+      describe('when creating fails', function () {
+        beforeEach(function () {
+          sinon.stub(Question, 'create').rejects();
+        });
+
+        afterEach(function () {
+          Question.create.restore();
+        });
+
+        it('should 500', async function () {
+          await agent()
+            .post('/api/forms/1/questions')
+            .cookiejar()
+            .accept('application/json')
+            .expect(500);
+        });
+      });
+
+      describe('on success', function () {
+        it('should return 200', async function () {
+          await agent()
+            .post('/api/forms/1/questions')
+            .cookiejar()
+            .accept('application/json')
+            .expect(200, {
+              ok: true,
+              record: {
+                id: 1,
+                formId: 1,
+                order: 1,
+                required: false,
+                title: 'Question #1',
+                createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
+                updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
+              }
+            });
+        });
+
+        it('should create multiple questions in order', async function () {
+          await agent()
+            .post('/api/forms/1/questions')
+            .cookiejar()
+            .accept('application/json');
+          await agent()
+            .post('/api/forms/1/questions')
+            .cookiejar()
+            .accept('application/json');
+
+          const questions = await this.form.getQuestions();
+          expect(questions.length).to.eql(2);
+          expect(questions[0].order).to.eql(1);
+          expect(questions[1].order).to.eql(2);
+        });
       });
     });
   });

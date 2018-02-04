@@ -3,7 +3,10 @@ const Question = require('./Question');
 const QuestionOption = require('./QuestionOption');
 const User = require('../users/User');
 const FormSubmitter = require('./FormSubmitter');
-const { NotFoundError } = require('../../core/errors');
+const {
+  NotFoundError,
+  UnauthorizedError
+} = require('../../core/errors');
 const { Op } = require('../../services/db').Sequelize;
 
 module.exports.get = function (req, res, next) {
@@ -120,4 +123,31 @@ module.exports.create = function (req, res, next) {
         ok: false
       });
     });
+};
+
+module.exports.createQuestion = function (req, res, next) {
+  async function handle() {
+    const form = await Form.findById(req.params.id, { include: [Question] });
+
+    if (!form) throw new NotFoundError();
+
+    if (form.userId !== req.user.id) throw new UnauthorizedError();
+
+    const order = form.questions.length + 1;
+
+    const question = await Question.create({
+      formId: form.id,
+      order,
+      type: 'string',
+      title: `Question #${order}`,
+      required: false
+    });
+
+    return res.json({
+      ok: true,
+      record: await question.toJSON()
+    });
+  }
+
+  handle().catch(next);
 };
