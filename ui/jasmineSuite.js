@@ -10,6 +10,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import includes from 'array-includes';
 
+/* eslint-disable no-extend-native */
 Array.prototype.includes = includes;
 
 es6promise.polyfill();

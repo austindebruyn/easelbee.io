@@ -3,7 +3,6 @@ import VInputText from 'components/controls/VInputText';
 import { shallow, mount } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
 import sinon from 'sinon';
-import Vuex from 'vuex';
 
 describe('QuestionDetailsOptions', function () {
   beforeEach(function () {
@@ -66,5 +65,5 @@ describe('QuestionDetailsOptions', function () {
         { value: 'apple' }
       ]);
     });
-  })
+  });
 });

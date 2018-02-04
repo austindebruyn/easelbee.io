@@ -22,6 +22,7 @@ export default {
       type: String,
       default: void 0
     },
+    /* eslint-disable vue/require-default-prop */
     options: VueTypes.arrayOf(
       VueTypes.shape({
         label: VueTypes.string.isRequired,
