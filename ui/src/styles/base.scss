@@ -30,3 +30,9 @@ h1, h2, h3, h4, h5 {
   border: none;
   border-radius: 0;
 }
+
+.card-controls {
+  padding-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}

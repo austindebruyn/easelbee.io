@@ -1,4 +1,5 @@
 import FormsListItem from './FormsListItem';
+import VCardControl from 'components/controls/VCardControl';
 import { shallow } from 'avoriaz';
 import formsFixture, { buildForm } from 'fixtures/forms';
 import clock from '../../../../api/tests/clock';
@@ -22,9 +23,9 @@ describe('FormsListItem', function () {
   it('should have pencil icon to edit page', function () {
     wrapperFactory.call(this, formsFixture.basic);
 
-    const editLink = this.wrapper.first(RouterLink);
+    const editLink = this.wrapper.find(VCardControl)[1];
     expect(editLink.propsData().to).to.eql('/forms/1');
-    expect(editLink.contains('.fa.fa-pencil')).to.be.true;
+    expect(editLink.propsData().icon).to.eql('fa-pencil');
   });
 
   it('should have link icon to public url', function () {
@@ -32,9 +33,9 @@ describe('FormsListItem', function () {
 
     const expectedUrl = 'http://local-easelbee.io:3000/forms/some-form';
 
-    const publicLink = this.wrapper.find('.controls .control-link')[2];
-    expect(publicLink.getAttribute('href')).to.eql(expectedUrl);
-    expect(publicLink.contains('.fa.fa-external-link')).to.be.true;
+    const publicLink = this.wrapper.find(VCardControl)[2];
+    expect(publicLink.propsData().href).to.eql(expectedUrl);
+    expect(publicLink.propsData().icon).to.eql('fa-external-link');
   });
 
   it('should render last updated', function () {

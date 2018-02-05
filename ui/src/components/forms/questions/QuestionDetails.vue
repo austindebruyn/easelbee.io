@@ -29,12 +29,19 @@
           )
         .form-group(v-if='dirty')
           button.btn.btn-primary(type='submit') {{ $t('save') }}
+      .card-controls
+        v-card-control(
+          icon='fa-trash-o'
+          kind='danger'
+          @click='handleDestroyClick'
+        )
 </template>
 
 <script>
 import { questionShape } from 'components/shapes';
 import VInputText from 'components/controls/VInputText';
 import VDropdown from 'components/controls/VDropdown';
+import VCardControl from 'components/controls/VCardControl';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
 import clone from '../../../lib/clone';
 import pick from 'lodash.pick';
@@ -44,6 +51,7 @@ export default {
   components: {
     'v-input-text': VInputText,
     'v-dropdown': VDropdown,
+    'v-card-control': VCardControl,
     'question-details-options': QuestionDetailsOptions
   },
   props: {
@@ -97,6 +105,9 @@ export default {
         type: this.$refs.type.getValue(),
         options: this.scrubQuestionOptions(options)
       });
+    },
+    handleDestroyClick: function () {
+      this.$store.dispatch('destroyQuestion', { id: this.question.id });
     }
   }
 };
@@ -107,6 +118,10 @@ export default {
 
   .card-body {
     padding: 3rem;
+  }
+
+  .card-controls {
+
   }
 
   .form-group {

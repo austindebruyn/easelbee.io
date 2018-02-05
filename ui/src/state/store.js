@@ -225,6 +225,14 @@ export default new Vuex.Store({
       state.forms.errors = errors;
     },
 
+    destroyQuestionStart: function (state) {
+      state.forms.status = STATUS.MUTATING;
+    },
+    destroyQuestionFailure: function (state, errors) {
+      state.forms.status = STATUS.ERRORED;
+      state.forms.errors = errors;
+    },
+
     set_emailPreferences: function (state, emailPreferences) {
       return state.emailPreferences = emailPreferences;
     }
@@ -478,6 +486,24 @@ export default new Vuex.Store({
         })
         .catch(({ response }) => {
           commit('createQuestionFailure', response && response.data.errors);
+        });
+    },
+    destroyQuestion ({ state, commit, dispatch }, payload) {
+      const { id } = payload;
+      commit('destroyQuestionStart');
+
+      return axios.delete(`/api/questions/${id}`, {}, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(({ data }) => {
+          dispatch('fetchForms');
+        })
+        .catch(({ response }) => {
+          commit('destroyQuestionFailure', response && response.data.errors);
         });
     }
   }

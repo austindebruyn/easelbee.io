@@ -17,21 +17,31 @@
             h2 {{ count }}
             strong.text-muted
               | {{ $t('forms.index.item.question-count', { count: count }) }}
-        .controls
-          a.control-link.danger-link(href='javascript:;')
-            i.fa.fa-trash-o
-          router-link.control-link(:to='editUrl')
-            i.fa.fa-pencil
-          a.control-link(:href='form.publicUrl', target='_blank')
-            i.fa.fa-external-link
+        .card-controls
+          v-card-control(
+            icon='fa-trash-o'
+            kind='danger'
+          )
+          v-card-control(
+            icon='fa-pencil'
+            :to='editUrl'
+          )
+          v-card-control(
+            icon='fa-external-link'
+            :href='form.publicUrl'
+          )
 </template>
 
 <script>
 import { formShape } from 'components/shapes';
 import moment from 'moment';
+import VCardControl from 'components/controls/VCardControl';
 
 export default {
   name: 'forms-list-item',
+  components: {
+    'v-card-control': VCardControl
+  },
   props: {
     /* eslint-disable vue/require-default-prop */
     form: formShape.isRequired
@@ -74,43 +84,6 @@ export default {
           text-transform: uppercase;
           font-family: sinkinsans;
           font-size: 0.6rem;
-        }
-      }
-    }
-
-    .controls {
-      padding-top: 16px;
-      float: right;
-
-      .control-link {
-        i {
-          border: 1px solid $blue;
-          padding: 8px 16px;
-          color: $blue;
-          font-size: 1.5rem;
-
-          &:hover {
-            color: $blue-light;
-            border-color: $blue-light;
-          }
-        }
-
-        margin-right: 8px;
-
-        &:last-child {
-          margin-right: 0;
-        }
-      }
-
-      .danger-link {
-        i {
-          color: $red;
-          border-color: $red;
-
-          &:hover {
-            color: $red-light;
-            border-color: $red-light;
-          }
         }
       }
     }

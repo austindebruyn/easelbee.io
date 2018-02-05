@@ -1,5 +1,6 @@
 import QuestionDetails from './QuestionDetails';
 import VInputText from 'components/controls/VInputText';
+import VCardControl from 'components/controls/VCardControl';
 import { mount } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
 import sinon from 'sinon';
@@ -9,7 +10,10 @@ describe('QuestionDetails', function () {
   beforeEach(function () {
     this.question = buildQuestion();
 
-    this.actions = { updateQuestion: sinon.spy() };
+    this.actions = {
+      updateQuestion: sinon.spy(),
+      destroyQuestion: sinon.spy()
+    };
     this.store = new Vuex.Store({
       actions: this.actions
     });
@@ -39,6 +43,15 @@ describe('QuestionDetails', function () {
       title: 'How old are you?',
       type: 'string',
       options: []
+    });
+  });
+
+  it('should dispatch when destroy is clicked', function () {
+    const destroyButton = this.wrapper.first(VCardControl);
+    destroyButton.trigger('click');
+
+    expect(this.actions.destroyQuestion.args[0][1]).to.eql({
+      id: this.question.id
     });
   });
 });
