@@ -9,7 +9,9 @@ import commissionsFixture from 'fixtures/commissions';
 describe('CommissionsDetailsPage', function () {
   beforeEach(function () {
     this.actions = {
-      fetchCommissions: sinon.spy()
+      fetchCommissions: sinon.spy(),
+      fetchFillout: function () {},
+      fetchEvents: function () {}
     };
   });
 
