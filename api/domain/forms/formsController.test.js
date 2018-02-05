@@ -342,6 +342,30 @@ describe('formsController', function () {
           expect(questions[0].order).to.eql(1);
           expect(questions[1].order).to.eql(2);
         });
+
+        it('should ignore deleted questions', async function () {
+          await factory.create('question', {
+            formId: this.form.id,
+            order: 1
+          });
+          await factory.create('question', {
+            formId: this.form.id,
+            order: 2,
+            deletedAt: new Date()
+          });
+
+          await agent()
+            .post('/api/forms/1/questions')
+            .cookiejar()
+            .accept('application/json');
+
+          const questions = await this.form.getQuestions();
+          expect(questions.length).to.eql(3);
+          expect(questions[0].order).to.eql(1);
+          expect(questions[1].order).to.eql(2);
+          expect(questions[1].deletedAt).to.eql(new Date());
+          expect(questions[2].order).to.eql(2);
+        });
       });
     });
   });

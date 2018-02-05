@@ -127,7 +127,15 @@ module.exports.create = function (req, res, next) {
 
 module.exports.createQuestion = function (req, res, next) {
   async function handle() {
-    const form = await Form.findById(req.params.id, { include: [Question] });
+    const form = await Form.findById(req.params.id, {
+      include: [
+        {
+          model: Question,
+          where: { deletedAt: { [Op.eq]: null } },
+          required: false
+        }
+      ]
+    });
 
     if (!form) throw new NotFoundError();
 
