@@ -174,6 +174,24 @@ export default new Vuex.Store({
       state.forms.errors = errors;
     },
 
+    updateFormStart: function (state, id) {
+      state.forms.status = STATUS.MUTATING;
+    },
+    updateFormSuccess: function (state, { id, json }) {
+      const forms = clone(state.forms);
+      forms.status = STATUS.LOADED;
+      forms.value.forEach(function (form) {
+        if (form.id === id) {
+          Object.assign(form, json);
+        }
+      });
+      state.forms = forms;
+    },
+    updateFormFailure: function (state, { id, errors }) {
+      state.forms.status = STATUS.ERRORED;
+      state.forms.errors = errors;
+    },
+
     updateQuestionStart: function (state, id) {
       state.questions[id].status = STATUS.MUTATING;
     },
@@ -468,6 +486,27 @@ export default new Vuex.Store({
             ? err.response.data.errors
             : [];
           commit('updateQuestionFailure', { id: payload.id, errors });
+        });
+    },
+    updateForm ({ state, commit }, payload) {
+      const body = omit(payload, 'id');
+      commit('updateFormStart', payload.id);
+
+      return axios.patch(`/api/forms/${payload.id}`, body, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(function ({ data }) {
+          commit('updateFormSuccess', { id: payload.id, json: data.record });
+        })
+        .catch(function (err) {
+          const errors = err.response
+            ? err.response.data.errors
+            : [];
+          commit('updateFormFailure', { id: payload.id, errors });
         });
     },
     createQuestion ({ state, commit }, payload) {

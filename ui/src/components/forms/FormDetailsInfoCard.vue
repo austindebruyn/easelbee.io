@@ -1,10 +1,13 @@
 <template lang="pug">
   .card.form-details-info-card
     .title-block
-      v-input-text(
-        :defaultValue='form.name'
-        kind='madlibs'
-      )
+      form(@submit='handleSubmit')
+        v-input-text(
+          ref='name'
+          :defaultValue='form.name'
+          kind='madlibs'
+        )
+        input(type='submit', hidden=true)
     .card-body
       p
         span.text-muted {{ $t('forms.details.created-at') }}
@@ -41,6 +44,16 @@ export default {
     },
     revenueValue: function () {
       return '$0';
+    }
+  },
+  methods: {
+    handleSubmit: function (e) {
+      e.preventDefault();
+
+      this.$store.dispatch('updateForm', {
+        id: this.form.id,
+        name: this.$refs.name.getValue()
+      });
     }
   }
 };
