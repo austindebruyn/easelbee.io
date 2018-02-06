@@ -28,7 +28,7 @@ module.exports.get = function (req, res, next) {
           include: [QuestionOption]
         }
       ]
-    })
+    });
 
     if (!form) throw new NotFoundError();
 
@@ -55,7 +55,7 @@ module.exports.submit = function (req, res, next) {
   }
 
   async function handle() {
-    const form = await Form.findOne({ where: { slug }, include: [User] })
+    const form = await Form.findOne({ where: { slug }, include: [User] });
 
     if (!form) {
       return res.status(404).render('notFound');
@@ -81,7 +81,7 @@ module.exports.index = function (req, res, next) {
         include: [QuestionOption],
         required: false
       }]
-    })
+    });
 
     const formJsons = await Promise.all(forms.map(r => r.toJSON()));
     return res.json({
@@ -100,7 +100,7 @@ module.exports.create = function (req, res, next) {
   } = req.body;
 
   async function handle() {
-    const form = await Form.create({ userId: req.user.id, slug, name })
+    const form = await Form.create({ userId: req.user.id, slug, name });
     return res.json({
       ok: true,
       record: await form.toJSON()
