@@ -11,97 +11,86 @@ const { Op } = require('../../services/db').Sequelize;
 
 module.exports.get = function (req, res, next) {
   const { slug } = req.params;
-  const state = {};
 
   if (!req.accepts('html')) {
     return res.sendStatus(406);
   }
 
-  return Form.findOne({
-    where: { slug },
-    include: [
-      User,
-      {
-        model: Question,
-        where: { deletedAt: { [Op.eq]: null } },
-        required: false,
-        include: [QuestionOption]
-      }
-    ]
-  })
-    .then(function (record) {
-      if (!record) {
-        throw new NotFoundError();
-      }
-      state.form = record;
-      state.user = record.user;
-      return record;
+  async function handle() {
+    const form = await Form.findOne({
+      where: { slug },
+      include: [
+        User,
+        {
+          model: Question,
+          where: { deletedAt: { [Op.eq]: null } },
+          required: false,
+          include: [QuestionOption]
+        }
+      ]
     })
-    .then(record => record.toJSON())
-    .then(function (record) {
-      return res.render('forms/get', {
-        form: record,
-        user: state.user,
-        isOwnerView: req.user && req.user.id === record.userId
-      });
-    })
-    .catch(function (err) {
-      if (err.name === 'NotFoundError') {
-        return res.status(404).render('notFound');
-      }
-      return next(err);
+
+    if (!form) throw new NotFoundError();
+
+    return res.render('forms/get', {
+      form: await form.toJSON(),
+      user: form.user,
+      isOwnerView: req.user && req.user.id === form.userId
     });
+  }
+
+  handle().catch(function (err) {
+    if (err.name === 'NotFoundError') {
+      return res.status(404).render('notFound');
+    }
+    return next(err);
+  });
 };
 
 module.exports.submit = function (req, res, next) {
   const { slug } = req.params;
-  const state = {};
 
   if (!req.accepts('html')) {
     return res.sendStatus(406);
   }
 
-  return Form.findOne({ where: { slug }, include: [User] })
-    .then(function (record) {
-      state.form = record;
+  async function handle() {
+    const form = await Form.findOne({ where: { slug }, include: [User] })
 
-      if (!record) {
-        return res.status(404).render('notFound');
-      }
-      return record;
-    })
-    .then(function (record) {
-      const submitter = new FormSubmitter(state.form);
-      return submitter.submit(req.body);
-    })
-    .then(function () {
-      return res.render('forms/submit', {
-        user: state.form.user
-      });
-    })
-    .catch(next);
+    if (!form) {
+      return res.status(404).render('notFound');
+    }
+    const submitter = new FormSubmitter(form);
+    await submitter.submit(req.body);
+
+    return res.render('forms/submit', {
+      user: form.user
+    });
+  }
+
+  handle().catch(next);
 };
 
 module.exports.index = function (req, res, next) {
-  return Form.findAll({
-    where: { userId: req.user.id },
-    include: [{
-      model: Question,
-      where: { deletedAt: { [Op.eq]: null } },
-      include: [QuestionOption],
-      required: false
-    }]
-  })
-    .then(function (records) {
-      return Promise.all(records.map(r => r.toJSON()));
+  async function handle() {
+    const forms = await Form.findAll({
+      where: { userId: req.user.id },
+      include: [{
+        model: Question,
+        where: { deletedAt: { [Op.eq]: null } },
+        include: [QuestionOption],
+        required: false
+      }]
     })
-    .then(function (json) {
-      return res.json({
-        ok: true,
-        records: json
-      });
-    })
-    .catch(next);
+
+    const formJsons = await Promise.all(forms.map(r => r.toJSON()));
+    return res.json({
+      ok: true,
+      records: formJsons
+    });
+  }
+
+  handle().catch(next);
 };
 
 module.exports.create = function (req, res, next) {
@@ -110,19 +99,42 @@ module.exports.create = function (req, res, next) {
     name
   } = req.body;
 
-  return Form.create({ userId: req.user.id, slug, name })
-    .then(record => record.toJSON())
-    .then(function (record) {
-      return res.json({
-        ok: true,
-        record
-      });
-    })
-    .catch(function () {
-      return res.status(422).json({
-        ok: false
-      });
+  async function handle() {
+    const form = await Form.create({ userId: req.user.id, slug, name })
+    return res.json({
+      ok: true,
+      record: await form.toJSON()
     });
+  }
+
+  handle().catch(next);
+};
+
+module.exports.update = function (req, res, next) {
+  const { id } = req.params;
+
+  async function handle() {
+    const form = await Form.findById(id);
+
+    if (!form) throw new NotFoundError();
+
+    if (form.userId !== req.user.id) throw new UnauthorizedError();
+
+    for (let key in req.body) {
+      if (['name'].includes(key)) {
+        Object.assign(form, { [key]: req.body[key] });
+      }
+    }
+
+    await form.save();
+
+    return res.json({
+      ok: true,
+      record: await form.toJSON()
+    });
+  }
+
+  handle().catch(next);
 };
 
 module.exports.createQuestion = function (req, res, next) {
