@@ -21,6 +21,7 @@
           v-card-control(
             icon='fa-trash-o'
             kind='danger'
+            @click='handleDestroyClick'
           )
           v-card-control(
             icon='fa-pencil'
@@ -58,6 +59,11 @@ export default {
     },
     lastSubmittedAt: function () {
       return moment(this.form.submittedAt).fromNow();
+    }
+  },
+  methods: {
+    handleDestroyClick: function () {
+      this.$store.dispatch('destroyForm', { id: this.form.id });
     }
   }
 };

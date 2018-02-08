@@ -3,11 +3,16 @@ import VCardControl from 'components/controls/VCardControl';
 import { shallow } from 'avoriaz';
 import formsFixture, { buildForm } from 'fixtures/forms';
 import clock from '../../../../api/tests/clock';
+import sinon from 'sinon';
+import Vuex from 'vuex';
 
 function wrapperFactory (form) {
+  this.actions = { destroyForm: sinon.spy() };
+  this.store = new Vuex.Store({ actions: this.actions });
   this.wrapper = shallow(FormsListItem, {
     propsData: { form },
-    i18n: this.i18n
+    i18n: this.i18n,
+    store: this.store
   });
 }
 
@@ -18,6 +23,20 @@ describe('FormsListItem', function () {
     wrapperFactory.call(this, formsFixture.basic);
 
     expect(this.wrapper.first('.questions-count').text()).to.eql('0questions');
+  });
+
+  it('should have trash icon to destroy form', function () {
+    const form = buildForm();
+    wrapperFactory.call(this, form);
+
+    const destroyLink = this.wrapper.find(VCardControl)[0];
+    expect(destroyLink.propsData().icon).to.eql('fa-trash-o');
+
+    destroyLink.vm.$emit('click');
+    expect(this.actions.destroyForm).to.have.been.calledWith(
+      sinon.match.object,
+      { id: form.id }
+    );
   });
 
   it('should have pencil icon to edit page', function () {

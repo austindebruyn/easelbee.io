@@ -80,6 +80,7 @@ export default {
     text-align: center;
     border: 4px dashed $gray;
     padding: 4rem;
+    margin-bottom: 2rem;
 
     .fa {
       font-size: 3rem;

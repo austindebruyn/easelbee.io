@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import omit from 'lodash.omit';
 import flatten from 'lodash.flatten';
+import pull from 'lodash.pull';
 import Resource, { STATUS } from 'state/Resource';
 import clone from '../lib/clone';
 
@@ -195,13 +196,35 @@ export default new Vuex.Store({
     createFormStart: function (state) {
       state.forms.status = STATUS.MUTATING;
     },
-    createFormSuccess: function (state, { json }) {
+    createFormSuccess: function (state, json) {
       const forms = clone(state.forms);
       forms.status = STATUS.LOADED;
       forms.value.push(json);
       state.forms = forms;
     },
     createFormFailure: function (state, errors) {
+      state.forms.status = STATUS.ERRORED;
+      state.forms.errors = errors;
+    },
+
+    destroyFormStart: function (state) {
+      state.forms.status = STATUS.MUTATING;
+    },
+    destroyFormSuccess: function (state, id) {
+      const forms = clone(state.forms);
+      forms.status = STATUS.LOADED;
+
+      for (let i = 0; i < forms.value.length; i++) {
+        const form = forms.value[i];
+        if (form.id === id) {
+          pull(forms.value, form);
+          break;
+        }
+      }
+      
+      state.forms = forms;
+    },
+    destroyFormFailure: function (state, errors) {
       state.forms.status = STATUS.ERRORED;
       state.forms.errors = errors;
     },
@@ -454,6 +477,23 @@ export default new Vuex.Store({
         })
         .catch(({ response }) => {
           commit('createFormFailure', response && response.data.errors);
+        });
+    },
+    destroyForm ({ state, commit }, { id }) {
+      commit('destroyFormStart');
+
+      return axios.delete(`/api/forms/${id}`, {}, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(() => {
+          commit('destroyFormSuccess', id);
+        })
+        .catch(({ response }) => {
+          commit('destroyFormFailure', response && response.data.errors);
         });
     },
     createCommission ({ state, commit }, payload) {

@@ -2,6 +2,8 @@ import FormsList from './FormsList';
 import FormsListItem from './FormsListItem';
 import { shallow } from 'avoriaz';
 import formsFixture from 'fixtures/forms';
+import Vuex from 'vuex';
+import sinon from 'sinon';
 
 describe('FormsList', function () {
   it('should render zero data', function () {
@@ -28,5 +30,20 @@ describe('FormsList', function () {
     const listItems = wrapper.find(FormsListItem);
     expect(listItems[0].propsData().form).to.eql(formsFixture.basic);
     expect(listItems[1].propsData().form).to.eql(formsFixture.basic2);
+  });
+
+  it('should dispatch create form when button clicked', function () {
+    const actions = { createForm: sinon.spy() };
+    const store = new Vuex.Store({ actions });
+
+    const wrapper = shallow(FormsList, {
+      propsData: { forms: [] },
+      i18n: this.i18n,
+      store
+    });
+
+    wrapper.first('button').trigger('click');
+
+    expect(actions.createForm).to.have.been.called;
   });
 });
