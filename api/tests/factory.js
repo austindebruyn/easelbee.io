@@ -61,7 +61,8 @@ factory.define('form', Form, {
   slug: factory.chance('word'),
   name: factory.chance('word'),
   userId: factory.assoc('user', 'id'),
-  submittedAt: () => null
+  submittedAt: () => null,
+  deletedAt: () => null
 });
 
 factory.define('question', Question, {
