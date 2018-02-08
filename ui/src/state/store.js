@@ -221,7 +221,7 @@ export default new Vuex.Store({
           break;
         }
       }
-      
+
       state.forms = forms;
     },
     destroyFormFailure: function (state, errors) {
