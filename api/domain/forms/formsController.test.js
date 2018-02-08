@@ -128,7 +128,7 @@ describe('formsController', function () {
         });
 
         it('should should not return deleted forms', async function () {
-          const deletedForm = await factory.create('form', {
+          await factory.create('form', {
             userId: this.user.id,
             deletedAt: new Date()
           });
