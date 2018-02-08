@@ -74,7 +74,10 @@ module.exports.submit = function (req, res, next) {
 module.exports.index = function (req, res, next) {
   async function handle() {
     const forms = await Form.findAll({
-      where: { userId: req.user.id },
+      where: {
+        userId: req.user.id,
+        deletedAt: { [Op.eq]: null }
+      },
       include: [{
         model: Question,
         where: { deletedAt: { [Op.eq]: null } },

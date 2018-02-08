@@ -116,6 +116,27 @@ describe('formsController', function () {
             });
         });
 
+        it('should should not return deleted forms', async function () {
+          const deletedForm = await factory.create('form', {
+            userId: this.user.id,
+            deletedAt: new Date()
+          });
+          const notDeletedForm = await factory.create('form', {
+            userId: this.user.id
+          });
+          await agent()
+            .get('/api/users/me/forms')
+            .cookiejar()
+            .accept('application/json')
+            .expect(200)
+            .then(res => {
+              expect(res.body.ok).to.be.true;
+              expect(res.body.records).to.have.length(2);
+              expect(res.body.records[0].id).to.eql(this.form.id);
+              expect(res.body.records[1].id).to.eql(notDeletedForm.id);
+            });
+        });
+
         it('should not return deleted questions', async function () {
           const deletedQuestion = await factory.create('question', {
             formId: this.form.id,
