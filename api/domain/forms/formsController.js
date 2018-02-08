@@ -94,13 +94,28 @@ module.exports.index = function (req, res, next) {
 };
 
 module.exports.create = function (req, res, next) {
-  const {
-    slug,
-    name
-  } = req.body;
-
   async function handle() {
-    const form = await Form.create({ userId: req.user.id, slug, name });
+    let i;
+    for (i = 1; i <= 1024; i++) {
+      const count = await Form.count({
+        where: {
+          userId: req.user.id,
+          [Op.or]: [
+            { name: `Untitled Form #${i}` },
+            { slug: `untitled-form-${i}` }
+          ]
+        }
+      });
+
+      if (count < 1) break;
+    }
+
+    const form = await Form.create({
+      userId: req.user.id,
+      slug: `untitled-form-${i}`,
+      name: `Untitled Form #${i}`
+    });
+
     return res.json({
       ok: true,
       record: await form.toJSON()

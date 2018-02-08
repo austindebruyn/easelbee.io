@@ -9,7 +9,9 @@
         key='form.id'
         :form='form'
       )
-    button.btn-block.text-center.new-form-button(v-tooltip='$t("feature-not-built")')
+    button.btn-block.text-center.create-form-button(
+      @click='handleCreateFormButtonClick'
+    )
       span
         .fa.fa-plus-circle
         | {{ $t('forms.index.new') }}
@@ -32,6 +34,11 @@ export default {
   props: {
     /* eslint-disable vue/require-default-prop */
     forms: VueTypes.arrayOf(formShape).isRequired
+  },
+  methods: {
+    handleCreateFormButtonClick: function () {
+      this.$store.dispatch('createForm');
+    }
   }
 };
 </script>
@@ -51,7 +58,7 @@ export default {
     }
   }
 
-  .new-form-button {
+  .create-form-button {
     background: none;
     border: 4px dashed $gray;
     color: $gray;

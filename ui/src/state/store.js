@@ -192,6 +192,20 @@ export default new Vuex.Store({
       state.forms.errors = errors;
     },
 
+    createFormStart: function (state) {
+      state.forms.status = STATUS.MUTATING;
+    },
+    createFormSuccess: function (state, { json }) {
+      const forms = clone(state.forms);
+      forms.status = STATUS.LOADED;
+      forms.value.push(json);
+      state.forms = forms;
+    },
+    createFormFailure: function (state, errors) {
+      state.forms.status = STATUS.ERRORED;
+      state.forms.errors = errors;
+    },
+
     updateQuestionStart: function (state, id) {
       state.questions[id].status = STATUS.MUTATING;
     },
@@ -423,6 +437,23 @@ export default new Vuex.Store({
         .catch(function (err) {
           const errors = err.response && err.response.data.errors;
           commit('completePasswordResetFailure', errors);
+        });
+    },
+    createForm ({ state, commit }) {
+      commit('createFormStart');
+
+      return axios.post('/api/users/me/forms', {}, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(({ data }) => {
+          commit('createFormSuccess', data.record);
+        })
+        .catch(({ response }) => {
+          commit('createFormFailure', response && response.data.errors);
         });
     },
     createCommission ({ state, commit }, payload) {

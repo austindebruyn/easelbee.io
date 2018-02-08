@@ -174,25 +174,41 @@ describe('formsController', function () {
         });
       });
 
-      describe('on success', function () {
-        it('should return 200', function () {
-          return agent()
+      describe.only('on success', function () {
+        it('should return 200', async function () {
+          const res = await agent()
             .post('/api/users/me/forms')
-            .send({ slug: 'some-form', name: 'Some Form' })
             .cookiejar()
             .accept('application/json')
             .expect(200)
-            .then(res => {
-              expect(res.body.ok).to.be.true;
-              expect(res.body.record).to.deep.include({
-                id: 1,
-                slug: 'some-form',
-                publicUrl: 'http://test-easelbee.io:8000/forms/some-form',
-                name: 'Some Form',
-                userId: signIn.user.id,
-                questions: []
-              });
-            });
+          expect(res.body.ok).to.be.true;
+          expect(res.body.record).to.deep.include({
+            id: 1,
+            publicUrl: 'http://test-easelbee.io:8000/forms/untitled-form-1',
+            name: 'Untitled Form #1',
+            userId: signIn.user.id,
+            questions: []
+          });
+          expect(res.body.record.slug).to.be.a(String);
+        });
+
+        it('should pick the next available `Untitled` name', async function () {
+          await factory.create('form', {
+            userId: signIn.user.id,
+            name: 'Untitled Form #1'
+          });
+          await factory.create('form', {
+            userId: signIn.user.id,
+            name: 'Untitled Form #2'
+          });
+          const res = await agent()
+            .post('/api/users/me/forms')
+            .cookiejar()
+            .accept('application/json')
+            .expect(200);
+          expect(res.body.record).to.deep.include({
+            name: 'Untitled Form #3'
+          });
         });
       });
     });
