@@ -174,13 +174,13 @@ describe('formsController', function () {
         });
       });
 
-      describe.only('on success', function () {
+      describe('on success', function () {
         it('should return 200', async function () {
           const res = await agent()
             .post('/api/users/me/forms')
             .cookiejar()
             .accept('application/json')
-            .expect(200)
+            .expect(200);
           expect(res.body.ok).to.be.true;
           expect(res.body.record).to.deep.include({
             id: 1,
@@ -189,7 +189,7 @@ describe('formsController', function () {
             userId: signIn.user.id,
             questions: []
           });
-          expect(res.body.record.slug).to.be.a(String);
+          expect(res.body.record.slug).to.be.a('string');
         });
 
         it('should pick the next available `Untitled` name', async function () {
@@ -268,7 +268,7 @@ describe('formsController', function () {
     });
   });
 
-  describe.only('PATCH /api/forms/:id', function () {
+  describe('PATCH /api/forms/:id', function () {
     beforeEach(async function () {
       this.user = await factory.create('user');
       this.form = await factory.create('form', { id: 1, userId: this.user.id });
