@@ -18,7 +18,10 @@ module.exports.get = function (req, res, next) {
 
   async function handle() {
     const form = await Form.findOne({
-      where: { slug },
+      where: {
+        slug,
+        deletedAt: { [Op.eq]: null }
+      },
       include: [
         User,
         {

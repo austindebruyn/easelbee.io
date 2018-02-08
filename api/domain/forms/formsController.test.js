@@ -25,12 +25,10 @@ describe('formsController', function () {
     });
 
     describe('when exists', function () {
-      beforeEach(function () {
-        return factory.create('form', {
+      beforeEach(async function () {
+        this.form = await factory.create('form', {
           name: 'Some Form',
           slug: 'some-form'
-        }).then(record => {
-          this.form = record;
         });
       });
 
@@ -43,6 +41,19 @@ describe('formsController', function () {
           .then(function (res) {
             expect(res.text).to.include('<h1>Some Form</h1>');
             expect(res.text).to.not.include('This is your form.');
+          });
+      });
+
+      it('should 404 if deleted', async function () {
+        this.form.deletedAt = new Date();
+        await this.form.save();
+        await agent()
+          .get('/forms/some-form')
+          .cookiejar()
+          .accept('text/html')
+          .expect(404)
+          .then(function (res) {
+            expect(res.text).to.include('<h1>Not Found 404</h1>');
           });
       });
 
