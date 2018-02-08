@@ -14,6 +14,9 @@ const Form = db.define('forms', {
   submittedAt: {
     type: db.Sequelize.DATE,
     allowNull: true
+  },
+  deletedAt: {
+    type: db.Sequelize.DATE
   }
 }, {
   tableName: 'forms',

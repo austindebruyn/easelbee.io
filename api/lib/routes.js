@@ -54,6 +54,7 @@ module.exports = function (app) {
   app.post('/api/users/me/forms', ensureAuthenticated, formsController.create);
   app.patch('/api/forms/:id', ensureAuthenticated, formsController.update);
   app.post('/api/forms/:id/questions', ensureAuthenticated, formsController.createQuestion);
+  app.delete('/api/forms/:id', ensureAuthenticated, formsController.destroy);
   app.patch('/api/questions/:id', ensureAuthenticated, questionsController.update);
   app.delete('/api/questions/:id', ensureAuthenticated, questionsController.destroy);
   app.get('*', homeController.index);

@@ -466,4 +466,72 @@ describe('formsController', function () {
       });
     });
   });
+
+  describe('DELETE /api/forms/:id', function () {
+    beforeEach(async function () {
+      this.user = await factory.create('user');
+      this.form = await factory.create('form', { id: 1, userId: this.user.id });
+      this.otherForm = await factory.create('form', { id: 2 });
+    });
+
+    it('should 403 if signed out', function () {
+      return agent()
+        .delete('/api/forms/1')
+        .cookiejar()
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(async function () {
+        await signIn(this.user);
+      });
+
+      it('should 404 when no record', function () {
+        return agent()
+          .delete('/api/forms/9999')
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      it('should 403 when not owned', function () {
+        return agent()
+          .delete('/api/forms/2')
+          .cookiejar()
+          .accept('application/json')
+          .expect(403);
+      });
+
+      describe('when updating fails', function () {
+        beforeEach(function () {
+          sinon.stub(Form.prototype, 'save').rejects();
+        });
+
+        afterEach(function () {
+          Form.prototype.save.restore();
+        });
+
+        it('should 500', async function () {
+          await agent()
+            .delete('/api/forms/1')
+            .cookiejar()
+            .accept('application/json')
+            .expect(500);
+        });
+      });
+
+      describe('on success', function () {
+        it('should return 200', async function () {
+          await agent()
+            .delete('/api/forms/1')
+            .cookiejar()
+            .accept('application/json')
+            .expect(200, {
+              ok: true
+            });
+        });
+      });
+    });
+  });
 });

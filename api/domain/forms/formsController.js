@@ -186,3 +186,22 @@ module.exports.createQuestion = function (req, res, next) {
 
   handle().catch(next);
 };
+
+module.exports.destroy = function (req, res, next) {
+  async function handle() {
+    const form = await Form.findById(req.params.id);
+
+    if (!form) throw new NotFoundError();
+
+    if (form.userId !== req.user.id) throw new UnauthorizedError();
+
+    form.deletedAt = new Date();
+    await form.save();
+
+    return res.json({
+      ok: true
+    });
+  }
+
+  handle().catch(next);
+};
