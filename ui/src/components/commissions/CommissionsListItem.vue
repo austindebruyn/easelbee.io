@@ -1,25 +1,34 @@
 <template lang="pug">
   li
     router-link(:to='url').card.commission-card
-      .card-img-top
+      .card-img-top(v-if='shouldShowImage')
       .card-body
         .card-text
-          h4 {{ commission.email }}
-          q {{ commission.body }}
+          section.id
+            .nickname {{ commission.nickname }}
+            .email {{ commission.email }}
+          section.answer-preview
+            span {{ answerPreview }}
 </template>
 
 <script>
+import { commissionShape } from 'components/shapes';
+
 export default {
   name: 'commissions-list-item',
   props: {
-    commission: {
-      type: Object,
-      required: true
-    }
+    /* eslint-disable vue/require-default-prop */
+    commission: commissionShape.isRequired
   },
   computed: {
     url: function () {
       return `/commissions/${this.commission.id}`;
+    },
+    shouldShowImage: function () {
+      return this.commission.status !== 'incoming';
+    },
+    answerPreview: function () {
+      return '...';
     }
   }
 };
@@ -35,13 +44,36 @@ export default {
     color: black;
     text-decoration: inherit;
 
+    section.id {
+      padding-bottom: 2rem;
+    }
+
+    section.answer-preview {
+      span {
+        color: $gray;
+      }
+    }
+
+    .nickname {
+      font-weight: bold;
+      font-family: tensoregular, serif;
+      font-size: 1.4rem;
+      line-height: 1.6rem;
+    }
+
+    .email {
+      color: $purple;
+      font-family: tensoregular, serif;
+      font-size: 1.2rem;
+      line-height: 1.4rem;
+    }
+
     &:hover {
-      box-shadow: 0 6px 30px $gray;
-      top: -6px;
+      border: 2px solid $blue-dark;
     }
 
     .card-img-top {
-      height: 160px;
+      height: 200px;
       background-color: #ade;
     }
   }

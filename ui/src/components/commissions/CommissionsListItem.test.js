@@ -1,21 +1,48 @@
 import CommissionsListItem from './CommissionsListItem';
-import { mount } from 'avoriaz';
+import { shallow } from 'avoriaz';
+import { buildCommission } from 'fixtures/commissions';
 
 describe('CommissionsListItem', function () {
-  it('should render text', function () {
-    const wrapper = mount(CommissionsListItem, { propsData: {
-      commission: {
-        id: 145,
-        email: 'austin@eslb.io',
-        body: 'Hello there.'
-      }
-    }});
-
-    expect(wrapper.first(RouterLink).propsData()).to.include({
-      to: '/commissions/145'
+  beforeEach(function () {
+    this.commission = buildCommission({
+      id: 145,
+      nickname: 'Austin',
+      email: 'austin@eslb.io'
     });
 
-    expect(wrapper.first('.card-text h4').text()).to.include('austin@eslb.io');
-    expect(wrapper.first('.card-text q').text()).to.include('Hello there.');
+    this.wrapper = shallow(CommissionsListItem, { propsData: {
+      commission: this.commission
+    }});
+  });
+
+  it('should render link', function () {
+    expect(this.wrapper.first(RouterLink).propsData()).to.include({
+      to: '/commissions/145'
+    });
+  });
+
+  it('should render customer id', function () {
+    expect(this.wrapper.first('.card-text .nickname').text())
+      .to.eql('Austin');
+    expect(this.wrapper.first('.card-text .email').text())
+      .to.eql('austin@eslb.io');
+  });
+
+  it('should show image only if not incoming', function () {
+    function buildWrapper (status) {
+      return shallow(CommissionsListItem, {
+        propsData: { commission: buildCommission({ status }) }
+      });
+    }
+    let wrapper = buildWrapper('incoming');
+    expect(wrapper.find('.card-img-top')).to.have.length(0);
+    wrapper = buildWrapper('inprogress');
+    expect(wrapper.find('.card-img-top')).to.have.length(1);
+    wrapper = buildWrapper('inreview');
+    expect(wrapper.find('.card-img-top')).to.have.length(1);
+    wrapper = buildWrapper('finished');
+    expect(wrapper.find('.card-img-top')).to.have.length(1);
+    wrapper = buildWrapper('canceled');
+    expect(wrapper.find('.card-img-top')).to.have.length(1);
   });
 });

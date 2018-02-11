@@ -71,9 +71,9 @@ export default {
   }
 
   .commissions-zero-data-state {
-    color: $gray-light;
+    color: $blue;
     text-align: center;
-    border: 4px dashed $gray-light;
+    border: 4px dashed $blue;
     padding: 4rem;
 
     .fa {
