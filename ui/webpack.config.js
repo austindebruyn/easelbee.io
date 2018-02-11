@@ -28,10 +28,13 @@ const devtool = process.env.NODE_ENV === 'production'
   : 'eval-source-map';
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    app: './src/entries/app.js',
+    form: './src/entries/form.js'
+  },
   devtool,
   output: {
-    filename: 'main.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, '..', 'public', 'dist'),
     publicPath: '/dist/'
   },
