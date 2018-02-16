@@ -1,5 +1,6 @@
 import CommissionsList from './CommissionsList';
 import CommissionsListItem from './CommissionsListItem';
+import { buildCommission } from 'fixtures/commissions';
 import { shallow } from 'avoriaz';
 
 describe('CommissionsList', function () {
@@ -15,12 +16,9 @@ describe('CommissionsList', function () {
   });
 
   it('should render list', function () {
-    const commission1 = {
-      id: 1, email: 'austin@easelbee.io', body: 'Hey.'
-    };
-    const commission2 = {
-      id: 2, email: 'jeremy@chocolate.com', body: 'Got any reeces pieces.'
-    };
+    const commission1 = buildCommission();
+    const commission2 = buildCommission();
+
     const wrapper = shallow(CommissionsList, { propsData: {
       commissions: [commission1, commission2]
     }});
