@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import 'components/App';
+import 'components/TheArtistRoot';
 import NewPasswordResetPage from 'components/auth/passwordResets/NewPasswordResetPage';
 import CompletePasswordResetPage from 'components/auth/passwordResets/CompletePasswordResetPage';
 import VerifyEmailPage from 'components/auth/VerifyEmailPage';

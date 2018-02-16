@@ -6,74 +6,72 @@ const expect = require('chai').expect;
 const Form = require('./Form');
 const Question = require('./Question');
 const Commission = require('../commissions/Commission');
-const User = require('../users/User');
 const sinon = require('sinon');
 
 describe('formsController', function () {
   clock();
 
   describe('GET /forms/:slug', function () {
-    it('should 404', function () {
-      return agent()
+    it('should return customer app', async function () {
+      const resp = await agent()
         .get('/forms/some-form')
         .cookiejar()
         .accept('text/html')
-        .expect(404)
-        .then(function (res) {
-          expect(res.text).to.include('<h1>Not Found 404</h1>');
-        });
+        .expect(200);
+
+      expect(resp.header['content-type']).to.include('text/html');
     });
 
-    describe('when exists', function () {
-      beforeEach(async function () {
-        this.form = await factory.create('form', {
-          name: 'Some Form',
-          slug: 'some-form'
-        });
-      });
+    // describe('when exists', function () {
+    //   beforeEach(async function () {
+    //     this.form = await factory.create('form', {
+    //       name: 'Some Form',
+    //       slug: 'some-form'
+    //     });
+    //   });
 
-      it('should render', function () {
-        return agent()
-          .get('/forms/some-form')
-          .cookiejar()
-          .accept('text/html')
-          .expect(200)
-          .then(function (res) {
-            expect(res.text).to.include('<h1>Some Form</h1>');
-            expect(res.text).to.not.include('This is your form.');
-          });
-      });
+    //   it('should render', function () {
+    //     return agent()
+    //       .get('/forms/some-form')
+    //       .cookiejar()
+    //       .accept('text/html')
+    //       .expect(200)
+    //       .then(function (res) {
+    //         expect(res.text).to.include('<h1>Some Form</h1>');
+    //         expect(res.text).to.not.include('This is your form.');
+    //       });
+    //   });
 
-      it('should 404 if deleted', async function () {
-        this.form.deletedAt = new Date();
-        await this.form.save();
-        await agent()
-          .get('/forms/some-form')
-          .cookiejar()
-          .accept('text/html')
-          .expect(404)
-          .then(function (res) {
-            expect(res.text).to.include('<h1>Not Found 404</h1>');
-          });
-      });
+    //   it('should 404 if deleted', async function () {
+    //     this.form.deletedAt = new Date();
+    //     await this.form.save();
+    //     await agent()
+    //       .get('/forms/some-form')
+    //       .cookiejar()
+    //       .accept('text/html')
+    //       .expect(404)
+    //       .then(function (res) {
+    //         expect(res.text).to.include('<h1>Not Found 404</h1>');
+    //       });
+    //   });
 
-      describe('when signed in as owner', function () {
-        beforeEach(function () {
-          return User.findById(this.form.userId).then(signIn);
-        });
+    //   describe('when signed in as owner', function () {
+    //     beforeEach(function () {
+    //       return User.findById(this.form.userId).then(signIn);
+    //     });
 
-        it('should display banner', function () {
-          return agent()
-            .get('/forms/some-form')
-            .cookiejar()
-            .accept('text/html')
-            .expect(200)
-            .then(function (res) {
-              expect(res.text).to.include('This is your form.');
-            });
-        });
-      });
-    });
+    //     it('should display banner', function () {
+    //       return agent()
+    //         .get('/forms/some-form')
+    //         .cookiejar()
+    //         .accept('text/html')
+    //         .expect(200)
+    //         .then(function (res) {
+    //           expect(res.text).to.include('This is your form.');
+    //         });
+    //     });
+    //   });
+    // });
   });
 
   describe('GET /api/users/me/forms', function () {

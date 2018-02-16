@@ -12,7 +12,7 @@ import { mapState } from 'vuex';
 import { STATUS } from 'state/Resource';
 import LoadingSpinner from 'components/LoadingSpinner';
 
-export default Vue.component('App', {
+export default Vue.component('the-artist-root', {
   components: {
     'loading-spinner': LoadingSpinner
   },

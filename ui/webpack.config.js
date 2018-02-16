@@ -29,8 +29,8 @@ const devtool = process.env.NODE_ENV === 'production'
 
 module.exports = {
   entry: {
-    app: './src/entries/app.js',
-    form: './src/entries/form.js'
+    artist: './src/vms/artist/entry.js',
+    customer: './src/vms/customer/entry.js'
   },
   devtool,
   output: {

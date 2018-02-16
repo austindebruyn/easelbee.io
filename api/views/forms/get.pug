@@ -1,52 +1,12 @@
 html(lang='en')
   head
-    title Easelbee
+    title Easelbee | Fill Out Form
     meta(name='charset', content='utf-8')
     meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
     include ../favicons
     meta(name='description', content='Easelbee')
     meta(name='viewport', content='width=device-width, initial-scale=1')
-    script(src='/dist/form.js', defer=true)
+    script(src='/dist/customer.js', defer=true)
   body
     #root(data-user=user, data-context=context)
-      if isOwnerView
-        div(style='background-color:yellow;')
-          p This is your form. Some fancy admin controls will go here :)
-          p Visit this page incognito and these won't be here.
-      h1= form.name
-      p
-        | This is
-        |
-        = user.displayName
-        |
-        | (
-        = user.email
-        | )
-        | 's form.
-      hr
-      h3 Questions
-      form(method='POST', action=form.submitUrl)
-        input(type='text', name='email', placeholder='your@email.com')
-        input(type='text', name='nickname', placeholder='Nickname')
-        for question in form.questions
-          fieldset
-            -key = 'question_' + question.id
-            case question.type
-              when 'radio'
-                label(for=key)= question.title
-                for option in question.options
-                  -optionKey = optionName + '-option' + option.id
-                  .input-group
-                    input(
-                      id=optionKey
-                      type='radio'
-                      name=key
-                      value=option.id
-                    )
-                    label(for=optionKey)= option.value
-              when 'string'
-                label(for=key)= question.title
-                input(id=key, type='text', name=key)
-              default
-                p Unknown question type
-        button(type='submit') Submit
+      the-customer-root

@@ -18,10 +18,8 @@ module.exports.app = function (req, res, next) {
   }
 
   async function handle() {
-    const json = await req.user.toJSON();
-
-    return res.render('app', {
-      user: json,
+    return res.render('artist', {
+      user: await req.user.toJSON(),
       context: {
         sentry: {
           public: config.app.sentry.public

@@ -8,46 +8,25 @@ const {
   UnauthorizedError
 } = require('../../core/errors');
 const { Op } = require('../../services/db').Sequelize;
+const config = require('../../config');
 
 module.exports.get = function (req, res, next) {
-  const { slug } = req.params;
-
   if (!req.accepts('html')) {
     return res.sendStatus(406);
   }
 
   async function handle() {
-    const form = await Form.findOne({
-      where: {
-        slug,
-        deletedAt: { [Op.eq]: null }
-      },
-      include: [
-        User,
-        {
-          model: Question,
-          where: { deletedAt: { [Op.eq]: null } },
-          required: false,
-          include: [QuestionOption]
-        }
-      ]
-    });
-
-    if (!form) throw new NotFoundError();
-
     return res.render('forms/get', {
-      form: await form.toJSON(),
-      user: form.user,
-      isOwnerView: req.user && req.user.id === form.userId
+      user: req.user ? await req.user.toJSON() : null,
+      context: {
+        sentry: {
+          public: config.app.sentry.public
+        }
+      }
     });
   }
 
-  handle().catch(function (err) {
-    if (err.name === 'NotFoundError') {
-      return res.status(404).render('notFound');
-    }
-    return next(err);
-  });
+  handle().catch(next);
 };
 
 module.exports.submit = function (req, res, next) {

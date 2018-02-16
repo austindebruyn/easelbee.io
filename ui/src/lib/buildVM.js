@@ -2,27 +2,16 @@ import Vue from 'vue';
 import VueTween from 'lib/VueTween';
 import buildRaven from 'lib/buildRaven';
 import buildLocale from 'lib/buildLocale';
-import store from 'state/store';
-import pick from 'lodash.pick';
 
 import VTooltip from 'v-tooltip';
 
 export default function (opts) {
-  const { user, router } = opts;
-  const raven = buildRaven(opts.context.sentry);
+  const { user, router, store } = opts;
 
-  store.subscribe(function () {
-    if (raven) {
-      const userContext = pick(
-        store.state.user.value,
-        'id',
-        'displayName',
-        'email'
-      );
-      raven.setRavenUser(userContext);
-    }
+  buildRaven({
+    ...opts.context.sentry,
+    user
   });
-  store.commit('loginSuccess', user);
 
   Vue.use(VueTween);
   Vue.use(VTooltip);

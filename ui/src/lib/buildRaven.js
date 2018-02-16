@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Raven from 'raven-js';
 import RavenVue from 'raven-js/plugins/vue';
+import pick from 'lodash.pick';
 
 let raven = null;
 
@@ -9,7 +10,6 @@ export default function (opts) {
     return raven;
   }
 
-  let userId = 'unset';
   const publicToken = opts.public;
 
   if (publicToken) {
@@ -19,15 +19,9 @@ export default function (opts) {
     raven.addPlugin(RavenVue, Vue);
     raven.install();
 
-    raven.setRavenUser = function (user = {}) {
-      if (!raven) {
-        return;
-      }
-      if (userId === 'unset' || userId !== user.id) {
-        Raven.setUserContext(user);
-        userId = user.id;
-      }
-    };
+    if (opts.user) {
+      Raven.setUserContext(pick(opts.user, 'id', 'displayName', 'email'));
+    }
   }
   return raven;
 };
