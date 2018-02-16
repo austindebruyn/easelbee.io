@@ -18,72 +18,59 @@ describe('sessionsController', function () {
   });
 
   describe('POST /login', function () {
-    it('should error for wrong displayName', function () {
-      return agent()
+    it('should render form with error for wrong email', async function () {
+      const resp = await agent()
         .post('/login')
         .send({ email: 'apples@heb.com', password: 'bananas' })
-        .expect(400, {
-          ok: false,
-          errors: [{ code: 'WRONG_EMAIL_OR_PASSWORD' }]
-        });
+        .expect(400);
+      expect(resp.header['content-type']).to.include('text/html');
+      expect(resp.text).to.include('Wrong email or password.');
     });
 
     describe('when email is right', function () {
-      beforeEach(function () {
-        return factory.create('user', {
+      beforeEach(async function () {
+        await factory.create('user', {
           displayName: 'Renes',
           password: 'politics87',
           email: 'descarte@gov.gov'
         });
       });
 
-      it('should error', function () {
-        return agent()
+      it('should error', async function () {
+        const resp = await agent()
           .post('/login')
           .send({ email: 'descarte@gov.gov', password: 'banana' })
-          .expect(400, {
-            ok: false,
-            errors: [{ code: 'WRONG_EMAIL_OR_PASSWORD' }]
-          });
+          .expect(400);
+        expect(resp.header['content-type']).to.include('text/html');
+        expect(resp.text).to.include('Wrong email or password.');
       });
 
-      it('should sign in', function () {
-        return agent()
+      it('should sign in', async function () {
+        const resp = await agent()
           .post('/login')
           .send({ email: 'descarte@gov.gov', password: 'politics87' })
-          .expect(200, {
-            ok: true,
-            user: {
-              id: 1,
-              displayName: 'Renes',
-              email: 'descarte@gov.gov',
-              createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
-              updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
-            }
-          });
+          .expect(200);
+        expect(resp.text).to.include('You are now logged in.');
       });
 
-      it('should tell lynbot', function () {
-        return agent()
+      it('should tell lynbot', async function () {
+        await agent()
           .post('/login')
           .send({ email: 'descarte@gov.gov', password: 'politics87' })
-          .expect(200)
-          .then(function () {
-            const message = '__descarte@gov.gov__ just signed in.';
-            expect(LynbotAPI.prototype.send)
-              .to.have.been.calledWith(message);
-          });
+          .expect(200);
+        const message = '__descarte@gov.gov__ just signed in.';
+        expect(LynbotAPI.prototype.send).to.have.been.calledWith(message);
       });
     });
   });
 
   describe('POST /signout', function () {
-    beforeEach(function () {
-      return signIn();
+    beforeEach(async function () {
+      await signIn();
     });
 
-    it('should sign user out', function () {
-      return agent()
+    it('should sign user out', async function () {
+      await agent()
         .post('/signout')
         .accept('application/json')
         .expect(200, {
@@ -91,14 +78,11 @@ describe('sessionsController', function () {
         });
     });
 
-    it('should sign user out and redirect if using form', function () {
-      return agent()
+    it('should sign user out and redirect if using form', async function () {
+      await agent()
         .post('/signout')
         .accept('text/html')
-        .expect(302)
-        .then(function (res) {
-          expect(res.header.location).to.eql('/');
-        });
+        .expect(200, 'You are now logged out.');
     });
   });
 });

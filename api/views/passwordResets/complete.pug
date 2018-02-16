@@ -1,0 +1,28 @@
+html(lang='en')
+  head
+    title Easelbee | Reset Your Password
+    meta(name='charset', content='utf-8')
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    include ../favicons
+    meta(name='description', content='Easelbee')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+  body
+    h1 Reset Your Password
+    if errors && errors.length
+      h3 Errors:
+      ul.errors
+        for error in errors
+          li.error= error
+    form(method='POST', action='/passwordResets/complete')
+      .form-group
+        label(for='code') Code
+        input(id='code', name='code', placeholder='Enter the code you received in your email')
+      .form-group
+        label(for='password') New Password
+        input(id='password', name='password', type='password')
+      .form-group
+        label(for='password2') Confirm Password
+        input(id='password2', name='password2', type='password')
+      .form-group
+        button(type='submit') Finish
+

@@ -11,7 +11,7 @@ const errorHandler = require('./errorHandler');
 function ensureAuthenticated(req, res, next) {
   if (!req.user) {
     if (req.accepts('html')) {
-      return res.redirect('/');
+      return res.redirect('/login');
     }
     return res.status(403).json({ ok: false });
   }
@@ -21,7 +21,7 @@ function ensureAuthenticated(req, res, next) {
 function ensureAnonymous(req, res, next) {
   if (req.user) {
     if (req.accepts('html')) {
-      return res.redirect('/');
+      return res.redirect('/app');
     }
     return res.status(403).json({ ok: false });
   }
@@ -29,17 +29,22 @@ function ensureAnonymous(req, res, next) {
 }
 
 module.exports = function (app) {
-  app.get('/', homeController.noPath);
-  app.get('/app/', homeController.index);
+  app.get('/', homeController.index);
+  app.get('/app', ensureAuthenticated, homeController.app);
+
+  app.get('/login', ensureAnonymous, sessionsController.new);
+  app.post('/login', ensureAnonymous, sessionsController.create);
+  app.post('/signout', sessionsController.destroy);
+
+  app.get('/passwordResets/new', ensureAnonymous, passwordResetsController.new);
+  app.post('/passwordResets', ensureAnonymous, passwordResetsController.create);
+  app.get('/passwordResets/complete', ensureAnonymous, passwordResetsController.getComplete);
+  app.post('/passwordResets/complete', ensureAnonymous, passwordResetsController.complete);
 
   app.get('/forms/:slug', formsController.get);
   app.post('/forms/:slug/submit', formsController.submit);
 
-  app.post('/login', sessionsController.create);
-  app.post('/signout', sessionsController.destroy);
   app.post('/api/users', usersController.create);
-  app.post('/api/passwordResets', ensureAnonymous, passwordResetsController.create);
-  app.post('/api/passwordResets/complete', ensureAnonymous, passwordResetsController.complete);
   app.get('/api/users/me', ensureAuthenticated, usersController.get);
   app.put('/api/users/me', ensureAuthenticated, usersController.update);
   app.get('/api/users/me/emailPreferences', ensureAuthenticated, emailPreferencesController.get);
@@ -57,7 +62,8 @@ module.exports = function (app) {
   app.delete('/api/forms/:id', ensureAuthenticated, formsController.destroy);
   app.patch('/api/questions/:id', ensureAuthenticated, questionsController.update);
   app.delete('/api/questions/:id', ensureAuthenticated, questionsController.destroy);
-  app.get('*', homeController.index);
+
+  app.get('*', homeController.app);
 
   app.use(errorHandler);
 };

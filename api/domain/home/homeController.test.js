@@ -4,22 +4,20 @@ const expect = require('chai').expect;
 
 describe('homeController', function () {
   describe('GET /', function () {
-    it('should redirect', function () {
-      return agent().get('/').expect(302).then(function (resp) {
-        expect(resp.header.location).to.eql('/app/');
-      });
+    it('should show landing page', async function () {
+      const resp = await agent().get('/').expect(200);
+      expect(resp.header['content-type']).to.include('text/html');
+      expect(resp.text).to.include('Easelbee is still in beta');
     });
   });
 
-  describe('GET /app/', function () {
+  describe('GET /app', function () {
     describe('when signed out', function () {
-      it('should render template without', function () {
-        return agent()
-          .get('/app/')
-          .expect(200)
-          .then(function (resp) {
-            expect(resp.text).not.to.include('data-user');
-          });
+      it('should redirect to login', async function () {
+        const resp = await agent()
+          .get('/app')
+          .expect(302);
+        expect(resp.header.location).to.eql('/login');
       });
     });
 
@@ -28,14 +26,12 @@ describe('homeController', function () {
         return signIn();
       });
 
-      it('should render template with user', function () {
-        return agent()
-          .get('/app/')
+      it('should render template with user', async function () {
+        const resp = await agent()
+          .get('/app')
           .cookiejar()
-          .expect(200)
-          .then(function (resp) {
-            expect(resp.text).to.include('data-user');
-          });
+          .expect(200);
+        expect(resp.text).to.include('data-user');
       });
     });
   });

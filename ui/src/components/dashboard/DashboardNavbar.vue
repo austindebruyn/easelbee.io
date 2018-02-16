@@ -5,7 +5,7 @@
         span.fa.fa-th-large
       v-link(to='/forms')
         span.fa.fa-list-ol
-    form(action='/signOut', method='POST')
+    form(action='/signout', method='POST')
       button(type='submit')
         span.fa.fa-sign-out
 </template>

@@ -19,7 +19,9 @@ module.exports = function (app) {
     Raven.config(dsn).install();
   }
 
-  const transports = config.app.logging ? [new winston.transports.Console()] : [];
+  const transports = config.app.logging
+    ? [new winston.transports.Console()]
+    : [];
   winston.configure({ transports });
 
   app.set('views', path.resolve(app.root, 'api', 'views'));

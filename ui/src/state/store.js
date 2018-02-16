@@ -379,49 +379,6 @@ export default new Vuex.Store({
           commit('fetchFormsFailure', response && response.data.errors);
         });
     },
-    login: function ({ state, commit }, { email, password }) {
-      commit('loginStart');
-
-      return axios.post('/login', {
-        email,
-        password
-      }, {
-        credentials: 'same-origin',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(({ data }) => {
-          commit('loginSuccess', data.user);
-        })
-        .catch(({ response: { data } }) => {
-          commit('loginFailure', data.errors);
-        });
-    },
-    createUser ({ state, commit }, payload) {
-      const { displayName, email, password, password2 } = payload;
-      commit('loginStart');
-
-      return axios.post('/api/users', {
-        displayName,
-        email,
-        password,
-        password2
-      }, {
-        credentials: 'same-origin',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(({ data }) => {
-          commit('loginSuccess', data.user);
-        })
-        .catch(({ response: { data } }) => {
-          commit('loginFailure', data.errors);
-        });
-    },
     createPasswordReset ({ state, commit }, { email }) {
       commit('createPasswordResetStart');
 

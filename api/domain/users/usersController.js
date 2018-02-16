@@ -1,6 +1,10 @@
 const createUser = require('./createUser');
 const updateUser = require('./updateUser');
 
+module.exports.new = function (req, res, next) {
+  return res.render('signup', { errors: null });
+};
+
 module.exports.create = function (req, res, next) {
   const {
     displayName,
@@ -16,17 +20,13 @@ module.exports.create = function (req, res, next) {
       req.login(user, function (err) {
         if (err) return next(err);
 
-        return user
-          .toJSON()
-          .then(json => res.json({ ok: true, user: json }))
-          .catch(function (err) {
-            return next(err);
-          });
+        return res.send('You are now signed in.');
       });
     })
     .catch(function (err) {
       if (err.name === 'UserCreationError') {
-        return res.status(422).json({ ok: false, errors: [err.toJSON()] });
+        return res.status(422).render('signup', { errors: [err.code] });
+        // return res.status(422).json({ ok: false, errors: [err.toJSON()] });
       }
       return next(err);
     });

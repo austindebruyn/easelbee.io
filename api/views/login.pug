@@ -1,0 +1,26 @@
+html(lang='en')
+  head
+    title Easelbee | Login
+    meta(name='charset', content='utf-8')
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    include ./favicons
+    meta(name='description', content='Easelbee')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+  body
+    h1 Easelbee - Beta Login
+    p
+      a(href='/') Back to Home
+    if errors && errors.length
+      h3 Errors:
+      ul.errors
+        for error in errors
+          li.error= error
+    form(action='/login', method='POST')
+      .form-group
+        label(for='email') Email
+        input(id='email', name='email', placeholder='your@email.com')
+      .form-group
+        label(for='email') Password
+        input(id='password', type='password', name='password')
+      .form-group
+        button(type='submit') Login

@@ -43,8 +43,8 @@ describe('usersController', function () {
           });
       });
 
-      it('should return user and sign me in', function () {
-        return agent()
+      it('should return user and sign me in', async function () {
+        await agent()
           .post('/api/users')
           .accept('application/json')
           .send({
@@ -53,19 +53,7 @@ describe('usersController', function () {
             password: 'allegory',
             password2: 'allegory'
           })
-          .expect(200, {
-            ok: true,
-            user: {
-              id: 1,
-              displayName: 'turkish',
-              email: 'austin@baustin.com',
-              createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
-              updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
-            }
-          })
-          .expect(function (res) {
-            expect(res.headers).to.have.property('set-cookie');
-          });
+          .expect(200, 'You are now signed in.');
       });
     });
 
