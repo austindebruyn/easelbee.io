@@ -21,57 +21,47 @@ describe('formsController', function () {
 
       expect(resp.header['content-type']).to.include('text/html');
     });
+  });
 
-    // describe('when exists', function () {
-    //   beforeEach(async function () {
-    //     this.form = await factory.create('form', {
-    //       name: 'Some Form',
-    //       slug: 'some-form'
-    //     });
-    //   });
+  describe('GET /api/forms/:slug', function () {
+    describe('when exists', function () {
+      beforeEach(async function () {
+        this.form = await factory.create('form', {
+          name: 'Some Form',
+          slug: 'some-form'
+        });
+      });
 
-    //   it('should render', function () {
-    //     return agent()
-    //       .get('/forms/some-form')
-    //       .cookiejar()
-    //       .accept('text/html')
-    //       .expect(200)
-    //       .then(function (res) {
-    //         expect(res.text).to.include('<h1>Some Form</h1>');
-    //         expect(res.text).to.not.include('This is your form.');
-    //       });
-    //   });
+      it('should return json', function () {
+        return agent()
+          .get('/api/forms/some-form')
+          .accept('application/json')
+          .expect(200, {
+            ok: true,
+            record: {
+              id: 1,
+              userId: 1,
+              name: 'Some Form',
+              publicUrl: 'http://test-easelbee.io:8000/forms/some-form',
+              questions: [],
+              slug: 'some-form',
+              submitUrl: 'http://test-easelbee.io:8000/forms/some-form/submit',
+              submittedAt: null,
+              createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
+              updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
+            }
+          });
+      });
 
-    //   it('should 404 if deleted', async function () {
-    //     this.form.deletedAt = new Date();
-    //     await this.form.save();
-    //     await agent()
-    //       .get('/forms/some-form')
-    //       .cookiejar()
-    //       .accept('text/html')
-    //       .expect(404)
-    //       .then(function (res) {
-    //         expect(res.text).to.include('<h1>Not Found 404</h1>');
-    //       });
-    //   });
-
-    //   describe('when signed in as owner', function () {
-    //     beforeEach(function () {
-    //       return User.findById(this.form.userId).then(signIn);
-    //     });
-
-    //     it('should display banner', function () {
-    //       return agent()
-    //         .get('/forms/some-form')
-    //         .cookiejar()
-    //         .accept('text/html')
-    //         .expect(200)
-    //         .then(function (res) {
-    //           expect(res.text).to.include('This is your form.');
-    //         });
-    //     });
-    //   });
-    // });
+      it('should 404 if deleted', async function () {
+        this.form.deletedAt = new Date();
+        await this.form.save();
+        await agent()
+          .get('/api/forms/some-form')
+          .accept('application/json')
+          .expect(404);
+      });
+    });
   });
 
   describe('GET /api/users/me/forms', function () {

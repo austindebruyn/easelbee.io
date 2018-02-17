@@ -29,6 +29,26 @@ module.exports.get = function (req, res, next) {
   handle().catch(next);
 };
 
+module.exports.getJson = function (req, res, next) {
+  async function handle() {
+    const { slug } = req.params;
+    const form = await Form.findOne({
+      where: {
+        slug,
+        deletedAt: { [Op.eq]: null }
+      }
+    });
+
+    if (!form) throw new NotFoundError();
+
+    return res.json({
+      ok: true,
+      record: await form.toJSON()
+    });
+  }
+  handle().catch(next);
+};
+
 module.exports.submit = function (req, res, next) {
   const { slug } = req.params;
 
