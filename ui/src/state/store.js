@@ -258,23 +258,40 @@ export default new Vuex.Store({
     destroyQuestionFailure: function (state, errors) {
       state.forms.status = STATUS.ERRORED;
       state.forms.errors = errors;
+    },
+
+    // customer
+    fetchFormStart: function (state) {
+      state.form.status = STATUS.MUTATING;
+    },
+    fetchFormSuccess: function (state, json) {
+      state.form.status = STATUS.LOADED;
+      state.form.value = json;
+      state.form = clone(state.form);
+    },
+    fetchFormFailure: function (state, errors) {
+      state.form.status = STATUS.ERRORED;
+      state.form.errors = errors;
     }
   },
 
   actions: {
-    fetchEmailPreferences ({ state, commit }) {
+    fetchForm ({ state, commit }, slug) {
+      commit('fetchFormStart');
+
       const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       };
-      const url = '/api/users/me/emailPreferences';
+      const url = `/api/forms/${slug}`;
 
       return axios.get(url, { credentials: 'same-origin', headers })
-        .then(data => data.json())
-        .then(function (json) {
-          if (json.ok) {
-            return commit('set_email_preferences', json.record);
-          }
+        .then(({ data }) => {
+          commit('fetchFormSuccess', data.record);
+        })
+        .catch(({ response }) => {
+          const errors = response && response.data && response.data.errors;
+          commit('fetchFormFailure', errors);
         });
     },
     fetchCommissions ({ state, commit }) {
@@ -500,9 +517,6 @@ export default new Vuex.Store({
         .catch(({ response }) => {
           commit('destroyQuestionFailure', response && response.data.errors);
         });
-    },
-    fetchForm () {
-
     }
   }
 });

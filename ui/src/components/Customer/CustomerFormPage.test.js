@@ -4,7 +4,8 @@ import Vuex from 'vuex';
 import sinon from 'sinon';
 import Resource, { STATUS } from 'state/Resource';
 import LoadingSpinner from 'components/LoadingSpinner';
-// import FormsList from 'components/forms/FormsList';
+import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
+import formsFixture from 'fixtures/forms';
 
 describe('CustomerFormPage', function () {
   beforeEach(function () {
@@ -56,7 +57,7 @@ describe('CustomerFormPage', function () {
       const wrapper = factory.call(this);
 
       expect(wrapper.contains(LoadingSpinner)).to.be.true;
-      // expect(wrapper.contains(FormsList)).to.be.false;
+      expect(wrapper.contains(CustomerFormQuestionCard)).to.be.false;
     });
   });
 
@@ -64,7 +65,7 @@ describe('CustomerFormPage', function () {
     beforeEach(function () {
       storeFactory.call(this, {
         status: STATUS.LOADED,
-        value: {}
+        value: formsFixture.basic
       });
     });
 
@@ -72,13 +73,13 @@ describe('CustomerFormPage', function () {
       const wrapper = factory.call(this);
 
       expect(wrapper.contains(LoadingSpinner)).to.be.false;
-      // expect(wrapper.contains(FormsList)).to.be.true;
+      expect(wrapper.contains(CustomerFormQuestionCard)).to.be.true;
       expect(wrapper.contains('.not-found')).to.be.false;
 
-      // const child = wrapper.first(FormsList);
-      // expect(child.propsData()).to.eql({
-      //   forms: [ formsFixture.basic ]
-      // });
+      const child = wrapper.first(CustomerFormQuestionCard);
+      expect(child.propsData()).to.eql({
+        form: formsFixture.basic
+      });
     });
   });
 });
