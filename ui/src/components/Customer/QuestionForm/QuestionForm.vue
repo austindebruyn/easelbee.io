@@ -8,12 +8,13 @@
           v-if='question.type === "string"'
           :id='question.id'
         )
-      button.btn.btn-primary(type='submit') Next
+      button.btn.btn-primary(type='submit') {{ buttonText }}
 </template>
 
 <script>
 import { questionShape } from 'components/shapes';
 import CString from './controls/CString';
+import VueTypes from 'vue-types';
 
 export default {
   name: 'question-form',
@@ -22,7 +23,15 @@ export default {
   },
   props: {
     /* eslint-disable vue/require-default-prop */
-    question: questionShape.isRequired
+    question: questionShape.isRequired,
+    isFinalQuestion: VueTypes.bool
+  },
+  computed: {
+    buttonText: function () {
+      return this.isFinalQuestion
+        ? this.$t('customer.finish')
+        : this.$t('customer.next');
+    }
   },
   methods: {
     handleSubmit: function (e) {

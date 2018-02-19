@@ -6,6 +6,7 @@
         question-form(
           :key='index'
           :question='form.questions[this.index]'
+          :isFinalQuestion='isFinalQuestion'
           @submit='handleSubmit'
         )
 </template>
@@ -29,10 +30,19 @@ export default {
       index: 0
     };
   },
+  computed: {
+    isFinalQuestion: function () {
+      return this.index === this.form.questions.length - 1;
+    }
+  },
   methods: {
     handleSubmit: function (value) {
       this.values[this.form.questions[this.index].id] = value;
-      this.index = this.index + 1;
+      if (this.isFinalQuestion) {
+        this.$emit('complete', this.values);
+      } else {
+        this.index = this.index + 1;
+      }
     }
   }
 };

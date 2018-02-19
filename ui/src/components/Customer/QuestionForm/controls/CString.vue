@@ -15,6 +15,7 @@ export default {
     'v-input-text': VInputText
   },
   props: {
+    /* eslint-disable vue/require-default-prop */
     id: VueTypes.number.isRequired,
     required: VueTypes.bool
   },

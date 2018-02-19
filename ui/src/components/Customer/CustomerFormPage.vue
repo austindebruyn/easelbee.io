@@ -6,12 +6,18 @@
           div(v-if='loaded')
             h1 {{ form.value.name }}
             //- h2 Artist's Name
-            customer-form-question-card(:form='form.value')
+            customer-form-completed-card(v-if='completed')
+            customer-form-question-card(
+              v-else=true
+              :form='form.value'
+              @complete='handleComplete'
+            )
           loading-spinner(v-else=true)
 </template>
 
 <script>
 import LoadingSpinner from 'components/LoadingSpinner';
+import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
 import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
 import { isLoaded } from 'state/Resource';
 import { mapState } from 'vuex';
@@ -20,7 +26,11 @@ export default {
   name: 'customer-form-page',
   components: {
     'loading-spinner': LoadingSpinner,
+    'customer-form-completed-card': CustomerFormCompletedCard,
     'customer-form-question-card': CustomerFormQuestionCard
+  },
+  data: function () {
+    return { completed: false };
   },
   computed: {
     ...mapState(['form']),
@@ -33,6 +43,11 @@ export default {
   },
   mounted: function () {
     this.$store.dispatch('fetchForm', this.formSlug);
+  },
+  methods: {
+    handleComplete: function (values) {
+      this.completed = true;
+    }
   }
 };
 </script>

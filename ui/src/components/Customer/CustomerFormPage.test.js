@@ -5,7 +5,9 @@ import sinon from 'sinon';
 import Resource, { STATUS } from 'state/Resource';
 import LoadingSpinner from 'components/LoadingSpinner';
 import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
+import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
 import formsFixture from 'fixtures/forms';
+import { nextTick } from 'vue';
 
 describe('CustomerFormPage', function () {
   beforeEach(function () {
@@ -80,6 +82,23 @@ describe('CustomerFormPage', function () {
       expect(child.propsData()).to.eql({
         form: formsFixture.basic
       });
+    });
+  });
+
+  describe('when form is completed', function () {
+    beforeEach(function () {
+      storeFactory.call(this, {
+        status: STATUS.LOADED,
+        value: formsFixture.basic
+      });
+      this.wrapper = factory.call(this);
+      this.wrapper.vm.completed = true;
+      return nextTick();
+    });
+
+    it('should render completed card and not question card', function () {
+      expect(this.wrapper.find(CustomerFormQuestionCard)).to.have.length(0);
+      expect(this.wrapper.find(CustomerFormCompletedCard)).to.have.length(1);
     });
   });
 });

@@ -89,5 +89,12 @@
     "body": "That page wasn’t found!"
   },
   "feature-not-built": "This feature has not been built yet.",
-  "save": "Save"
+  "save": "Save",
+  "customer": {
+    "next": "Next",
+    "finish": "Finish",
+    "completed": "You’re all done!",
+    "completed-message": "We’ve sent in your answers! {{name}} will take it from here.",
+    "completed-message-2": "You can close the page now."
+  }
 }
