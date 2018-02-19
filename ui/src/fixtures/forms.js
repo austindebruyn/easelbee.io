@@ -34,7 +34,7 @@ function buildForm (attrs = {}) {
     userId: attrs.userId || chance.integer({ min: 1, max: 1024 }),
     name: attrs.name || chance.word(),
     slug: attrs.name || chance.word(),
-    questions: [],
+    questions: attrs.questions || [],
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
     submittedAt: 'submittedAt' in attrs ? attrs.submittedAt : new Date(chance.timestamp()).toUTCString()

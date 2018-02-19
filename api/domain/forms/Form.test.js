@@ -39,14 +39,25 @@ describe('#toJSON', function () {
       const record = await factory.create('form');
       this.formId = record.id;
 
-      this.questions = await factory.createMany('question', 3, {
-        formId: record.id
-      });
+      this.questions = [];
+      for (let order = 1; order <= 3; order++) {
+        this.questions.push(await factory.create('question', {
+          formId: record.id,
+          order
+        }));
+      }
     });
 
     it('should include objects', async function () {
       const json = await fetchFormJSONById(this.formId, true);
       expect(json.questions).to.have.length(3);
+    });
+
+    it('should order them', async function () {
+      const json = await fetchFormJSONById(this.formId, true);
+      expect(json.questions[0].order).to.eql(1);
+      expect(json.questions[1].order).to.eql(2);
+      expect(json.questions[2].order).to.eql(3);
     });
 
     it('should not include deleted questions', async function () {

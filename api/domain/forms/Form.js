@@ -60,6 +60,9 @@ Form.prototype.toJSON = function () {
     } = this.get();
 
     return this.ensureQuestions().then(() => {
+      this.questions.sort(function (a, b) {
+        return a.order - b.order;
+      });
       const jsons = this.questions
         .filter(q => !q.deletedAt)
         .map(q => q.toJSON());
