@@ -3,7 +3,11 @@
     .card
       .progress-bar
       .card-body
-        question-form(:question='form.questions[0]')
+        question-form(
+          :key='index'
+          :question='form.questions[this.index]'
+          @submit='handleSubmit'
+        )
 </template>
 
 <script>
@@ -18,6 +22,18 @@ export default {
   props: {
     /* eslint-disable vue/require-default-prop */
     form: formShape.isRequired
+  },
+  data: function () {
+    return {
+      values: {},
+      index: 0
+    };
+  },
+  methods: {
+    handleSubmit: function (value) {
+      this.values[this.form.questions[this.index].id] = value;
+      this.index = this.index + 1;
+    }
   }
 };
 </script>
