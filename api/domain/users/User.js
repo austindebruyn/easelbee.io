@@ -19,16 +19,21 @@ const User = db.define('user', {
   }
 });
 
-User.prototype.toJSON = function () {
-  return new Promise(resolve => {
-    return resolve({
+User.prototype.toJSON = function (viewer = null) {
+  return (async () => {
+    const json = {
       id: this.get('id'),
-      displayName: this.get('displayName'),
-      email: this.get('email'),
-      createdAt: this.get('createdAt').toUTCString(),
-      updatedAt: this.get('updatedAt').toUTCString()
-    });
-  });
+      displayName: this.get('displayName')
+    };
+    if (viewer && viewer.id === this.id) {
+      Object.assign(json, {
+        email: this.get('email'),
+        createdAt: this.get('createdAt').toUTCString(),
+        updatedAt: this.get('updatedAt').toUTCString()
+      });
+    }
+    return json;
+  })();
 };
 
 module.exports = User;

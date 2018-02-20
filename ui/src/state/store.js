@@ -4,7 +4,7 @@ import axios from 'axios';
 import omit from 'lodash.omit';
 import flatten from 'lodash.flatten';
 import pull from 'lodash.pull';
-import Resource, { STATUS } from 'state/Resource';
+import Resource, { STATUS, isLoaded } from 'state/Resource';
 import clone from '../lib/clone';
 
 Vue.use(Vuex);
@@ -21,7 +21,8 @@ const initialState = {
   questions: {},
   i18n: new Resource(),
   // Customer
-  form: new Resource()
+  form: new Resource(),
+  formSubmission: new Resource()
 };
 
 export default new Vuex.Store({
@@ -264,14 +265,35 @@ export default new Vuex.Store({
     fetchFormStart: function (state) {
       state.form.status = STATUS.MUTATING;
     },
-    fetchFormSuccess: function (state, json) {
+    fetchFormSuccess: function (state, { record, user }) {
       state.form.status = STATUS.LOADED;
-      state.form.value = json;
+      state.form.value = record;
       state.form = clone(state.form);
+      state.artist = user;
     },
     fetchFormFailure: function (state, errors) {
       state.form.status = STATUS.ERRORED;
       state.form.errors = errors;
+    },
+    submitFormStart: function (state) {
+      state.formSubmission.status = STATUS.MUTATING;
+    },
+    submitFormSuccess: function (state, json) {
+      state.formSubmission.status = STATUS.LOADED;
+      state.formSubmission.value = json;
+    },
+    submitFormFailure: function (state, errors) {
+      state.formSubmission.status = STATUS.ERRORED;
+      state.form.errors = errors;
+    }
+  },
+
+  getters: {
+    isCompleted (state) {
+      return isLoaded(state.formSubmission);
+    },
+    isUserArtist ({ form, artist }) {
+      return artist && isLoaded(form) && artist.id === form.value.userId;
     }
   },
 
@@ -287,7 +309,7 @@ export default new Vuex.Store({
 
       return axios.get(url, { credentials: 'same-origin', headers })
         .then(({ data }) => {
-          commit('fetchFormSuccess', data.record);
+          commit('fetchFormSuccess', data);
         })
         .catch(({ response }) => {
           const errors = response && response.data && response.data.errors;
@@ -516,6 +538,25 @@ export default new Vuex.Store({
         })
         .catch(({ response }) => {
           commit('destroyQuestionFailure', response && response.data.errors);
+        });
+    },
+    submitForm ({ state, commit }, payload) {
+      commit('submitFormStart');
+
+      const { slug } = state.form.value;
+
+      return axios.post(`/forms/${slug}/submit`, payload, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(({ data }) => {
+          commit('submitFormSuccess', { json: data.record });
+        })
+        .catch(({ response }) => {
+          commit('submitFormFailure', response && response.data.errors);
         });
     }
   }

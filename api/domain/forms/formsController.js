@@ -36,14 +36,16 @@ module.exports.getJson = function (req, res, next) {
       where: {
         slug,
         deletedAt: { [Op.eq]: null }
-      }
+      },
+      include: [User]
     });
 
     if (!form) throw new NotFoundError();
 
     return res.json({
       ok: true,
-      record: await form.toJSON()
+      record: await form.toJSON(),
+      user: await form.user.toJSON(req.user)
     });
   }
   handle().catch(next);
@@ -52,10 +54,6 @@ module.exports.getJson = function (req, res, next) {
 module.exports.submit = function (req, res, next) {
   const { slug } = req.params;
 
-  if (!req.accepts('html')) {
-    return res.sendStatus(406);
-  }
-
   async function handle() {
     const form = await Form.findOne({ where: { slug }, include: [User] });
 
@@ -63,10 +61,11 @@ module.exports.submit = function (req, res, next) {
       return res.status(404).render('notFound');
     }
     const submitter = new FormSubmitter(form);
-    await submitter.submit(req.body);
+    const commission = await submitter.submit(req.body);
 
-    return res.render('forms/submit', {
-      user: form.user
+    return res.json({
+      ok: true,
+      record: await commission.toJSON()
     });
   }
 

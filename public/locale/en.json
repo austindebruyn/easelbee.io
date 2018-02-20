@@ -95,6 +95,10 @@
     "finish": "Finish",
     "completed": "You’re all done!",
     "completed-message": "We’ve sent in your answers! {{name}} will take it from here.",
-    "completed-message-2": "You can close the page now."
+    "completed-message-2": "You can close the page now.",
+    "user-is-artist": {
+      "hey": "Hey there!",
+      "message": "This is your form, but can still submit it if you really want to."
+    }
   }
 }

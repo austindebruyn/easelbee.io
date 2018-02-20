@@ -33,7 +33,7 @@ module.exports.create = function (req, res, next) {
 };
 
 module.exports.get = function (req, res, next) {
-  return req.user.toJSON()
+  return req.user.toJSON(req.user)
     .then(user => res.json(user))
     .catch(next);
 };
@@ -43,7 +43,7 @@ module.exports.update = function (req, res, next) {
     user: req.user,
     attributes: req.body
   })
-    .then(user => user.toJSON())
+    .then(user => user.toJSON(req.user))
     .then(function (user) {
       return res.json({ ok: true, user });
     })

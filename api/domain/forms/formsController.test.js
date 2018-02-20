@@ -26,13 +26,17 @@ describe('formsController', function () {
   describe('GET /api/forms/:slug', function () {
     describe('when exists', function () {
       beforeEach(async function () {
+        this.user = await factory.create('user', {
+          displayName: 'Abraham'
+        });
         this.form = await factory.create('form', {
           name: 'Some Form',
-          slug: 'some-form'
+          slug: 'some-form',
+          userId: this.user.id
         });
       });
 
-      it('should return json', function () {
+      it('should return form and artist json', function () {
         return agent()
           .get('/api/forms/some-form')
           .accept('application/json')
@@ -40,7 +44,7 @@ describe('formsController', function () {
             ok: true,
             record: {
               id: 1,
-              userId: 1,
+              userId: this.user.id,
               name: 'Some Form',
               publicUrl: 'http://test-easelbee.io:8000/forms/some-form',
               questions: [],
@@ -49,6 +53,10 @@ describe('formsController', function () {
               submittedAt: null,
               createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
               updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
+            },
+            user: {
+              id: this.user.id,
+              displayName: 'Abraham'
             }
           });
       });
@@ -249,21 +257,33 @@ describe('formsController', function () {
         .expect(404);
     });
 
-    it('should submit', function () {
-      return agent()
+    it('should create models after submitting', async function () {
+      await agent()
         .post('/forms/some-form/submit')
         .send({ email: 'tinker@bell.com', nickname: 'Peter Pan' })
-        .accept('text/html')
-        .expect(200)
-        .then(res => {
-          expect(res.text).to.include('<h1>Thanks for submitting!</h1>');
-
-          return Commission.findOne({ where: { formId: this.form.id } });
-        })
-        .then(function (commission) {
-          expect(commission).to.include({
-          });
+        .accept('application/json')
+        .expect(200, {
+          ok: true,
+          record: {
+            id: 1,
+            userId: 1,
+            email: 'tinker@bell.com',
+            nickname: 'Peter Pan',
+            status: 'incoming',
+            createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
+            updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
+          }
         });
+      const commission = await Commission.findOne({
+        where: { formId: this.form.id }
+      });
+      expect(commission).to.include({
+        id: 1,
+        userId: 1,
+        email: 'tinker@bell.com',
+        nickname: 'Peter Pan',
+        status: Commission.STATUS.incoming
+      });
     });
 
     describe('when creating fails', function () {
