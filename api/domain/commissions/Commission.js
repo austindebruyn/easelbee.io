@@ -51,6 +51,19 @@ Commission.prototype.ensureForm = function () {
 };
 
 /**
+ * Promises to ensure that `prices` are eager loaded on this instance.
+ * @returns {Promise}
+ */
+Commission.prototype.ensurePrices = function () {
+  return (async () => {
+    if (!this.prices) {
+      this.prices = await this.getPrices();
+    }
+    return this.prices;
+  })();
+};
+
+/**
  * Promises to ensure that `answers` are eager loaded on this instance.
  * @returns {Promise}
  */
@@ -68,7 +81,7 @@ Commission.prototype.ensureAnswers = function () {
 };
 
 Commission.prototype.toJSON = function () {
-  return new Promise(resolve => {
+  return (async () => {
     const {
       id,
       userId,
@@ -79,16 +92,23 @@ Commission.prototype.toJSON = function () {
       status
     } = this.get();
 
-    return resolve({
+    await this.ensurePrices();
+    const prices = [];
+    for (let i = 0; i < this.prices.length; i++) {
+      prices.push(await this.prices[i].toJSON());
+    }
+
+    return {
       id,
       userId,
       email,
       nickname,
       status: invert(Commission.STATUS)[status],
       createdAt: createdAt && createdAt.toUTCString(),
-      updatedAt: updatedAt && updatedAt.toUTCString()
-    });
-  });
+      updatedAt: updatedAt && updatedAt.toUTCString(),
+      prices
+    };
+  })();
 };
 
 Commission.belongsTo(User);

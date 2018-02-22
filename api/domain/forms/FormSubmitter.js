@@ -8,6 +8,7 @@ const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
 const AnswerOptionValue = require('./AnswerOptionValue');
 const db = require('../../services/db');
+require('../commissions/Price');
 
 /**
  * Returns a question id parsed from a string like `question_7`.

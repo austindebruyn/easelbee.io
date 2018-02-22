@@ -47,7 +47,8 @@ describe('FilloutFetcher', function () {
           email: 'happy@customer.com',
           status: 'incoming',
           createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
-          updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
+          updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
+          prices: []
         },
         pairs: [
           {
