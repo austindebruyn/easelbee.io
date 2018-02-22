@@ -9,6 +9,8 @@ export default {
     email: 'elon@musk.com',
     nickname: 'Elon Musk',
     status: 'incoming',
+    price: 10,
+    adjustedPrice: null,
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   },
@@ -18,6 +20,8 @@ export default {
     email: 'abraham@lincon.com',
     nickname: 'Abraham Lincoln',
     status: 'inprogress',
+    price: 10,
+    adjustedPrice: null,
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   },
@@ -27,6 +31,8 @@ export default {
     email: 'austin@eslb.io',
     nickname: 'Austin',
     status: 'incoming',
+    price: 10,
+    adjustedPrice: null,
     createdAt: 'Sun, 10 Dec 2017 22:00:09 GMT',
     updatedAt: 'Sun, 10 Dec 2017 22:00:09 GMT'
   }
@@ -47,6 +53,8 @@ export function buildCommission (attrs = {}) {
     email: attrs.email || chance.email(),
     nickname: attrs.nickname || chance.word(),
     status: attrs.status || randomStatus,
+    price: attrs.price || Math.floor(Math.random() * 100),
+    adjustedPrice: null,
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()
   };

@@ -7,7 +7,8 @@ describe('CommissionsListItem', function () {
     this.commission = buildCommission({
       id: 145,
       nickname: 'Austin',
-      email: 'austin@eslb.io'
+      email: 'austin@eslb.io',
+      price: 20
     });
 
     this.wrapper = shallow(CommissionsListItem, { propsData: {
@@ -19,6 +20,10 @@ describe('CommissionsListItem', function () {
     expect(this.wrapper.first(RouterLink).propsData()).to.include({
       to: '/commissions/145'
     });
+  });
+
+  it('should render price', function () {
+    expect(this.wrapper.first('.price-bubble').text()).to.eql('$20');
   });
 
   it('should render customer id', function () {

@@ -12,6 +12,8 @@ export const commissionShape = VueTypes.shape({
     'finished',
     'canceled'
   ]).isRequired,
+  price: [Number, null],
+  adjustedPrice: [Number, null],
   createdAt: VueTypes.string.isRequired,
   updatedAt: VueTypes.string.isRequired
 });

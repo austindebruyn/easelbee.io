@@ -1,6 +1,7 @@
 <template lang="pug">
   li
     router-link(:to='url').card.commission-card
+      .price-bubble {{ priceBubbleText }}
       .card-img-top(v-if='shouldShowImage')
       .card-body
         .card-text
@@ -29,6 +30,9 @@ export default {
     },
     answerPreview: function () {
       return '...';
+    },
+    priceBubbleText: function () {
+      return `$${this.commission.price}`;
     }
   }
 };
@@ -68,13 +72,23 @@ export default {
       line-height: 1.4rem;
     }
 
-    &:hover {
-      border: 2px solid $blue-dark;
-    }
-
     .card-img-top {
       height: 200px;
       background-color: #ade;
+    }
+
+    .price-bubble {
+      position: absolute;
+      right: -18px;
+      top: -12px;
+
+      background-color: $white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>
