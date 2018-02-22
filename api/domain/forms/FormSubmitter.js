@@ -152,36 +152,27 @@ class FormSubmitter {
    */
   submit(body) {
     return db.transaction(t => {
-      return this.form.ensureQuestions()
-        .then(() => {
-          return Commission.create({
-            formId: this.form.id,
-            userId: this.form.userId,
-            email: body.email,
-            nickname: body.nickname
-          }, { transaction: t });
-        })
-        .then(commission => {
-          this._commission = commission;
-        })
-        .then(() => {
-          return this.findQuestionsForInputs(body);
-        })
-        .then(questions => {
-          return Promise.all(questions.map(q => {
-            return this.createAnswerForQuestion(t, this._commission, body, q);
-          }));
-        })
-        .then(answers => {
-          return this._commission.ensureAnswers();
-        })
-        .then(() => {
-          this.form.submittedAt = new Date();
-          return this.form.save({ transaction: t });
-        })
-        .then(() => {
-          return this._commission;
-        });
+      return (async () => {
+        await this.form.ensureQuestions();
+
+        this._commission = await Commission.create({
+          formId: this.form.id,
+          userId: this.form.userId,
+          email: body.email,
+          nickname: body.nickname
+        }, { transaction: t });
+
+        const questions = await this.findQuestionsForInputs(body);
+        const answers = await Promise.all(questions.map(q => {
+          return this.createAnswerForQuestion(t, this._commission, body, q);
+        }));
+
+        this._commission.ensureAnswers();
+        this.form.submittedAt = new Date();
+        await this.form.save({ transaction: t });
+
+        return this._commission;
+      })();
     });
   }
 }
