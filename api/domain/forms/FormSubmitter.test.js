@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { expect } = require('chai');
 const FormSubmitter = require('./FormSubmitter');
 const Commission = require('../commissions/Commission');
+const Price = require('../commissions/Price');
 const Question = require('./Question');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
@@ -48,10 +49,8 @@ describe('FormSubmitter', function () {
   describe('with no questions', function () {
     clock();
 
-    beforeEach(function () {
-      return factory.create('form').then(record => {
-        this.form = record;
-      });
+    beforeEach(async function () {
+      this.form = await factory.create('form');
     });
 
     it('should create commission with no answers', function () {
@@ -67,6 +66,17 @@ describe('FormSubmitter', function () {
       const commission = await submitter.submit({ ...contact });
       await commission.ensureForm();
       expect(commission.form.submittedAt).to.eql(new Date());
+    });
+
+    it('should create price model', async function () {
+      const submitter = new FormSubmitter(this.form);
+      const commission = await submitter.submit({ ...contact });
+      await commission.ensurePrices();
+      expect(commission.prices).to.have.length(1);
+      expect(commission.prices[0]).to.include({
+        type: Price.TYPES.auto,
+        amount: 10
+      });
     });
   });
 

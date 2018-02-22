@@ -8,7 +8,7 @@ const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
 const AnswerOptionValue = require('./AnswerOptionValue');
 const db = require('../../services/db');
-require('../commissions/Price');
+const Price = require('../commissions/Price');
 
 /**
  * Returns a question id parsed from a string like `question_7`.
@@ -155,7 +155,7 @@ class FormSubmitter {
       return (async () => {
         await this.form.ensureQuestions();
 
-        this._commission = await Commission.create({
+        const commission = await Commission.create({
           formId: this.form.id,
           userId: this.form.userId,
           email: body.email,
@@ -164,14 +164,20 @@ class FormSubmitter {
 
         const questions = await this.findQuestionsForInputs(body);
         const answers = await Promise.all(questions.map(q => {
-          return this.createAnswerForQuestion(t, this._commission, body, q);
+          return this.createAnswerForQuestion(t, commission, body, q);
         }));
 
-        this._commission.ensureAnswers();
+        commission.ensureAnswers();
         this.form.submittedAt = new Date();
         await this.form.save({ transaction: t });
 
-        return this._commission;
+        const price = await Price.create({
+          commissionId: commission.id,
+          amount: 10.0
+        });
+        commission.prices = [price];
+
+        return commission;
       })();
     });
   }
