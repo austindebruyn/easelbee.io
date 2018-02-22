@@ -6,6 +6,7 @@ const hashPassword = require('../domain/users/passwords').hash;
 const User = require('../domain/users/User');
 const EmailPreferences = require('../domain/emailPreferences/EmailPreferences');
 const Commission = require('../domain/commissions/Commission');
+const Price = require('../domain/commissions/Price');
 const TimelineEvent = require('../domain/commissions/TimelineEvent');
 const TimelineEventMeta = require('../domain/commissions/TimelineEventMeta');
 const Form = require('../domain/forms/Form');
@@ -44,6 +45,12 @@ factory.define('commission', Commission, {
   nickname: factory.chance('word'),
   userId: factory.assoc('user', 'id'),
   formId: factory.assoc('form', 'id')
+});
+
+factory.define('price', Price, {
+  commissionId: factory.assoc('commission', 'id'),
+  amount: factory.chance('floating', { fixed: 2, min: 0, max: 200 }),
+  type: 'auto'
 });
 
 factory.define('timelineEvent', TimelineEvent, {

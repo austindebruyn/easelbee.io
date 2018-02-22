@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const db = require('../../services/db');
 const User = require('../users/User');
 const Form = require('../forms/Form');
-const invert = require('lodash.invert');
 
 const Commission = db.define('commissions', {
   email: {
@@ -57,7 +57,7 @@ Commission.prototype.ensureForm = function () {
 Commission.prototype.ensurePrices = function () {
   return (async () => {
     if (!this.prices) {
-      this.prices = await this.getPrices();
+      this.prices = await this.getPrices({ order: db.col('createdAt') });
     }
     return this.prices;
   })();
@@ -93,20 +93,23 @@ Commission.prototype.toJSON = function () {
     } = this.get();
 
     await this.ensurePrices();
-    const prices = [];
-    for (let i = 0; i < this.prices.length; i++) {
-      prices.push(await this.prices[i].toJSON());
-    }
+    const price = this.prices.length > 0
+      ? _.head(this.prices).amount
+      : null;
+    const adjustedPrice = this.prices.length > 1
+      ? _.last(this.prices).amount
+      : null;
 
     return {
       id,
       userId,
       email,
       nickname,
-      status: invert(Commission.STATUS)[status],
+      status: _.invert(Commission.STATUS)[status],
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString(),
-      prices
+      price,
+      adjustedPrice
     };
   })();
 };

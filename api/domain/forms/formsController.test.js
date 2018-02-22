@@ -270,14 +270,8 @@ describe('formsController', function () {
             email: 'tinker@bell.com',
             nickname: 'Peter Pan',
             status: 'incoming',
-            prices: [{
-              id: 1,
-              commissionId: 1,
-              createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
-              updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
-              status: 'auto',
-              amount: 10
-            }],
+            price: 10,
+            adjustedPrice: null,
             createdAt: 'Thu, 31 Aug 2017 00:00:00 GMT',
             updatedAt: 'Thu, 31 Aug 2017 00:00:00 GMT'
           }

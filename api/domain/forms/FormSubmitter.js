@@ -163,7 +163,7 @@ class FormSubmitter {
         }, { transaction: t });
 
         const questions = await this.findQuestionsForInputs(body);
-        const answers = await Promise.all(questions.map(q => {
+        await Promise.all(questions.map(q => {
           return this.createAnswerForQuestion(t, commission, body, q);
         }));
 
