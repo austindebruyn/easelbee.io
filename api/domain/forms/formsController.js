@@ -17,7 +17,7 @@ module.exports.get = function (req, res, next) {
 
   async function handle() {
     return res.render('forms/get', {
-      user: req.user ? await req.user.toJSON() : null,
+      user: req.user ? await req.user.toJSON(req.user) : null,
       context: {
         sentry: {
           public: config.app.sentry.public

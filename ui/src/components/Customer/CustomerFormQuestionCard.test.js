@@ -36,7 +36,7 @@ describe('CustomerFormQuestionCard', function () {
         this.wrapper.first(QuestionForm).vm.$emit('submit', 'Whatever!');
         expect(this.wrapper.vm).to.deep.include({
           index: 1,
-          values: { [this.questions[0].id]: 'Whatever!' }
+          values: { [`question_${this.questions[0].id}`]: 'Whatever!' }
         });
         nextTick(() => {
           const formProps = this.wrapper.first(QuestionForm).propsData();
@@ -59,7 +59,7 @@ describe('CustomerFormQuestionCard', function () {
       it('should fire complete with all values', function () {
         this.wrapper.first(QuestionForm).vm.$emit('submit', 'All done!');
         expect(this.wrapper.vm.$emit).to.have.been.calledWith('complete', {
-          [this.questions[1].id]: 'All done!'
+          [`question_${this.questions[1].id}`]: 'All done!'
         });
       });
     });

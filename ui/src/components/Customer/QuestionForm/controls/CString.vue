@@ -2,7 +2,7 @@
   .c-text
     label(:for='htmlId') fill me out
     span.required.ml-1 *
-    v-input-text(:id='htmlId')
+    v-input-text(:id='htmlId', ref='input')
 </template>
 
 <script>
@@ -22,6 +22,9 @@ export default {
   computed: {
     htmlId: function () {
       return `input-${this.id}`;
+    },
+    value: function () {
+      return this.$refs.input.value;
     }
   }
 };

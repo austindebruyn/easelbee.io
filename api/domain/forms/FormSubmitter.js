@@ -174,6 +174,8 @@ class FormSubmitter {
         const price = await Price.create({
           commissionId: commission.id,
           amount: 10.0
+        }, {
+          transaction: t
         });
         commission.prices = [price];
 

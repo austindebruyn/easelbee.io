@@ -37,7 +37,9 @@ export default {
   },
   methods: {
     handleSubmit: function (value) {
-      this.values[this.form.questions[this.index].id] = value;
+      const key = `question_${this.form.questions[this.index].id}`;
+      this.values[key] = value;
+
       if (this.isFinalQuestion) {
         this.$emit('complete', this.values);
       } else {
