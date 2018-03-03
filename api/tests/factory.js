@@ -15,6 +15,7 @@ const Answer = require('../domain/forms/Answer');
 const AnswerTextValue = require('../domain/forms/AnswerTextValue');
 const AnswerOptionValue = require('../domain/forms/AnswerOptionValue');
 const QuestionOption = require('../domain/forms/QuestionOption');
+const QuestionPriceAdjustment = require('../domain/forms/QuestionPriceAdjustment');
 const adapter = new FactoryGirl.SequelizeAdapter();
 const uid = require('uid-safe');
 
@@ -78,17 +79,18 @@ factory.define('question', Question, {
   order: factory.chance('integer'),
   deletedAt: () => null,
   required: () => false,
-  type: function () {
-    const keys = Object.keys(Question.TYPES);
-    const randomKey = keys[Math.floor(Math.random() * keys.length)];
-
-    return Question.TYPES[randomKey];
-  }
+  type: factory.chance('pickone', _.values(Question.TYPES))
 });
 
 factory.define('questionOption', QuestionOption, {
   questionId: factory.assoc('question', 'id'),
   value: factory.chance('word')
+});
+
+factory.define('questionPriceAdjustment', QuestionPriceAdjustment, {
+  questionOptionId: factory.assoc('questionOption', 'id'),
+  amount: factory.chance('float'),
+  type: factory.chance('pickone', _.values(QuestionPriceAdjustment.TYPES))
 });
 
 factory.define('answer', Answer, {

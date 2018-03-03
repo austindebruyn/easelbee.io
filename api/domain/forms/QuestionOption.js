@@ -11,6 +11,24 @@ const QuestionOption = db.define('questionOptions', {
   freezeTableName: true
 });
 
+/**
+ * Promises to ensure that `questionPriceAdjustments` are eager loaded on this
+ * instance.
+ * @returns {Promise}
+ */
+QuestionOption.prototype.questionPriceAdjustments = function () {
+  return new Promise((resolve, reject) => {
+    if (this.questionPriceAdjustments) return resolve(this);
+
+    return this.getQuestionPriceAdjustments()
+      .then(questionPriceAdjustments => {
+        this.questionPriceAdjustments = questionPriceAdjustments;
+        return resolve(this);
+      })
+      .catch(reject);
+  });
+};
+
 QuestionOption.prototype.toJSON = function () {
   return new Promise(resolve => {
     const {
