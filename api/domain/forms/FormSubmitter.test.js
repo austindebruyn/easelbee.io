@@ -32,18 +32,12 @@ const contact = {
  * rollback.
  */
 function itShouldNotCreateAnyRecords(body = contact) {
-  it('should not create commission or answers', function () {
+  it('should not create commission or answers', async function () {
     const submitter = new FormSubmitter(this.form);
-    return submitter.submit(body).catch(_.noop)
-      .then(function () {
-        return expect(Commission.findAll()).to.eventually.have.length(0);
-      })
-      .then(function (commissions) {
-        return expect(Answer.findAll()).to.eventually.have.length(0);
-      })
-      .then(function (commissions) {
-        return expect(AnswerTextValue.findAll()).to.eventually.have.length(0);
-      });
+    await submitter.submit(body).catch(_.noop);
+    await expect(Commission.findAll()).to.eventually.have.length(0);
+    await expect(Answer.findAll()).to.eventually.have.length(0);
+    await expect(AnswerTextValue.findAll()).to.eventually.have.length(0);
   });
 }
 
