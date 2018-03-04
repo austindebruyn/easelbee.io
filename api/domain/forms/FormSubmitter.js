@@ -9,6 +9,7 @@ const AnswerTextValue = require('./AnswerTextValue');
 const AnswerOptionValue = require('./AnswerOptionValue');
 const db = require('../../services/db');
 const Price = require('../commissions/Price');
+const PriceCalculator = require('./PriceCalculator');
 
 /**
  * Returns a question id parsed from a string like `question_7`.
@@ -173,7 +174,7 @@ class FormSubmitter {
 
         const price = await Price.create({
           commissionId: commission.id,
-          amount: 10.0
+          amount: await new PriceCalculator(commission).calculate()
         }, {
           transaction: t
         });

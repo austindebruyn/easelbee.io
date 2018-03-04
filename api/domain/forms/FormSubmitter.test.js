@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { expect } = require('chai');
+const sinon = require('sinon');
 const FormSubmitter = require('./FormSubmitter');
 const Commission = require('../commissions/Commission');
 const Price = require('../commissions/Price');
@@ -7,6 +8,7 @@ const Question = require('./Question');
 const Answer = require('./Answer');
 const AnswerTextValue = require('./AnswerTextValue');
 const AnswerOptionValue = require('./AnswerOptionValue');
+const PriceCalculator = require('./PriceCalculator');
 const factory = require('../../tests/factory');
 const clock = require('../../tests/clock');
 
@@ -50,7 +52,13 @@ describe('FormSubmitter', function () {
     clock();
 
     beforeEach(async function () {
+      this.sandbox = sinon.sandbox.create();
+      this.sandbox.stub(PriceCalculator.prototype, 'calculate').resolves(15.0);
       this.form = await factory.create('form');
+    });
+
+    afterEach(function () {
+      this.sandbox.restore();
     });
 
     it('should create commission with no answers', function () {
@@ -75,7 +83,7 @@ describe('FormSubmitter', function () {
       expect(commission.prices).to.have.length(1);
       expect(commission.prices[0]).to.include({
         type: Price.TYPES.auto,
-        amount: 10
+        amount: 15
       });
     });
   });
