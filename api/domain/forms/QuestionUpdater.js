@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const Question = require('./Question');
-const QuestionOption = require('./QuestionOption');
-const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
+const Option = require('./Option');
+const Delta = require('./Delta');
 const Answer = require('./Answer');
 const {
   UnprocessableEntityError
@@ -31,14 +31,14 @@ class QuestionUpdater {
   }
 
   /**
-   * Duplicates the original question and all QuestionOptions.
+   * Duplicates the original question and all Options.
    * @private
    * @param {Object} extraProperties
    */
   async performDuplicate(extraProperties) {
     this.question.deletedAt = new Date();
     await this.question.save();
-    await this.question.ensureQuestionOptions();
+    await this.question.ensureOptions();
 
     this.originalQuestion = this.question;
     this.question = await Question.create({
@@ -53,67 +53,66 @@ class QuestionUpdater {
       ...extraProperties
     });
 
-    // Duplicate questionOptions
-    this.question.questionOptions = [];
-    const originalQuestionOptions = this.originalQuestion.questionOptions;
-    for (let i = 0; i < originalQuestionOptions.length; i++) {
-      const originalOption = originalQuestionOptions[i];
-      const newOption = await QuestionOption.create({
+    // Duplicate options
+    this.question.options = [];
+    const originalOptions = this.originalQuestion.options;
+    for (let i = 0; i < originalOptions.length; i++) {
+      const originalOption = originalOptions[i];
+      const newOption = await Option.create({
         questionId: this.question.id,
-        originalQuestionOptionId: originalOption.id,
+        originalId: originalOption.id,
         ..._.pick(originalOption, 'value')
       });
 
-      // Duplicate price adjustments
-      await originalOption.ensureQuestionPriceAdjustment();
-      if (originalOption.questionPriceAdjustment) {
-        newOption.questionPriceAdjustment = await QuestionPriceAdjustment.create({
-          questionOptionId: newOption.id,
-          ..._.pick(originalOption.questionPriceAdjustment, 'type', 'amount')
+      // Duplicate deltas
+      await originalOption.ensureDelta();
+      if (originalOption.delta) {
+        newOption.delta = await Delta.create({
+          optionId: newOption.id,
+          ..._.pick(originalOption.delta, 'type', 'amount')
         });
       }
-      this.question.questionOptions.push(newOption);
+      this.question.options.push(newOption);
     }
   }
 
   /**
-   * @typedef QuestionOption
+   * @typedef Option
    * @property {String} value
    */
   /**
    * @private
-   * @param {QuestionOption[]} options 
+   * @param {Option[]} options 
    */
   async createMissingOptions(options) {
-    await this.question.ensureQuestionOptions();
-    const values = this.question.questionOptions.map(o => o.value);
+    await this.question.ensureOptions();
+    const values = this.question.options.map(o => o.value);
 
     for (let i = 0; i < options.length; i++) {
       const option = options[i];
 
       if (!values.includes(option.value)) {
-        const newQuestionOption = await this.question.createQuestionOption({
+        const newOption = await this.question.createOption({
           value: option.value
         });
-        this.question.questionOptions.push(newQuestionOption);
+        this.question.options.push(newOption);
       }
     }
   }
 
   /**
    * @private
-   * @param {QuestionOption[]} options
+   * @param {Option[]} expectedOptions
    */
-  async destroyExtraOptions(options = []) {
-    await this.question.ensureQuestionOptions();
-    const { questionOptions } = this.question;
-    const expectedValues = options.map(o => o.value);
+  async destroyExtraOptions(expectedOptions = []) {
+    await this.question.ensureOptions();
+    const expectedValues = expectedOptions.map(o => o.value);
 
-    for (let i = 0; i < questionOptions.length; i++) {
-      const questionOption = questionOptions[i];
-      if (!expectedValues.includes(questionOption.value)) {
-        await questionOption.destroy();
-        _.pull(this.question.questionOptions, questionOption);
+    for (let i = 0; i < this.question.options.length; i++) {
+      const option = this.question.options[i];
+      if (!expectedValues.includes(option.value)) {
+        await option.destroy();
+        _.pull(this.question.options, option);
       }
     }
   }
@@ -148,33 +147,33 @@ class QuestionUpdater {
   }
 
   /**
-   * Sets the price adjustment.
+   * Sets the delta.
    * @param {Number} id question option id
    * @param {String} type
    * @param {Number} amount
    */
-  async setPriceAdjustment(id, type, amount) {
+  async setDelta(id, type, amount) {
     const needsDuplicate = await this.needsDuplicate();
     if (needsDuplicate) {
       await this.performDuplicate({});
     }
-    await this.question.ensureQuestionOptions();
+    await this.question.ensureOptions();
 
     // Select the question option by the _original_ id if we just duplicated
     // the models.
-    const questionOption = _.find(this.question.questionOptions, {
-      [needsDuplicate ? 'originalQuestionOptionId' : 'id']: id
+    const option = _.find(this.question.options, {
+      [needsDuplicate ? 'originalId' : 'id']: id
     });
-    await questionOption.ensureQuestionPriceAdjustment();
+    await option.ensureDelta();
 
-    const questionPriceAdjustment = questionOption.questionPriceAdjustment
-      ? questionOption.questionPriceAdjustment
-      : QuestionPriceAdjustment.build({ questionOptionId: questionOption.id });
+    const delta = option.delta
+      ? option.delta
+      : Delta.build({ optionId: option.id });
 
-    Object.assign(questionPriceAdjustment, { type, amount });
-    await questionPriceAdjustment.save();
+    Object.assign(delta, { type, amount });
+    await delta.save();
 
-    return questionPriceAdjustment;
+    return delta;
   }
 }
 

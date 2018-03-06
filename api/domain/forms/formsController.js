@@ -1,6 +1,6 @@
 const Form = require('./Form');
 const Question = require('./Question');
-const QuestionOption = require('./QuestionOption');
+const Option = require('./Option');
 const User = require('../users/User');
 const FormSubmitter = require('./FormSubmitter');
 const {
@@ -82,7 +82,7 @@ module.exports.index = function (req, res, next) {
       include: [{
         model: Question,
         where: { deletedAt: { [Op.eq]: null } },
-        include: [QuestionOption],
+        include: [Option],
         required: false
       }]
     });

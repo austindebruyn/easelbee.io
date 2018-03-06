@@ -14,8 +14,8 @@ const Question = require('../domain/forms/Question');
 const Answer = require('../domain/forms/Answer');
 const AnswerTextValue = require('../domain/forms/AnswerTextValue');
 const AnswerOptionValue = require('../domain/forms/AnswerOptionValue');
-const QuestionOption = require('../domain/forms/QuestionOption');
-const QuestionPriceAdjustment = require('../domain/forms/QuestionPriceAdjustment');
+const Option = require('../domain/forms/Option');
+const Delta = require('../domain/forms/Delta');
 const adapter = new FactoryGirl.SequelizeAdapter();
 const uid = require('uid-safe');
 
@@ -82,15 +82,15 @@ factory.define('question', Question, {
   type: factory.chance('pickone', _.values(Question.TYPES))
 });
 
-factory.define('questionOption', QuestionOption, {
+factory.define('option', Option, {
   questionId: factory.assoc('question', 'id'),
   value: factory.chance('word')
 });
 
-factory.define('questionPriceAdjustment', QuestionPriceAdjustment, {
-  questionOptionId: factory.assoc('questionOption', 'id'),
+factory.define('delta', Delta, {
+  optionId: factory.assoc('option', 'id'),
   amount: factory.chance('float'),
-  type: factory.chance('pickone', _.values(QuestionPriceAdjustment.TYPES))
+  type: factory.chance('pickone', _.values(Delta.TYPES))
 });
 
 factory.define('answer', Answer, {
@@ -101,11 +101,11 @@ factory.define('answer', Answer, {
     return Question.findById(attrs.questionId).then(function (question) {
       switch (question.type) {
         case Question.TYPES.radio:
-          return question.getQuestionOptions()
-            .then(questionOptions => {
+          return question.getOptions()
+            .then(options => {
               return AnswerOptionValue.create({
                 answerId: model.id,
-                questionOptionId: buildOpts.value || _.sample(questionOptions).id
+                optionId: buildOpts.value || _.sample(options).id
               });
             }).then(() => model);
         case Question.TYPES.string:

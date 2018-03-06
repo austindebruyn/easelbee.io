@@ -35,11 +35,11 @@ module.exports = {
       }),
       q.createTable('answer_option_values', {
         ...buildCommonFields(Sequelize),
-        questionOptionId: {
+        optionId: {
           type: Sequelize.INTEGER,
           allowNull: false,
           references: {
-            model: 'question_options',
+            model: 'options',
             key: 'id'
           }
         }

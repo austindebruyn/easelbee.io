@@ -1,6 +1,6 @@
 const factory = require('../../tests/factory');
 const Question = require('./Question');
-require('./QuestionOption');
+require('./Option');
 const { expect } = require('chai');
 
 describe('#toJSON', function () {
@@ -29,7 +29,7 @@ describe('#toJSON', function () {
       }).then(record => {
         this.questionId = record.id;
 
-        return factory.createMany('questionOption', 4, {
+        return factory.createMany('option', 4, {
           questionId: record.id,
           value: 'abc'
         });

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { UnprocessableEntityError } = require('../../core/errors');
 const Question = require('./Question');
-const QuestionOption = require('./QuestionOption');
+const Option = require('./Option');
 const Form = require('./Form');
 const Commission = require('../commissions/Commission');
 const Answer = require('./Answer');
@@ -66,16 +66,16 @@ class FormSubmitter {
       switch (question.type) {
         case Question.TYPES.radio:
           const id = body[key];
-          return QuestionOption.findOne({ where: { id } })
-            .then(questionOption => {
-              if (!questionOption) {
+          return Option.findOne({ where: { id } })
+            .then(option => {
+              if (!option) {
                 throw new UnprocessableEntityError('invalid-question-option', {
                   id
                 });
               }
 
               return AnswerOptionValue.create(
-                { questionOptionId: questionOption.id, answerId: answer.id },
+                { optionId: option.id, answerId: answer.id },
                 { transaction: t }
               );
             }).then(() => answer);

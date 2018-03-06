@@ -1,6 +1,6 @@
-const QuestionOption = require('./QuestionOption');
+const Option = require('./Option');
 const AnswerOptionValue = require('./AnswerOptionValue');
-const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
+const Delta = require('./Delta');
 
 /**
  * Calculates the price of a commission from the submitted questions and
@@ -24,8 +24,8 @@ class PriceCalculator {
         model: AnswerOptionValue,
         required: false,
         include: [{
-          model: QuestionOption,
-          include: [QuestionPriceAdjustment]
+          model: Option,
+          include: [Delta]
         }]
       }]
     });
@@ -34,9 +34,9 @@ class PriceCalculator {
 
     answers.forEach(function (answer) {
       answer.answerOptionValues.forEach(function (optionValue) {
-        const adjustment = optionValue.questionOption.questionPriceAdjustment;
-        if (adjustment) {
-          total += adjustment.amount;
+        const { delta } = optionValue.option;
+        if (delta) {
+          total += delta.amount;
         }
       });
     });

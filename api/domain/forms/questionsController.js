@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const Form = require('./Form');
 const Question = require('./Question');
-const QuestionOption = require('./QuestionOption');
-const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
+const Option = require('./Option');
+const Delta = require('./Delta');
 const {
   NotFoundError,
   UnauthorizedError,
@@ -82,18 +82,18 @@ module.exports.destroy = function (req, res, next) {
   handle().catch(next);
 };
 
-module.exports.setQuestionPriceAdjustment = function (req, res, next) {
+module.exports.setDelta = function (req, res, next) {
   async function handle() {
-    const questionOption = await QuestionOption.findById(req.params.id, {
+    const option = await Option.findById(req.params.id, {
       include: [{ model: Question, include: [Form] }]
     });
-    if (!questionOption) throw new NotFoundError();
-    if (questionOption.question.form.userId !== req.user.id) {
+    if (!option) throw new NotFoundError();
+    if (option.question.form.userId !== req.user.id) {
       throw new UnauthorizedError();
     }
 
     const { amount, type } = req.body;
-    if (!(type in QuestionPriceAdjustment.TYPES)) {
+    if (!(type in Delta.TYPES)) {
       throw new UnprocessableEntityError('bad-type', {
         fields: { type }
       });
@@ -104,7 +104,7 @@ module.exports.setQuestionPriceAdjustment = function (req, res, next) {
       });
     }
 
-    const result = await new QuestionUpdater(question).setPriceAdjustment({
+    const result = await new QuestionUpdater(question).setDelta({
       type,
       amount
     });
@@ -113,6 +113,6 @@ module.exports.setQuestionPriceAdjustment = function (req, res, next) {
   handle().catch(next);
 };
 
-module.exports.destroyQuestionPriceAdjustment = function (req, res, next) {
+module.exports.destroyDelta = function (req, res, next) {
 
 };

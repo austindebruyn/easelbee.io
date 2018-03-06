@@ -1,8 +1,8 @@
 const PriceCalculator = require('./PriceCalculator');
 const Question = require('./Question');
 const Answer = require('./Answer');
-const QuestionOption = require('./QuestionOption');
-const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
+const Option = require('./Option');
+const Delta = require('./Delta');
 const AnswerOptionValue = require('../forms/AnswerOptionValue');
 const AnswerTextValue = require('../forms/AnswerTextValue');
 const factory = require('../../tests/factory');
@@ -25,7 +25,7 @@ describe('PriceCalculator', function () {
 
   describe('with one BASE question', function () {
     beforeEach(async function () {
-      this.builder = new FormWithPriceAdjustmentsBuilder({
+      this.builder = new FormWithDeltasBuilder({
         formId: this.form.id,
         commissionId: this.commission.id
       });
@@ -52,7 +52,7 @@ describe('PriceCalculator', function () {
 
   describe('with one ADD question', function () {
     beforeEach(async function () {
-      this.builder = new FormWithPriceAdjustmentsBuilder({
+      this.builder = new FormWithDeltasBuilder({
         formId: this.form.id,
         commissionId: this.commission.id
       });
@@ -74,12 +74,12 @@ describe('PriceCalculator', function () {
 
   describe('with one normal, one BASE, and one ADD question', function () {
     beforeEach(async function () {
-      this.builder = new FormWithPriceAdjustmentsBuilder({
+      this.builder = new FormWithDeltasBuilder({
         formId: this.form.id,
         commissionId: this.commission.id
       });
       await this.builder.setUpForm([
-        { c: 'this is a non price-adjusting question' },
+        { c: 'this is a question with no deltas' },
         { type: 'base', amounts: [null, 20] },
         { type: 'add', amounts: [10, 5, null] }
       ]);
@@ -109,17 +109,17 @@ describe('PriceCalculator', function () {
 /**
  * For purposes of quickly automating test cases for PriceCalculator, an
  * instance of this class can spin up forms via a spec that defines the
- * questions tailored to have specific price adjustment options...
+ * questions tailored to have specific options with deltas...
  *    ie. (build form with one question that set base price to $10 or 20$)
  * This class is also able to automate answering that question for a specific
  * commission...
  *   ie. (answer the first question in that form with the 20$ option)
  *
- * NOTE: This builder can't build questions with mixed QuestionPriceAdjustment
+ * NOTE: This builder can't build questions with mixed Delta
  * types, ie. a radio question with answers that can both set the BASE price OR
  * incur an ADD price. This isn't a feature so no point in testing.
  */
-class FormWithPriceAdjustmentsBuilder {
+class FormWithDeltasBuilder {
   /**
    * @api
    * @param {Object} opts
@@ -130,7 +130,7 @@ class FormWithPriceAdjustmentsBuilder {
 
   /**
    * Helper to build a a form with specific questions - tailored to have the price
-   * adjustment properties described by `descs`.
+   * deltas properties described by `descs`.
    * @param {Array} questions
    */
   async setUpForm(descs) {
@@ -138,27 +138,27 @@ class FormWithPriceAdjustmentsBuilder {
 
     for (let i = 0; i < descs.length; i++) {
       const desc = descs[i];
-      const isPriceAdjustingQuestion = ['base', 'add'].includes(desc.type);
+      const hasDelta = ['base', 'add'].includes(desc.type);
 
       const question = await factory.create('question', {
         formId: this.formId,
-        type: Question.TYPES[isPriceAdjustingQuestion ? 'radio' : 'string'],
+        type: Question.TYPES[hasDelta ? 'radio' : 'string'],
         order: i + 1
       });
 
-      if (isPriceAdjustingQuestion) {
+      if (hasDelta) {
         for (let j = 0; j < desc.amounts.length; j++) {
           const amount = desc.amounts[j];
 
-          const questionOption = await factory.create('questionOption', {
+          const option = await factory.create('option', {
             questionId: question.id
           });
 
           if (amount) {
-            await factory.create('questionPriceAdjustment', {
-              questionOptionId: questionOption.id,
+            await factory.create('delta', {
+              optionId: option.id,
               amount,
-              type: QuestionPriceAdjustment.TYPES[desc.type]
+              type: Delta.TYPES[desc.type]
             });
           }
         }
@@ -168,7 +168,7 @@ class FormWithPriceAdjustmentsBuilder {
 
   /**
    * Helper to answer the question indicated by formId and order with the answer
-   * that cooresponds to the expected amount in terms of QuestionPriceAdjustment.
+   * that cooresponds to the expected amount in terms of Delta.
    * @param {Number} index
    * @param {Number?} amount
    */
@@ -179,9 +179,9 @@ class FormWithPriceAdjustmentsBuilder {
     const question = await Question.findOne({
       where: { formId: this.formId, order },
       include: [{
-        model: QuestionOption,
+        model: Option,
         required: false,
-        include: [{ model: QuestionPriceAdjustment, required: false }]
+        include: [{ model: Delta, required: false }]
       }]
     });
     if (!question) {
@@ -201,23 +201,23 @@ class FormWithPriceAdjustmentsBuilder {
       return;
     }
 
-    let questionOption;
-    for (let i = 0; i < question.questionOptions.length; i++) {
-      const record = question.questionOptions[i];
-      if (record.questionPriceAdjustment) {
-        if (record.questionPriceAdjustment.amount === amount) {
-          questionOption = record;
+    let option;
+    for (let i = 0; i < question.options.length; i++) {
+      const record = question.options[i];
+      if (record.delta) {
+        if (record.delta.amount === amount) {
+          option = record;
         }
       } else if (amount === null) {
-        questionOption = record;
+        option = record;
       }
     }
-    if (!questionOption) {
+    if (!option) {
       throw new Error(`question with order ${order} has no answer with amount ${amount}`);
     }
     await AnswerOptionValue.create({
       answerId: answer.id,
-      questionOptionId: questionOption.id
+      optionId: option.id
     });
   }
 }

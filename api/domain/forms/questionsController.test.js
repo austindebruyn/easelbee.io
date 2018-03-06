@@ -5,7 +5,7 @@ const factory = require('../../tests/factory');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const Question = require('./Question');
-const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
+const Delta = require('./Delta');
 const QuestionUpdater = require('./QuestionUpdater');
 
 describe('questionsController', function () {
@@ -230,7 +230,7 @@ describe('questionsController', function () {
     });
   });
 
-  describe('PUT /api/questionOptions/:id/questionPriceAdjustment', function () {
+  describe('PUT /api/options/:id/delta', function () {
     beforeEach(async function () {
       this.user = await factory.create('user');
       this.form = await factory.create('form', { userId: this.user.id });
@@ -238,14 +238,14 @@ describe('questionsController', function () {
         formId: this.form.id,
         type: Question.TYPES.radio
       });
-      this.questionOption = await factory.create('questionOption', {
+      this.option = await factory.create('option', {
         questionId: this.question.id
       });
     });
 
     it('should 403 if signed out', function () {
       return agent()
-        .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+        .put(`/api/options/${this.option.id}/delta`)
         .send({})
         .accept('application/json')
         .expect(403);
@@ -258,7 +258,7 @@ describe('questionsController', function () {
 
       it('should 404 if not found', function () {
         return agent()
-          .put('/api/questionOptions/999/questionPriceAdjustment')
+          .put('/api/options/999/delta')
           .cookiejar()
           .accept('application/json')
           .expect(404);
@@ -270,11 +270,11 @@ describe('questionsController', function () {
           formId: otherForm.id,
           type: Question.TYPES.radio
         });
-        const otherQuestionOption = await factory.create('questionOption', {
+        const otherOption = await factory.create('option', {
           questionId: otherQuestion.id
         });
         return agent()
-          .put(`/api/questionOptions/${otherQuestionOption.id}/questionPriceAdjustment`)
+          .put(`/api/options/${otherOption.id}/delta`)
           .send({ type: 'base', amount: 10 })
           .cookiejar()
           .accept('application/json')
@@ -283,7 +283,7 @@ describe('questionsController', function () {
 
       it('should error if no type', async function () {
         await agent()
-          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .put(`/api/options/${this.option.id}/delta`)
           .send({ amount: 10 })
           .cookiejar()
           .accept('application/json')
@@ -294,7 +294,7 @@ describe('questionsController', function () {
 
       it('should error if bad type', async function () {
         await agent()
-          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .put(`/api/options/${this.option.id}/delta`)
           .send({ type: 'potato' })
           .cookiejar()
           .accept('application/json')
@@ -305,7 +305,7 @@ describe('questionsController', function () {
 
       it('should error if amount not a number', async function () {
         await agent()
-          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .put(`/api/options/${this.option.id}/delta`)
           .send({ type: 'add', amount: 'potato' })
           .cookiejar()
           .accept('application/json')
@@ -316,7 +316,7 @@ describe('questionsController', function () {
 
       it('should error if amount out of range', async function () {
         await agent()
-          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .put(`/api/options/${this.option.id}/delta`)
           .send({ type: 'add', amount: -14 })
           .cookiejar()
           .accept('application/json')
@@ -327,16 +327,16 @@ describe('questionsController', function () {
 
       it('should succeed and create model', async function () {
         await agent()
-          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .put(`/api/options/${this.option.id}/delta`)
           .send({ type: 'base', amount: 10.50 })
           .cookiejar()
           .accept('application/json')
           .expect(200);
-        const questionPriceAdjustment = await QuestionPriceAdjustment.findOne({
-          where: { questionOptionId: this.questionOption.id } }
+        const delta = await Delta.findOne({
+          where: { optionId: this.option.id } }
         );
-        expect(questionPriceAdjustment.type).to.eql('base');
-        expect(questionPriceAdjustment.amount).to.eql(10.50);
+        expect(delta.type).to.eql('base');
+        expect(delta.amount).to.eql(10.50);
       });
     });
   });

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const Question = require('./Question');
-const QuestionOption = require('./QuestionOption');
+const Option = require('./Option');
 
 /**
  * Fetches all the questions and answers that were filled out for one
@@ -20,7 +20,7 @@ class FilloutFetcher {
     const ids = _.map(this.commission.answers, 'questionId');
     return Question.findAll({
       where: { id: ids },
-      include: [QuestionOption]
+      include: [Option]
     })
       .then(questions => {
         this._questions = questions;

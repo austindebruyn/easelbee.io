@@ -58,7 +58,7 @@ const GET_VALUE_HANDLERS = {
             `${answerOptionValues.length} instead.`
           );
         }
-        return answerOptionValues[0].questionOptionId;
+        return answerOptionValues[0].optionId;
       });
   }
 };

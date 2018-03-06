@@ -1,6 +1,6 @@
 module.exports = {
   up: function (q, Sequelize) {
-    return q.createTable('question_price_adjustments', {
+    return q.createTable('deltas', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -23,17 +23,17 @@ module.exports = {
         allowNull: false,
         default: 0
       },
-      questionOptionId: {
+      optionId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'question_options',
+          model: 'options',
           key: 'id'
         }
       }
     });
   },
   down: function (q, Sequelize) {
-    return q.dropTable('question_price_adjustments');
+    return q.dropTable('deltas');
   }
 };

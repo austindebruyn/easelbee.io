@@ -24,12 +24,6 @@ const Question = db.define('questions', {
   deletedAt: {
     type: db.Sequelize.DATE
   }
-}, {
-  tableName: 'questions',
-  freezeTableName: true,
-  name: {
-    singular: 'question'
-  }
 });
 
 Question.TYPES = {
@@ -42,7 +36,7 @@ Question.TYPES = {
 };
 
 /**
- * Returns whether or not this question has associated QuestionOption models.
+ * Returns whether or not this question has associated Option models.
  * @returns {Boolean}
  */
 Question.prototype.isMultipleChoice = function () {
@@ -67,16 +61,16 @@ Question.prototype.ensureForm = function () {
 };
 
 /**
- * Promises to ensure that `questionOptions` are eager loaded on this instance.
+ * Promises to ensure that `options` are eager loaded on this instance.
  * @returns {Promise}
  */
-Question.prototype.ensureQuestionOptions = function () {
+Question.prototype.ensureOptions = function () {
   return new Promise((resolve, reject) => {
-    if (this.questionOptions) return resolve(this);
+    if (this.options) return resolve(this);
 
-    return this.getQuestionOptions()
-      .then(questionOptions => {
-        this.questionOptions = questionOptions;
+    return this.getOptions()
+      .then(options => {
+        this.options = options;
         return resolve(this);
       })
       .catch(reject);
@@ -111,11 +105,11 @@ Question.prototype.toJSON = function () {
       updatedAt: updatedAt && updatedAt.toUTCString()
     };
 
-    // If this question can include `questionOptions`, like a radio or checkbox
+    // If this question can include `options`, like a radio or checkbox
     // question would, then eager load those before serializing.
     if ([ Question.TYPES.radio, Question.TYPES.checkbox ].includes(type)) {
-      return this.ensureQuestionOptions()
-        .then(() => Promise.all(this.questionOptions.map(r => r.toJSON())))
+      return this.ensureOptions()
+        .then(() => Promise.all(this.options.map(r => r.toJSON())))
         .then(optionJsons => {
           return resolve({
             ...attrs,

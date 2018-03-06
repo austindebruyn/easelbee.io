@@ -1,6 +1,6 @@
 module.exports = {
   up: function (q, Sequelize) {
-    return q.createTable('question_options', {
+    return q.createTable('options', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -29,6 +29,6 @@ module.exports = {
     });
   },
   down: function (q, Sequelize) {
-    return q.dropTable('question_options');
+    return q.dropTable('options');
   }
 };

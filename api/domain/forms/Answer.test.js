@@ -52,7 +52,7 @@ describe('Answer', function () {
         return factory.create('question', { type: Question.TYPES.radio })
           .then(question => {
             this.question = question;
-            return factory.create('questionOption', {
+            return factory.create('option', {
               id: 222,
               questionId: question.id
             });

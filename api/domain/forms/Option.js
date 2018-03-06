@@ -1,35 +1,32 @@
 const db = require('../../services/db');
 const Question = require('./Question');
 
-const QuestionOption = db.define('questionOptions', {
+const Option = db.define('options', {
   value: {
     type: db.Sequelize.TEXT,
     allowNull: false
   }
-}, {
-  tableName: 'question_options',
-  freezeTableName: true
 });
 
 /**
- * Promises to ensure that `questionPriceAdjustments` are eager loaded on this
+ * Promises to ensure that `deltas` are eager loaded on this
  * instance.
  * @returns {Promise}
  */
-QuestionOption.prototype.questionPriceAdjustments = function () {
+Option.prototype.ensureDelta = function () {
   return new Promise((resolve, reject) => {
-    if (this.questionPriceAdjustments) return resolve(this);
+    if (this.delta) return resolve(this);
 
-    return this.getQuestionPriceAdjustments()
-      .then(questionPriceAdjustments => {
-        this.questionPriceAdjustments = questionPriceAdjustments;
+    return this.getDelta()
+      .then(delta => {
+        this.delta = delta;
         return resolve(this);
       })
       .catch(reject);
   });
 };
 
-QuestionOption.prototype.toJSON = function () {
+Option.prototype.toJSON = function () {
   return new Promise(resolve => {
     const {
       id,
@@ -49,7 +46,12 @@ QuestionOption.prototype.toJSON = function () {
   });
 };
 
-QuestionOption.belongsTo(Question);
-Question.hasMany(QuestionOption);
+Option.belongsTo(Question);
+Question.hasMany(Option);
 
-module.exports = QuestionOption;
+Option.belongsTo(Option, {
+  as: 'originalOption',
+  foreignKey: 'originalId'
+});
+
+module.exports = Option;

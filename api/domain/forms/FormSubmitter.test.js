@@ -226,11 +226,11 @@ describe('FormSubmitter', function () {
         });
       }).then(question => {
         this.question = question;
-        return factory.createMany('questionOption', 4, {
+        return factory.createMany('option', 4, {
           question: question.id
         });
-      }).then(questionOptions => {
-        this.questionOptions = questionOptions;
+      }).then(options => {
+        this.options = options;
       });
     });
 
@@ -238,7 +238,7 @@ describe('FormSubmitter', function () {
       const submitter = new FormSubmitter(this.form);
       const body = {
         ...contact,
-        [`question_${this.question.id}`]: this.questionOptions[0].id
+        [`question_${this.question.id}`]: this.options[0].id
       };
       return submitter.submit(body)
         .then(reloadCommissionWithAssociations)
@@ -248,10 +248,10 @@ describe('FormSubmitter', function () {
           const { answers } = commission;
           expect(answers).to.have.length(1);
           expect(answers[0].answerOptionValues).to.have.length(1);
-          return answers[0].answerOptionValues[0].getQuestionOption();
+          return answers[0].answerOptionValues[0].getOption();
         })
-        .then(questionOption => {
-          expect(questionOption.id).to.eql(this.questionOptions[0].id);
+        .then(option => {
+          expect(option.id).to.eql(this.options[0].id);
         });
     });
   });

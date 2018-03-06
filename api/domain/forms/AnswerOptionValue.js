@@ -1,13 +1,13 @@
 const db = require('../../services/db');
 const Answer = require('./Answer');
-const QuestionOption = require('./QuestionOption');
+const Option = require('./Option');
 
 const AnswerOptionValue = db.define('answerOptionValues', {
-  questionOptionId: {
+  optionId: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: 'question_options',
+      model: 'options',
       key: 'id'
     }
   }
@@ -21,7 +21,7 @@ AnswerOptionValue.prototype.toJSON = function () {
     const {
       id,
       answerId,
-      questionOptionId,
+      optionId,
       createdAt,
       updatedAt
     } = this.get();
@@ -29,7 +29,7 @@ AnswerOptionValue.prototype.toJSON = function () {
     return resolve({
       id,
       answerId,
-      questionOptionId,
+      optionId,
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });
@@ -39,7 +39,7 @@ AnswerOptionValue.prototype.toJSON = function () {
 AnswerOptionValue.belongsTo(Answer);
 Answer.hasMany(AnswerOptionValue);
 
-AnswerOptionValue.belongsTo(QuestionOption);
-QuestionOption.hasMany(AnswerOptionValue);
+AnswerOptionValue.belongsTo(Option);
+Option.hasMany(AnswerOptionValue);
 
 module.exports = AnswerOptionValue;

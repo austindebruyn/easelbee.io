@@ -22,7 +22,7 @@
         .form-group(v-if='shouldShowOptions')
           h4 {{ $t('forms.details.questions.options') }}
           question-details-options(
-            ref='questionOptions'
+            ref='options'
             :question='question'
             @addOption='handleAddOption'
             @change='handleChange'
@@ -70,19 +70,17 @@ export default {
     handleChange: function () {
       this.dirty = true;
     },
-    scrubQuestionOptions: function (questionOptions) {
+    scrubOptions: function (options) {
       // When submitting options to the API, don't include model attributes like
       // id or timestamps.
-      return questionOptions.map(function (questionOption) {
-        return pick(questionOption, 'value');
-      });
+      return options.map(option => pick(option, 'value'));
     },
     handleSubmit: function (e) {
       e.preventDefault();
 
-      const options = this.scrubQuestionOptions(
+      const options = this.scrubOptions(
         this.shouldShowOptions
-          ? this.$refs.questionOptions.getValues()
+          ? this.$refs.options.getValues()
           : this.question.options || []
       );
 
@@ -103,7 +101,7 @@ export default {
         id: this.question.id,
         title: this.$refs.title.getValue(),
         type: this.$refs.type.getValue(),
-        options: this.scrubQuestionOptions(options)
+        options: this.scrubOptions(options)
       });
     },
     handleDestroyClick: function () {

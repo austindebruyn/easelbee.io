@@ -63,8 +63,8 @@ module.exports = function (app) {
   app.delete('/api/forms/:id', ensureAuthenticated, formsController.destroy);
   app.patch('/api/questions/:id', ensureAuthenticated, questionsController.update);
   app.delete('/api/questions/:id', ensureAuthenticated, questionsController.destroy);
-  app.put('/api/questionOptions/:id/questionPriceAdjustment', ensureAuthenticated, questionsController.setQuestionPriceAdjustment);
-  app.delete('/api/questionOptions/:id/questionPriceAdjustment', ensureAuthenticated, questionsController.destroyQuestionPriceAdjustment);
+  app.put('/api/options/:id/delta', ensureAuthenticated, questionsController.setDelta);
+  app.delete('/api/options/:id/delta', ensureAuthenticated, questionsController.destroyDelta);
 
   app.get('*', homeController.app);
 
