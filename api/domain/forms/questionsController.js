@@ -112,5 +112,19 @@ module.exports.setDelta = function (req, res, next) {
 };
 
 module.exports.destroyDelta = function (req, res, next) {
+  async function handle() {
+    const option = await Option.findById(req.params.id, {
+      include: [Delta, { model: Question, include: [Form] }]
+    });
+    if (!option) throw new NotFoundError();
+    if (option.question.form.userId !== req.user.id) {
+      throw new UnauthorizedError();
+    }
+    if (!option.delta) throw new NotFoundError();
 
+    const updater = new QuestionUpdater(option.question);
+    await updater.destroyDelta(option.id);
+    return res.sendStatus(204);
+  }
+  handle().catch(next);
 };

@@ -89,7 +89,7 @@ factory.define('option', Option, {
 
 factory.define('delta', Delta, {
   optionId: factory.assoc('option', 'id'),
-  amount: factory.chance('float'),
+  amount: factory.chance('floating', { fixed: 2, min: 5, max: 20 }),
   type: factory.chance('pickone', _.values(Delta.TYPES))
 });
 

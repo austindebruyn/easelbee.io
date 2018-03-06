@@ -175,6 +175,26 @@ class QuestionUpdater {
 
     return delta;
   }
+
+  /**
+   * Destroys the delta.
+   * @param {Number} id question option id
+   */
+  async destroyDelta(id) {
+    const needsDuplicate = await this.needsDuplicate();
+    if (needsDuplicate) {
+      await this.performDuplicate({});
+    }
+    await this.question.ensureOptions();
+
+    // Select the question option by the _original_ id if we just duplicated
+    // the models.
+    const option = _.find(this.question.options, {
+      [needsDuplicate ? 'originalId' : 'id']: id
+    });
+    await option.ensureDelta();
+    await option.delta.destroy();
+  }
 }
 
 module.exports = QuestionUpdater;

@@ -346,4 +346,88 @@ describe('questionsController', function () {
       });
     });
   });
+
+  describe('DELETE /api/options/:id/delta', function () {
+    beforeEach(async function () {
+      this.user = await factory.create('user');
+      this.form = await factory.create('form', { userId: this.user.id });
+      this.question = await factory.create('question', {
+        formId: this.form.id,
+        type: Question.TYPES.radio
+      });
+      this.option = await factory.create('option', {
+        questionId: this.question.id
+      });
+    });
+
+    it('should 403 if signed out', function () {
+      return agent()
+        .put(`/api/options/${this.option.id}/delta`)
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(async function () {
+        await signIn(this.user);
+      });
+
+      it('should 404 if not found', async function () {
+        await agent()
+          .delete('/api/options/999/delta')
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+        // A delta doesn't exist yet
+        await agent()
+          .delete(`/api/options/${this.option.id}/delta`)
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      it('should 403 if not owner', async function () {
+        const otherForm = await factory.create('form');
+        const otherQuestion = await factory.create('question', {
+          formId: otherForm.id,
+          type: Question.TYPES.radio
+        });
+        const otherOption = await factory.create('option', {
+          questionId: otherQuestion.id
+        });
+        await agent()
+          .delete(`/api/options/${otherOption.id}/delta`)
+          .cookiejar()
+          .accept('application/json')
+          .expect(403);
+      });
+
+      describe('when delta exists', function () {
+        beforeEach(async function () {
+          await factory.create('delta', {
+            optionId: this.option.id
+          });
+        });
+
+        it('should succeed and destroy model', async function () {
+          await agent()
+            .delete(`/api/options/${this.option.id}/delta`)
+            .cookiejar()
+            .accept('application/json')
+            .expect(204);
+          // expect(await Delta.count({ where: { optionId: this.option.id } }))
+          //   .to.eql(0);
+        });
+
+        it('should 500 if QuestionUpdater errors', async function () {
+          this.sandbox.stub(QuestionUpdater.prototype, 'destroyDelta').rejects();
+          await agent()
+            .delete(`/api/options/${this.option.id}/delta`)
+            .cookiejar()
+            .accept('application/json')
+            .expect(500);
+        });
+      });
+    });
+  });
 });
