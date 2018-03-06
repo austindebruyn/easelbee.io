@@ -104,10 +104,8 @@ module.exports.setDelta = function (req, res, next) {
       });
     }
 
-    const result = await new QuestionUpdater(question).setDelta({
-      type,
-      amount
-    });
+    const updater = new QuestionUpdater(option.question);
+    const result = await updater.setDelta(option.id, type, amount);
     return res.json({ ok: true, record: await result.toJSON() });
   }
   handle().catch(next);

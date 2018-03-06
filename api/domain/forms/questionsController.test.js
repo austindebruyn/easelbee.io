@@ -11,6 +11,14 @@ const QuestionUpdater = require('./QuestionUpdater');
 describe('questionsController', function () {
   clock();
 
+  beforeEach(function () {
+    this.sandbox = sinon.sandbox.create();
+  });
+
+  afterEach(function () {
+    this.sandbox.restore();
+  });
+
   describe('PATCH /api/questions/:id', function () {
     beforeEach(async function () {
       this.form = await factory.create('form');
@@ -18,12 +26,6 @@ describe('questionsController', function () {
         formId: this.form.id
       });
       this.user = await this.form.getUser();
-
-      this.sandbox = sinon.sandbox.create();
-    });
-
-    afterEach(function () {
-      this.sandbox.restore();
     });
 
     it('should 403', function () {
@@ -150,12 +152,6 @@ describe('questionsController', function () {
         }));
       }
       this.user = await this.form.getUser();
-
-      this.sandbox = sinon.sandbox.create();
-    });
-
-    afterEach(function () {
-      this.sandbox.restore();
     });
 
     it('should 403', function () {
@@ -337,6 +333,16 @@ describe('questionsController', function () {
         );
         expect(delta.type).to.eql('base');
         expect(delta.amount).to.eql(10.50);
+      });
+
+      it('should 500 if QuestionUpdater errors', async function () {
+        this.sandbox.stub(QuestionUpdater.prototype, 'setDelta').rejects();
+        await agent()
+          .put(`/api/options/${this.option.id}/delta`)
+          .send({ type: 'base', amount: 10.50 })
+          .cookiejar()
+          .accept('application/json')
+          .expect(500);
       });
     });
   });
