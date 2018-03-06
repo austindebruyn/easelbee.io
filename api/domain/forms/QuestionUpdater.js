@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const Question = require('./Question');
+const QuestionOption = require('./QuestionOption');
+const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
 const Answer = require('./Answer');
 const {
   UnprocessableEntityError
@@ -29,15 +31,17 @@ class QuestionUpdater {
   }
 
   /**
-   * Duplicates the original question.
+   * Duplicates the original question and all QuestionOptions.
    * @private
+   * @param {Object} extraProperties
    */
-  async performDuplicate() {
+  async performDuplicate(extraProperties) {
     this.question.deletedAt = new Date();
     await this.question.save();
+    await this.question.ensureQuestionOptions();
 
     this.originalQuestion = this.question;
-    this.question = await Question.build({
+    this.question = await Question.create({
       originalQuestionId: this.originalQuestion.id,
       ..._.pick(this.originalQuestion,
         'title',
@@ -45,8 +49,31 @@ class QuestionUpdater {
         'order',
         'formId',
         'required'
-      )
+      ),
+      ...extraProperties
     });
+
+    // Duplicate questionOptions
+    this.question.questionOptions = [];
+    const originalQuestionOptions = this.originalQuestion.questionOptions;
+    for (let i = 0; i < originalQuestionOptions.length; i++) {
+      const originalOption = originalQuestionOptions[i];
+      const newOption = await QuestionOption.create({
+        questionId: this.question.id,
+        originalQuestionOptionId: originalOption.id,
+        ..._.pick(originalOption, 'value')
+      });
+
+      // Duplicate price adjustments
+      await originalOption.ensureQuestionPriceAdjustment();
+      if (originalOption.questionPriceAdjustment) {
+        newOption.questionPriceAdjustment = await QuestionPriceAdjustment.create({
+          questionOptionId: newOption.id,
+          ..._.pick(originalOption.questionPriceAdjustment, 'type', 'amount')
+        });
+      }
+      this.question.questionOptions.push(newOption);
+    }
   }
 
   /**
@@ -99,11 +126,11 @@ class QuestionUpdater {
    */
   async update(body) {
     if (await this.needsDuplicate()) {
-      await this.performDuplicate();
+      await this.performDuplicate(body);
+    } else {
+      Object.assign(this.question, body);
+      await this.question.save();
     }
-
-    Object.assign(this.question, body);
-    await this.question.save();
 
     if (this.question.isMultipleChoice()) {
       if (!body.options || !Array.isArray(body.options)) {
@@ -118,6 +145,36 @@ class QuestionUpdater {
     await this.destroyExtraOptions(body.options);
 
     return this.question;
+  }
+
+  /**
+   * Sets the price adjustment.
+   * @param {Number} id question option id
+   * @param {String} type
+   * @param {Number} amount
+   */
+  async setPriceAdjustment(id, type, amount) {
+    const needsDuplicate = await this.needsDuplicate();
+    if (needsDuplicate) {
+      await this.performDuplicate({});
+    }
+    await this.question.ensureQuestionOptions();
+
+    // Select the question option by the _original_ id if we just duplicated
+    // the models.
+    const questionOption = _.find(this.question.questionOptions, {
+      [needsDuplicate ? 'originalQuestionOptionId' : 'id']: id
+    });
+    await questionOption.ensureQuestionPriceAdjustment();
+
+    const questionPriceAdjustment = questionOption.questionPriceAdjustment
+      ? questionOption.questionPriceAdjustment
+      : QuestionPriceAdjustment.build({ questionOptionId: questionOption.id });
+
+    Object.assign(questionPriceAdjustment, { type, amount });
+    await questionPriceAdjustment.save();
+
+    return questionPriceAdjustment;
   }
 }
 

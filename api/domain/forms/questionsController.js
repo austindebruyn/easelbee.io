@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const Form = require('./Form');
 const Question = require('./Question');
+const QuestionOption = require('./QuestionOption');
+const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
 const {
   NotFoundError,
   UnauthorizedError,
@@ -9,54 +11,45 @@ const {
 const QuestionUpdater = require('./QuestionUpdater');
 
 module.exports.update = function (req, res, next) {
-  let question;
+  async function handle() {
+    const question = await Question.findById(req.params.id);
+    if (!question) {
+      throw new NotFoundError();
+    }
 
-  return Question.findById(req.params.id)
-    .then(function (record) {
-      question = record;
+    await question.ensureForm();
+    if (question.form.userId !== req.user.id) {
+      throw new UnauthorizedError();
+    }
 
-      if (!question) {
-        throw new NotFoundError();
-      }
+    const attributeKeys = Object.keys(req.body);
 
-      return question.ensureForm();
-    })
-    .then(function () {
-      if (question.form.userId !== req.user.id) {
-        throw new UnauthorizedError();
-      }
+    if (attributeKeys.length < 1) {
+      throw new UnprocessableEntityError('no-attributes');
+    }
 
-      const attributeKeys = Object.keys(req.body);
+    const allowedAttributes = [ 'title', 'type', 'options' ];
+    const forbiddenAttributes = _.difference(
+      attributeKeys,
+      allowedAttributes
+    );
+    if (forbiddenAttributes.length > 0) {
+      throw new UnprocessableEntityError('bad-attributes', {
+        fields: forbiddenAttributes
+      });
+    }
 
-      if (attributeKeys.length < 1) {
-        throw new UnprocessableEntityError('no-attributes');
-      }
+    if (!(req.body.type in Question.TYPES)) {
+      throw new UnprocessableEntityError('bad-type', {
+        fields: { type: req.body.type }
+      });
+    }
+    req.body.type = Question.TYPES[req.body.type];
 
-      const allowedAttributes = [ 'title', 'type', 'options' ];
-      const forbiddenAttributes = _.difference(
-        attributeKeys,
-        allowedAttributes
-      );
-      if (forbiddenAttributes.length > 0) {
-        throw new UnprocessableEntityError('bad-attributes', {
-          fields: forbiddenAttributes
-        });
-      }
-
-      if (!(req.body.type in Question.TYPES)) {
-        throw new UnprocessableEntityError('bad-type', {
-          fields: { type: req.body.type }
-        });
-      }
-      req.body.type = Question.TYPES[req.body.type];
-
-      return new QuestionUpdater(question).update(req.body);
-    })
-    .then(result => result.toJSON())
-    .then(function (record) {
-      return res.json({ ok: true, record });
-    })
-    .catch(next);
+    const result = await new QuestionUpdater(question).update(req.body);
+    return res.json({ ok: true, record: await result.toJSON() });
+  }
+  handle().catch(next);
 };
 
 module.exports.destroy = function (req, res, next) {
@@ -87,4 +80,39 @@ module.exports.destroy = function (req, res, next) {
   }
 
   handle().catch(next);
+};
+
+module.exports.setQuestionPriceAdjustment = function (req, res, next) {
+  async function handle() {
+    const questionOption = await QuestionOption.findById(req.params.id, {
+      include: [{ model: Question, include: [Form] }]
+    });
+    if (!questionOption) throw new NotFoundError();
+    if (questionOption.question.form.userId !== req.user.id) {
+      throw new UnauthorizedError();
+    }
+
+    const { amount, type } = req.body;
+    if (!(type in QuestionPriceAdjustment.TYPES)) {
+      throw new UnprocessableEntityError('bad-type', {
+        fields: { type }
+      });
+    }
+    if (!_.isFinite(amount) || amount < 0) {
+      throw new UnprocessableEntityError('bad-amount', {
+        fields: { amount }
+      });
+    }
+
+    const result = await new QuestionUpdater(question).setPriceAdjustment({
+      type,
+      amount
+    });
+    return res.json({ ok: true, record: await result.toJSON() });
+  }
+  handle().catch(next);
+};
+
+module.exports.destroyQuestionPriceAdjustment = function (req, res, next) {
+
 };

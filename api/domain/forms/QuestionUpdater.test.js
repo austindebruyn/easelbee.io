@@ -3,6 +3,7 @@ const factory = require('../../tests/factory');
 const expect = require('chai').expect;
 const QuestionUpdater = require('./QuestionUpdater');
 const Question = require('./Question');
+const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
 const QuestionOption = require('./QuestionOption');
 
 describe('QuestionUpdater', function () {
@@ -15,7 +16,7 @@ describe('QuestionUpdater', function () {
       formId: this.form.id,
       title: 'What is your favorite movie?'
     });
-    await factory.create('questionOption', {
+    this.questionOption = await factory.create('questionOption', {
       questionId: this.question.id,
       value: 'James Bond'
     });
@@ -150,6 +151,104 @@ describe('QuestionUpdater', function () {
         expect(originalQuestion.questionOptions).to.have.length(1);
         expect(originalQuestion.questionOptions[0]).to.include({
           value: 'James Bond'
+        });
+      });
+
+      it('should clone QuestionPriceAdjustments', async function () {
+        const question = await factory.create('question', {
+          type: Question.TYPES.radio
+        });
+        const questionOption = await factory.create('questionOption', {
+          questionId: question.id,
+          value: 'Oil Painting'
+        });
+        const questionPriceAdjustment = await factory.create('questionPriceAdjustment', {
+          questionOptionId: questionOption.id,
+          type: QuestionPriceAdjustment.TYPES.base,
+          amount: 14.44
+        });
+
+        await factory.create('answer', {
+          questionId: question.id
+        });
+
+        const updater = new QuestionUpdater(question);
+        const result = await updater.update({
+          title: 'Having a good time',
+          options: [{ value: 'Oil Painting' }]
+        });
+
+        expect(result.id).to.not.eql(this.question.id);
+        const newQuestionOption = result.questionOptions[0];
+        expect(newQuestionOption.id).to.not.eql(questionOption.id);
+        expect(newQuestionOption.questionPriceAdjustment.id)
+          .to.not.eql(questionPriceAdjustment.id);
+        expect(newQuestionOption.questionPriceAdjustment).to.include({
+          type: QuestionPriceAdjustment.TYPES.base,
+          amount: 14.44
+        });
+      });
+    });
+  });
+
+  describe.only('#setPriceAdjustment', function () {
+    it('should create QuestionPriceAdjustment', async function () {
+      const updater = new QuestionUpdater(this.question);
+      const result = await updater.setPriceAdjustment(
+        this.questionOption.id,
+        'add',
+        15.55
+      );
+      await this.questionOption.ensureQuestionPriceAdjustment();
+      expect(result.id).to.eql(this.questionOption.questionPriceAdjustment.id);
+      expect(result).to.include({
+        type: 'add',
+        amount: 15.55
+      });
+    });
+
+    it('should update QuestionPriceAdjustment', async function () {
+      const updater = new QuestionUpdater(this.question);
+      const oldPriceAdjustment = await factory.create(
+        'questionPriceAdjustment',
+        {
+          questionOptionId: this.questionOption.id,
+          type: 'base',
+          amount: 20.0
+        }
+      );
+      const result = await updater.setPriceAdjustment(
+        this.questionOption.id,
+        'add',
+        15.55
+      );
+      await this.questionOption.ensureQuestionPriceAdjustment();
+      expect(result.id).to.eql(oldPriceAdjustment.id);
+      expect(result).to.include({
+        type: 'add',
+        amount: 15.55
+      });
+    });
+
+    describe('when answer exists', function () {
+      beforeEach(async function () {
+        await factory.create('answer', {
+          questionId: this.question.id
+        });
+      });
+
+      it('should clone the question first', async function () {
+        const updater = new QuestionUpdater(this.question);
+        const result = await updater.setPriceAdjustment(
+          this.questionOption.id,
+          'add',
+          15.55
+        );
+
+        expect(result.questionOptionId).to.not.eql(this.questionOption.id);
+        expect(result).to.include({
+          type: 'add',
+          amount: 15.55
         });
       });
     });

@@ -5,6 +5,7 @@ const factory = require('../../tests/factory');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const Question = require('./Question');
+const QuestionPriceAdjustment = require('./QuestionPriceAdjustment');
 const QuestionUpdater = require('./QuestionUpdater');
 
 describe('questionsController', function () {
@@ -225,6 +226,117 @@ describe('questionsController', function () {
           expect(questions[1].order).to.eql(2);
           expect(questions[2].order).to.eql(2);
         });
+      });
+    });
+  });
+
+  describe('PUT /api/questionOptions/:id/questionPriceAdjustment', function () {
+    beforeEach(async function () {
+      this.user = await factory.create('user');
+      this.form = await factory.create('form', { userId: this.user.id });
+      this.question = await factory.create('question', {
+        formId: this.form.id,
+        type: Question.TYPES.radio
+      });
+      this.questionOption = await factory.create('questionOption', {
+        questionId: this.question.id
+      });
+    });
+
+    it('should 403 if signed out', function () {
+      return agent()
+        .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+        .send({})
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(async function () {
+        await signIn(this.user);
+      });
+
+      it('should 404 if not found', function () {
+        return agent()
+          .put('/api/questionOptions/999/questionPriceAdjustment')
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      it('should 403 if not owner', async function () {
+        const otherForm = await factory.create('form');
+        const otherQuestion = await factory.create('question', {
+          formId: otherForm.id,
+          type: Question.TYPES.radio
+        });
+        const otherQuestionOption = await factory.create('questionOption', {
+          questionId: otherQuestion.id
+        });
+        return agent()
+          .put(`/api/questionOptions/${otherQuestionOption.id}/questionPriceAdjustment`)
+          .send({ type: 'base', amount: 10 })
+          .cookiejar()
+          .accept('application/json')
+          .expect(403);
+      });
+
+      it('should error if no type', async function () {
+        await agent()
+          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .send({ amount: 10 })
+          .cookiejar()
+          .accept('application/json')
+          .expect(422, {
+            ok: false, code: 'bad-type', fields: {}
+          });
+      });
+
+      it('should error if bad type', async function () {
+        await agent()
+          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .send({ type: 'potato' })
+          .cookiejar()
+          .accept('application/json')
+          .expect(422, {
+            ok: false, code: 'bad-type', fields: { type: 'potato' }
+          });
+      });
+
+      it('should error if amount not a number', async function () {
+        await agent()
+          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .send({ type: 'add', amount: 'potato' })
+          .cookiejar()
+          .accept('application/json')
+          .expect(422, {
+            ok: false, code: 'bad-amount', fields: { amount: 'potato' }
+          });
+      });
+
+      it('should error if amount out of range', async function () {
+        await agent()
+          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .send({ type: 'add', amount: -14 })
+          .cookiejar()
+          .accept('application/json')
+          .expect(422, {
+            ok: false, code: 'bad-amount', fields: { amount: -14 }
+          });
+      });
+
+      it('should succeed and create model', async function () {
+        await agent()
+          .put(`/api/questionOptions/${this.questionOption.id}/questionPriceAdjustment`)
+          .send({ type: 'base', amount: 10.50 })
+          .cookiejar()
+          .accept('application/json')
+          .expect(200);
+        const questionPriceAdjustment = await QuestionPriceAdjustment.findOne({
+          where: { questionOptionId: this.questionOption.id } }
+        );
+        expect(questionPriceAdjustment.type).to.eql('base');
+        expect(questionPriceAdjustment.amount).to.eql(10.50);
       });
     });
   });
