@@ -77,6 +77,8 @@ describe('QuestionUpdater', function () {
             { value: 'Star Wars' }
           ]
         });
+        expect(result.options[0]).to.be.an.instanceof(Option);
+        expect(result.options[1]).to.be.an.instanceof(Option);
 
         await result.ensureOptions();
         expect(result.options).to.have.length(2);

@@ -127,7 +127,7 @@ class QuestionUpdater {
     if (await this.needsDuplicate()) {
       await this.performDuplicate(body);
     } else {
-      Object.assign(this.question, body);
+      Object.assign(this.question, _.omit(body, 'options'));
       await this.question.save();
     }
 
