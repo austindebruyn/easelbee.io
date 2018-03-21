@@ -57,8 +57,7 @@ export default {
           ...pick(option, 'id', 'questionId'),
           delta
         });
-      }
-      else {
+      } else {
         this.$store.dispatch('destroyOptionDelta', {
           ...pick(option, 'id', 'questionId')
         });

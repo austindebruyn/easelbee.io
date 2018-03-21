@@ -1,7 +1,5 @@
 import QuestionDetailsOptionsDelta from './QuestionDetailsOptionsDelta';
-import VInputText from 'components/controls/VInputText';
-import { shallow, mount } from 'avoriaz';
-import { buildQuestion } from 'fixtures/questions';
+import { shallow } from 'avoriaz';
 import { nextTick } from 'vue';
 import sinon from 'sinon';
 

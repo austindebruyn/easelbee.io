@@ -174,7 +174,7 @@ export default new Vuex.Store({
     },
     updateOptionDeltaSuccess: function (state, payload) {
       const questions = clone(state.questions);
-      const { questionId, id, amount, type } = payload;
+      const { questionId, amount, type } = payload;
       questions[questionId].status = STATUS.LOADED;
 
       const option = _find(questions[questionId].value.options, { id: payload.optionId });
@@ -207,7 +207,7 @@ export default new Vuex.Store({
     },
     destroyOptionDeltaSuccess: function (state, payload) {
       const questions = clone(state.questions);
-      const { questionId, optionId, id, amount, type } = payload;
+      const { questionId, optionId } = payload;
       questions[questionId].status = STATUS.LOADED;
 
       const option = _find(questions[questionId].value.options, { id: optionId });
@@ -553,7 +553,7 @@ export default new Vuex.Store({
         });
     },
     updateOptionDelta ({ state, commit }, payload) {
-      const { questionId, id, type, amount } = payload;
+      const { questionId, id } = payload;
       commit('updateOptionDeltaStart', { questionId });
 
       return axios.put(`/api/options/${id}/delta`, payload.delta, {
@@ -577,7 +577,7 @@ export default new Vuex.Store({
         });
     },
     destroyOptionDelta ({ state, commit }, payload) {
-      const { questionId, id, type } = payload;
+      const { questionId, id } = payload;
       commit('destroyOptionDeltaStart', { questionId });
 
       return axios.delete(`/api/options/${id}/delta`, {

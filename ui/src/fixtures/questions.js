@@ -51,7 +51,7 @@ export default {
   }
 };
 
-export function buildQuestion(attrs = {}) {
+export function buildQuestion (attrs = {}) {
   const question = {
     id: attrs.id || chance.integer({ min: 1, max: 1024 }),
     formId: attrs.formId || chance.integer({ min: 1, max: 1024 }),

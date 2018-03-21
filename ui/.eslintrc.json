@@ -19,5 +19,8 @@
   "globals": {
     "expect": false,
     "RouterLink": false
+  },
+  "parserOptions": {
+      "ecmaVersion": 2017
   }
 }

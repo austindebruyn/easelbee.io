@@ -33,8 +33,6 @@
 </template>
 
 <script>
-import { questionShape } from 'components/shapes';
-import VInputText from 'components/controls/VInputText';
 import VueTypes from 'vue-types';
 
 export default {
@@ -54,8 +52,7 @@ export default {
           type: { base: 'add' }[this.type] || 'base',
           amount: this.amount || 5
         };
-      }
-      else {
+      } else {
         delta = null;
       }
 
