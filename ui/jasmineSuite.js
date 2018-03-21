@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import es6promise from 'es6-promise';
 import chai, { expect } from 'chai';
 import sinonChai from 'sinon-chai';

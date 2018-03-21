@@ -26,7 +26,11 @@ export const questionShape = VueTypes.shape({
     questionId: VueTypes.number.isRequired,
     value: VueTypes.string.isRequired,
     createdAt: VueTypes.string.isRequired,
-    updatedAt: VueTypes.string.isRequired
+    updatedAt: VueTypes.string.isRequired,
+    delta: VueTypes.shape({
+      type: VueTypes.string.isRequired,
+      amount: VueTypes.number.isRequired
+    })
   })),
   required: VueTypes.bool,
   order: VueTypes.number.isRequired,

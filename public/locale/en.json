@@ -80,7 +80,17 @@
         "title": "Question Title",
         "type": "Type",
         "options": "Options",
-        "add-option": "Add option"
+        "add-option": "Add option",
+        "deltas": {
+          "none": "Choosing this option does not affect the commission’s price.",
+          "base": "Choosing this option sets the price of the commission to:",
+          "add": "Choosing this option is an extra cost of:",
+          "links": {
+            "base": "Set price.",
+            "add": "Make this an extra cost instead.",
+            "none": "Remove this price change."
+          }
+        }
       }
     }
   },

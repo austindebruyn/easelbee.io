@@ -85,7 +85,7 @@ module.exports.destroy = function (req, res, next) {
 module.exports.setDelta = function (req, res, next) {
   async function handle() {
     const option = await Option.findById(req.params.id, {
-      include: [{ model: Question, include: [Form] }]
+      include: [Delta, { model: Question, include: [Form] }]
     });
     if (!option) throw new NotFoundError();
     if (option.question.form.userId !== req.user.id) {

@@ -45,7 +45,7 @@ Delta.prototype.toJSON = function () {
   });
 };
 
-Delta.belongsTo(Option, { as: 'delta' });
+Delta.belongsTo(Option);
 Option.hasOne(Delta);
 
 module.exports = Delta;

@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import omit from 'lodash.omit';
 import flatten from 'lodash.flatten';
+import _find from 'lodash.find';
 import pull from 'lodash.pull';
 import Resource, { STATUS, isLoaded } from 'state/Resource';
 import clone from '../lib/clone';
@@ -166,6 +167,72 @@ export default new Vuex.Store({
       state.forms.errors = errors;
     },
 
+    updateOptionDeltaStart: function (state, { questionId }) {
+      const questions = clone(state.questions);
+      questions[questionId].status = STATUS.MUTATING;
+      state.questions = questions;
+    },
+    updateOptionDeltaSuccess: function (state, payload) {
+      const questions = clone(state.questions);
+      const { questionId, id, amount, type } = payload;
+      questions[questionId].status = STATUS.LOADED;
+
+      const option = _find(questions[questionId].value.options, { id: payload.optionId });
+      option.delta = { type, amount };
+
+      state.questions = questions;
+
+      // update form
+      state.forms = clone(state.forms);
+      state.forms.value.forEach(function (form) {
+        for (let i = 0; i < form.questions.length; i++) {
+          if (form.questions[i].id === questionId) {
+            form.questions[i] = state.questions[questionId].value;
+            break;
+          }
+        }
+      });
+    },
+    updateOptionDeltaFailure: function (state, { questionId, errors }) {
+      const questions = clone(state.questions);
+      questions[questionId].status = STATUS.ERRORED;
+      questions[questionId].errors = errors;
+      state.questions = questions;
+    },
+
+    destroyOptionDeltaStart: function (state, { questionId }) {
+      const questions = clone(state.questions);
+      questions[questionId].status = STATUS.MUTATING;
+      state.questions = questions;
+    },
+    destroyOptionDeltaSuccess: function (state, payload) {
+      const questions = clone(state.questions);
+      const { questionId, optionId, id, amount, type } = payload;
+      questions[questionId].status = STATUS.LOADED;
+
+      const option = _find(questions[questionId].value.options, { id: optionId });
+      option.delta = null;
+
+      state.questions = questions;
+
+      // update form
+      state.forms = clone(state.forms);
+      state.forms.value.forEach(function (form) {
+        for (let i = 0; i < form.questions.length; i++) {
+          if (form.questions[i].id === questionId) {
+            form.questions[i] = state.questions[questionId].value;
+            break;
+          }
+        }
+      });
+    },
+    destroyOptionDeltaFailure: function (state, { questionId, errors }) {
+      const questions = clone(state.questions);
+      questions[questionId].status = STATUS.ERRORED;
+      questions[questionId].errors = errors;
+      state.questions = questions;
+    },
+
     createFormStart: function (state) {
       state.forms.status = STATUS.MUTATING;
     },
@@ -203,7 +270,9 @@ export default new Vuex.Store({
     },
 
     updateQuestionStart: function (state, id) {
-      state.questions[id].status = STATUS.MUTATING;
+      const questions = clone(state.questions);
+      questions[id].status = STATUS.MUTATING;
+      state.questions = questions;
     },
     updateQuestionSuccess: function (state, { id, json }) {
       state.questions[id].status = STATUS.LOADED;
@@ -481,6 +550,54 @@ export default new Vuex.Store({
             ? err.response.data.errors
             : [];
           commit('updateQuestionFailure', { id: payload.id, errors });
+        });
+    },
+    updateOptionDelta ({ state, commit }, payload) {
+      const { questionId, id, type, amount } = payload;
+      commit('updateOptionDeltaStart', { questionId });
+
+      return axios.put(`/api/options/${id}/delta`, payload.delta, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(function ({ data }) {
+          commit('updateOptionDeltaSuccess', {
+            questionId,
+            ...data.record
+          });
+        })
+        .catch(function (err) {
+          const errors = err.response
+            ? err.response.data.errors
+            : [];
+          commit('updateOptionDeltaFailure', { questionId, errors });
+        });
+    },
+    destroyOptionDelta ({ state, commit }, payload) {
+      const { questionId, id, type } = payload;
+      commit('destroyOptionDeltaStart', { questionId });
+
+      return axios.delete(`/api/options/${id}/delta`, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(function () {
+          commit('destroyOptionDeltaSuccess', {
+            questionId,
+            optionId: id
+          });
+        })
+        .catch(function (err) {
+          const errors = err.response
+            ? err.response.data.errors
+            : [];
+          commit('destroyOptionDeltaFailure', { questionId, id, errors });
         });
     },
     updateForm ({ state, commit }, payload) {

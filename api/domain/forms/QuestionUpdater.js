@@ -170,7 +170,7 @@ class QuestionUpdater {
       ? option.delta
       : Delta.build({ optionId: option.id });
 
-    Object.assign(delta, { type, amount });
+    Object.assign(delta, { type: Delta.TYPES[type], amount });
     await delta.save();
 
     return delta;

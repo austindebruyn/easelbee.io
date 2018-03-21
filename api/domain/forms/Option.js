@@ -26,24 +26,25 @@ Option.prototype.ensureDelta = function () {
   });
 };
 
-Option.prototype.toJSON = function () {
-  return new Promise(resolve => {
-    const {
-      id,
-      questionId,
-      value,
-      createdAt,
-      updatedAt
-    } = this.get();
+Option.prototype.toJSON = async function () {
+  const {
+    id,
+    questionId,
+    value,
+    createdAt,
+    updatedAt
+  } = this.get();
 
-    return resolve({
-      id,
-      questionId,
-      value,
-      createdAt: createdAt && createdAt.toUTCString(),
-      updatedAt: updatedAt && updatedAt.toUTCString()
-    });
-  });
+  await this.ensureDelta();
+
+  return {
+    id,
+    questionId,
+    value,
+    createdAt: createdAt && createdAt.toUTCString(),
+    updatedAt: updatedAt && updatedAt.toUTCString(),
+    delta: this.delta ? await this.delta.toJSON() : null
+  };
 };
 
 Option.belongsTo(Question);

@@ -66,4 +66,8 @@ describe('QuestionDetailsOptions', function () {
       ]);
     });
   });
+
+  describe('changing delta', function () {
+
+  });
 });
