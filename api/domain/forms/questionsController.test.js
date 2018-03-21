@@ -331,7 +331,7 @@ describe('questionsController', function () {
         const delta = await Delta.findOne({
           where: { optionId: this.option.id } }
         );
-        expect(delta.type).to.eql('base');
+        expect(delta.type).to.eql(Delta.TYPES.base);
         expect(delta.amount).to.eql(10.50);
       });
 

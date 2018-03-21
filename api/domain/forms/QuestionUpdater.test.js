@@ -204,7 +204,7 @@ describe('QuestionUpdater', function () {
       await this.option.ensureDelta();
       expect(result.id).to.eql(this.option.delta.id);
       expect(result).to.include({
-        type: 'add',
+        type: Delta.TYPES.add,
         amount: 15.55
       });
     });
@@ -215,7 +215,7 @@ describe('QuestionUpdater', function () {
         'delta',
         {
           optionId: this.option.id,
-          type: 'base',
+          type: Delta.TYPES.base,
           amount: 20.0
         }
       );
@@ -227,7 +227,7 @@ describe('QuestionUpdater', function () {
       await this.option.ensureDelta();
       expect(result.id).to.eql(oldDelta.id);
       expect(result).to.include({
-        type: 'add',
+        type: Delta.TYPES.add,
         amount: 15.55
       });
     });
@@ -249,7 +249,7 @@ describe('QuestionUpdater', function () {
 
         expect(result.optionId).to.not.eql(this.option.id);
         expect(result).to.include({
-          type: 'add',
+          type: Delta.TYPES.add,
           amount: 15.55
         });
       });
