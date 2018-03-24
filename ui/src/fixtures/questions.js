@@ -55,7 +55,7 @@ export function buildQuestion (attrs = {}) {
   const question = {
     id: attrs.id || chance.integer({ min: 1, max: 1024 }),
     formId: attrs.formId || chance.integer({ min: 1, max: 1024 }),
-    title: chance.sentence(),
+    title: attrs.title || chance.sentence(),
     type: attrs.type || 'string',
     required: true,
     options: null,

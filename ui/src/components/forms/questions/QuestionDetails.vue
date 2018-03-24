@@ -25,6 +25,7 @@
             ref='options'
             :question='question'
             @addOption='handleAddOption'
+            @deleteOption='handleDeleteOption'
             @change='handleChange'
           )
         .form-group(v-if='dirty')
@@ -96,6 +97,16 @@ export default {
     handleAddOption: function () {
       const options = clone(this.question.options);
       options.push({ value: '' });
+
+      this.$store.dispatch('updateQuestion', {
+        id: this.question.id,
+        title: this.$refs.title.getValue(),
+        type: this.$refs.type.getValue(),
+        options: this.scrubOptions(options)
+      });
+    },
+    handleDeleteOption: function (id) {
+      const options = clone(this.question.options).filter(o => o.id !== id);
 
       this.$store.dispatch('updateQuestion', {
         id: this.question.id,

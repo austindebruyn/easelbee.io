@@ -41,6 +41,28 @@ describe('QuestionDetailsOptions', function () {
     expect(this.wrapper.vm.$emit).to.have.been.calledWith('addOption');
   });
 
+  it('should render a delete button for each option', function () {
+    const buttons = this.wrapper.find('button.delete-option-button');
+    expect(buttons).to.have.length(2);
+  });
+
+  it('should emit delete when delete button is clicked', function () {
+    const buttons = this.wrapper.find('button.delete-option-button');
+
+    buttons[0].trigger('click');
+    expect(this.wrapper.vm.$emit).to.have.been.calledWith(
+      'deleteOption',
+      this.question.options[0].id
+    );
+    this.wrapper.vm.$emit.reset();
+
+    buttons[1].trigger('click');
+    expect(this.wrapper.vm.$emit).to.have.been.calledWith(
+      'deleteOption',
+      this.question.options[1].id
+    );
+  });
+
   it('should emit change when keys are typed', function () {
     const input = this.wrapper.first(VInputText);
     input.vm.$emit('keyup');

@@ -1,21 +1,30 @@
 <template lang="pug">
   .question-details-options
-    .form-group(
+    .option-form(
       v-for='option in question.options'
       key='option.id'
     )
-      v-input-text(
-        :ref='"option-" + option.id'
-        :name='"option" + option.id'
-        :defaultValue='option.value'
-        kind='madlibs'
-        @keyup='handleChange'
-      )
-      question-details-options-delta(
-        :type='getDeltaType(option)'
-        :amount='getDeltaAmount(option)'
-        @change='data => handleDeltaChange(option, data)'
-      )
+      .form-row
+        .form-group.col-11
+          v-input-text(
+            :ref='"option-" + option.id'
+            :name='"option" + option.id'
+            :defaultValue='option.value'
+            kind='madlibs'
+            @keyup='handleChange'
+          )
+        .col-1
+          button.delete-option-button(
+            @click='handleDeleteOptionClick(option.id)'
+          )
+            i.fa.fa-times
+      .form-row
+        .col-12
+          question-details-options-delta(
+            :type='getDeltaType(option)'
+            :amount='getDeltaAmount(option)'
+            @change='data => handleDeltaChange(option, data)'
+          )
     a.btn.btn-link(
       href='javascript:;'
       @click='handleAddOptionClick'
@@ -41,6 +50,9 @@ export default {
   methods: {
     handleAddOptionClick: function () {
       this.$emit('addOption');
+    },
+    handleDeleteOptionClick: function (optionId) {
+      this.$emit('deleteOption', optionId);
     },
     getValues: function () {
       const refs = this.$refs;
@@ -75,4 +87,15 @@ export default {
 
 <style lang="scss" scoped>
   @import 'src/styles/colors';
+
+  .delete-option-button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: $red;
+  }
+
+  .option-form {
+    padding-bottom: 20px;
+  }
 </style>

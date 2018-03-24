@@ -1,4 +1,5 @@
 import QuestionDetails from './QuestionDetails';
+import QuestionDetailsOptions from './QuestionDetailsOptions';
 import VInputText from 'components/controls/VInputText';
 import VCardControl from 'components/controls/VCardControl';
 import { mount } from 'avoriaz';
@@ -52,6 +53,54 @@ describe('QuestionDetails', function () {
 
     expect(this.actions.destroyQuestion.args[0][1]).to.eql({
       id: this.question.id
+    });
+  });
+
+  describe('radio questions', function () {
+    beforeEach(function () {
+      this.question = buildQuestion({
+        title: 'Oreos?',
+        type: 'radio',
+        options: [{ id: 11, value: 'Cookies' }, { value: 'Creme' }]
+      });
+      this.wrapper = mount(QuestionDetails, {
+        propsData: { question: this.question },
+        i18n: this.i18n,
+        store: this.store
+      });
+    });
+
+    it('should render QuestionDetailsOptions', function () {
+      expect(this.wrapper.find(QuestionDetailsOptions)).to.have.length(1);
+    });
+
+    it('should dispatch when add option is clicked', function () {
+      this.wrapper.first(QuestionDetailsOptions).vm.$emit('addOption');
+
+      expect(this.actions.updateQuestion.args[0][1]).to.eql({
+        id: this.question.id,
+        title: 'Oreos?',
+        type: 'radio',
+        options: [
+          { value: 'Cookies' },
+          { value: 'Creme' },
+          { value: '' }
+        ]
+      });
+    });
+
+    it('should dispatch when delete option is clicked', function () {
+      this.wrapper.first(QuestionDetailsOptions).vm.$emit('deleteOption', 11);
+
+      expect(this.actions.updateQuestion.args[0][1]).to.eql({
+        id: this.question.id,
+        title: 'Oreos?',
+        type: 'radio',
+        options: [
+          // Cookies is gone. It was option id 11
+          { value: 'Creme' }
+        ]
+      });
     });
   });
 });
