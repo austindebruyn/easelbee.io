@@ -112,6 +112,28 @@ describe('QuestionUpdater', function () {
         await result.ensureOptions();
         expect(result.options).to.have.length(0);
       });
+
+      describe('when options have deltas', function () {
+        beforeEach(async function () {
+          await this.question.ensureOptions();
+          this.delta = await this.question.options[0].createDelta({
+            type: Delta.TYPES.base,
+            amount: 5
+          });
+        });
+
+        it('should remove options that have deltas', async function () {
+          const updater = new QuestionUpdater(this.question);
+
+          const result = await updater.update({
+            options: []
+          });
+
+          await result.ensureOptions();
+          expect(result.options).to.have.length(0);
+          expect(await Delta.count()).to.eql(0);
+        });
+      });
     });
 
     describe('when answers already exist', function () {

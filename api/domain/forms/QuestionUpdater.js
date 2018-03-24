@@ -110,6 +110,7 @@ class QuestionUpdater {
 
     for (let i = 0; i < this.question.options.length; i++) {
       const option = this.question.options[i];
+
       if (!expectedValues.includes(option.value)) {
         await option.destroy();
         _.pull(this.question.options, option);

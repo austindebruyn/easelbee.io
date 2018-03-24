@@ -46,6 +46,6 @@ Delta.prototype.toJSON = function () {
 };
 
 Delta.belongsTo(Option);
-Option.hasOne(Delta);
+Option.hasOne(Delta, { onDelete: 'cascade', hooks: true });
 
 module.exports = Delta;
