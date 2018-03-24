@@ -1,8 +1,9 @@
 <template lang="pug">
   .c-text
-    label(:for='htmlId') fill me out
-    span.required.ml-1 *
-    v-input-text(:id='htmlId', ref='input')
+    .form-group
+      label(:for='htmlId') fill me out
+      span.required.ml-1 *
+      v-input-text(:id='htmlId', ref='input')
 </template>
 
 <script>
@@ -30,7 +31,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import 'src/styles/colors';
 
   .c-text {

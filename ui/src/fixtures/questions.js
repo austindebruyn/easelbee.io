@@ -58,6 +58,7 @@ export function buildQuestion (attrs = {}) {
     title: chance.sentence(),
     type: attrs.type || 'string',
     required: true,
+    options: null,
     order: attrs.order || chance.integer({ min: 1, max: 99 }),
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()

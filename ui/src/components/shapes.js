@@ -18,20 +18,22 @@ export const commissionShape = VueTypes.shape({
   updatedAt: VueTypes.string.isRequired
 });
 
+export const optionShape = VueTypes.shape({
+  id: VueTypes.number.isRequired,
+  questionId: VueTypes.number.isRequired,
+  value: VueTypes.string.isRequired,
+  createdAt: VueTypes.string.isRequired,
+  updatedAt: VueTypes.string.isRequired,
+  delta: [null, VueTypes.shape({
+    type: VueTypes.string.isRequired,
+    amount: VueTypes.number.isRequired
+  })]
+});
+
 export const questionShape = VueTypes.shape({
   id: VueTypes.number.isRequired,
   formId: VueTypes.number.isRequired,
-  options: VueTypes.arrayOf(VueTypes.shape({
-    id: VueTypes.number.isRequired,
-    questionId: VueTypes.number.isRequired,
-    value: VueTypes.string.isRequired,
-    createdAt: VueTypes.string.isRequired,
-    updatedAt: VueTypes.string.isRequired,
-    delta: VueTypes.shape({
-      type: VueTypes.string.isRequired,
-      amount: VueTypes.number.isRequired
-    })
-  })),
+  options: [null, VueTypes.arrayOf(optionShape)],
   required: VueTypes.bool,
   order: VueTypes.number.isRequired,
   title: VueTypes.string.isRequired,

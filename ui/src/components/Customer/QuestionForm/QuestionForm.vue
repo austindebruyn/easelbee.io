@@ -8,18 +8,26 @@
           v-if='question.type === "string"'
           :id='question.id'
         )
+        c-radio(
+          ref='input'
+          v-else-if='question.type === "radio"'
+          :id='question.id'
+          :options='question.options'
+        )
       button.btn.btn-primary(type='submit') {{ buttonText }}
 </template>
 
 <script>
 import { questionShape } from 'components/shapes';
 import CString from './controls/CString';
+import CRadio from './controls/CRadio';
 import VueTypes from 'vue-types';
 
 export default {
   name: 'question-form',
   components: {
-    'c-string': CString
+    'c-string': CString,
+    'c-radio': CRadio
   },
   props: {
     /* eslint-disable vue/require-default-prop */
