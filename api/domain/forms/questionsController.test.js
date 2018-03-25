@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const Question = require('./Question');
 const Delta = require('./Delta');
 const QuestionUpdater = require('./QuestionUpdater');
+const LocalAttachmentRepository = require('../attachments/LocalAttachmentRepository');
 
 describe('questionsController', function () {
   clock();
@@ -362,7 +363,7 @@ describe('questionsController', function () {
 
     it('should 403 if signed out', function () {
       return agent()
-        .put(`/api/options/${this.option.id}/delta`)
+        .delete(`/api/options/${this.option.id}/delta`)
         .accept('application/json')
         .expect(403);
     });
@@ -426,6 +427,119 @@ describe('questionsController', function () {
             .cookiejar()
             .accept('application/json')
             .expect(500);
+        });
+      });
+    });
+  });
+
+  describe('POST /api/options/:id/attachment', function () {
+    beforeEach(async function () {
+      this.user = await factory.create('user');
+      this.form = await factory.create('form', { userId: this.user.id });
+      this.question = await factory.create('question', {
+        formId: this.form.id,
+        type: Question.TYPES.radio
+      });
+      this.option = await factory.create('option', {
+        questionId: this.question.id
+      });
+    });
+
+    it('should 403 if signed out', function () {
+      return agent()
+        .post(`/api/options/${this.option.id}/attachment`)
+        .attach('file', `${__dirname}/fixtures/mars.jpg`)
+        .accept('application/json')
+        .expect(403);
+    });
+
+    describe('when signed in', function () {
+      beforeEach(async function () {
+        await signIn(this.user);
+      });
+
+      it('should 404 if not found', async function () {
+        await agent()
+          .post('/api/options/999/attachment')
+          .attach('file', `${__dirname}/fixtures/mars.jpg`)
+          .cookiejar()
+          .accept('application/json')
+          .expect(404);
+      });
+
+      it('should 403 if not owner', async function () {
+        const otherForm = await factory.create('form');
+        const otherQuestion = await factory.create('question', {
+          formId: otherForm.id,
+          type: Question.TYPES.radio
+        });
+        const otherOption = await factory.create('option', {
+          questionId: otherQuestion.id
+        });
+        await agent()
+          .post(`/api/options/${otherOption.id}/attachment`)
+          .attach('file', `${__dirname}/fixtures/mars.jpg`)
+          .cookiejar()
+          .accept('application/json')
+          .expect(403);
+      });
+
+      it('should 422 if no uploaded file', async function () {
+        await agent()
+          .post(`/api/options/${this.option.id}/attachment`)
+          .cookiejar()
+          .accept('application/json')
+          .expect(422, {
+            ok: false,
+            code: 'MISSING_ATTACHMENT'
+          });
+      });
+
+      describe('when uploading succeeds', function () {
+        beforeEach(async function () {
+          this.attachmentModel = await factory.create('optionAttachment');
+          this.sandbox.stub(LocalAttachmentRepository.prototype, 'save')
+            .resolves(this.attachmentModel);
+        });
+
+        it('should call save with the temporary file', async function () {
+          await agent()
+            .post(`/api/options/${this.option.id}/attachment`)
+            .attach('file', `${__dirname}/fixtures/mars.jpg`)
+            .cookiejar()
+            .accept('application/json');
+          expect(LocalAttachmentRepository.prototype.save).to.have.been
+            .calledWith(sinon.match(/tmp\/uploads\/\w{32}/), this.option.id);
+        });
+
+        it('should work', async function () {
+          await agent()
+            .post(`/api/options/${this.option.id}/attachment`)
+            .attach('file', `${__dirname}/fixtures/mars.jpg`)
+            .cookiejar()
+            .accept('application/json')
+            .expect(200, {
+              ok: true,
+              record: await this.attachmentModel.toJSON()
+            });
+        });
+      });
+
+      describe('when uploading failed', function () {
+        beforeEach(async function () {
+          this.sandbox.stub(LocalAttachmentRepository.prototype, 'save')
+            .rejects(new Error());
+        });
+
+        it('should 500', async function () {
+          await agent()
+            .post(`/api/options/${this.option.id}/attachment`)
+            .attach('file', `${__dirname}/fixtures/mars.jpg`)
+            .cookiejar()
+            .accept('application/json')
+            .expect(500, {
+              ok: false
+            });
         });
       });
     });

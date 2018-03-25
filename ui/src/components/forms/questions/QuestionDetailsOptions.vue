@@ -2,7 +2,7 @@
   .question-details-options
     .option-form(
       v-for='option in question.options'
-      key='option.id'
+      :key='option.id'
     )
       .form-row
         .form-group.col-11
@@ -15,7 +15,7 @@
           )
         .col-1
           button.delete-option-button(
-            @click='handleDeleteOptionClick(option.id)'
+            @click='handleDeleteOptionClick($event, option.id)'
           )
             i.fa.fa-times
       .form-row
@@ -51,7 +51,8 @@ export default {
     handleAddOptionClick: function () {
       this.$emit('addOption');
     },
-    handleDeleteOptionClick: function (optionId) {
+    handleDeleteOptionClick: function (e, optionId) {
+      e.preventDefault();
       this.$emit('deleteOption', optionId);
     },
     getValues: function () {

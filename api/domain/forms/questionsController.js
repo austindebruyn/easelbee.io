@@ -2,6 +2,8 @@ const _ = require('lodash');
 const Form = require('./Form');
 const Question = require('./Question');
 const Option = require('./Option');
+const OptionAttachment = require('../attachments/OptionAttachment');
+const LocalAttachmentRepository = require('../attachments/LocalAttachmentRepository');
 const Delta = require('./Delta');
 const {
   NotFoundError,
@@ -125,6 +127,41 @@ module.exports.destroyDelta = function (req, res, next) {
     const updater = new QuestionUpdater(option.question);
     await updater.destroyDelta(option.id);
     return res.sendStatus(204);
+  }
+  handle().catch(next);
+};
+
+module.exports.createOptionAttachment = function (req, res, next) {
+  async function handle() {
+    const option = await Option.findById(req.params.id, {
+      include: [OptionAttachment, { model: Question, include: [Form] }]
+    });
+    if (!option) throw new NotFoundError();
+    if (option.question.form.userId !== req.user.id) {
+      throw new UnauthorizedError();
+    }
+    if (!req.file) {
+      throw new UnprocessableEntityError('MISSING_ATTACHMENT');
+    }
+    /**
+     * @typedef MulterFile
+     * @property {String} fieldname key in the json body
+     * @property {String} originalname provided by client
+     * @property {String} encoding usually 7bit
+     * @property {String} mimemtype should be image/*
+     * @property {String} destination tmp/uploads/
+     * @property {String} filename hash
+     * @property {String} path relative to app root
+     * @property {Number} size in bytes
+     */
+    const { file } = req;
+
+    const attachment = await new LocalAttachmentRepository().save(file.path, option.id);
+
+    return res.json({
+      ok: true,
+      record: await attachment.toJSON()
+    });
   }
   handle().catch(next);
 };

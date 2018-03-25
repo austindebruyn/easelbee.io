@@ -7,6 +7,9 @@ const formsController = require('../domain/forms/formsController');
 const questionsController = require('../domain/forms/questionsController');
 const homeController = require('../domain/home/homeController');
 const errorHandler = require('./errorHandler');
+const multer = require('multer');
+
+const upload = multer({ dest: 'tmp/uploads/' });
 
 function ensureAuthenticated(req, res, next) {
   if (!req.user) {
@@ -65,6 +68,7 @@ module.exports = function (app) {
   app.delete('/api/questions/:id', ensureAuthenticated, questionsController.destroy);
   app.put('/api/options/:id/delta', ensureAuthenticated, questionsController.setDelta);
   app.delete('/api/options/:id/delta', ensureAuthenticated, questionsController.destroyDelta);
+  app.post('/api/options/:id/attachment', upload.single('file'), ensureAuthenticated, questionsController.createOptionAttachment);
 
   app.get('*', homeController.app);
 

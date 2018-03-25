@@ -15,6 +15,7 @@ const Answer = require('../domain/forms/Answer');
 const AnswerTextValue = require('../domain/forms/AnswerTextValue');
 const AnswerOptionValue = require('../domain/forms/AnswerOptionValue');
 const Option = require('../domain/forms/Option');
+const OptionAttachment = require('../domain/attachments/OptionAttachment');
 const Delta = require('../domain/forms/Delta');
 const adapter = new FactoryGirl.SequelizeAdapter();
 const uid = require('uid-safe');
@@ -85,6 +86,12 @@ factory.define('question', Question, {
 factory.define('option', Option, {
   questionId: factory.assoc('question', 'id'),
   value: factory.chance('word')
+});
+
+factory.define('optionAttachment', OptionAttachment, {
+  optionId: factory.assoc('option', 'id'),
+  objectKey: factory.chance('word'),
+  engine: factory.oneOf([0, 1])
 });
 
 factory.define('delta', Delta, {
