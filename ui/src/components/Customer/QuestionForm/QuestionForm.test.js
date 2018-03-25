@@ -6,7 +6,7 @@ import { buildQuestion } from 'fixtures/questions';
 import sinon from 'sinon';
 
 describe('QuestionForm', function () {
-  function factory(props = {}) {
+  function factory (props = {}) {
     return shallow(QuestionForm, {
       propsData: {
         isFinalQuestion: true,
