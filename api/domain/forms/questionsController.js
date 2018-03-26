@@ -156,7 +156,8 @@ module.exports.createOptionAttachment = function (req, res, next) {
      */
     const { file } = req;
 
-    const attachment = await new LocalAttachmentRepository().save(file.path, option.id);
+    const repo = new LocalAttachmentRepository();
+    const attachment = await repo.save(file.path, option.id);
 
     return res.json({
       ok: true,

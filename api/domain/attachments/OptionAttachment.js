@@ -2,7 +2,7 @@ const { invert } = require('lodash');
 const db = require('../../services/db');
 const Option = require('../forms/Option');
 
-const OptionAttachment = db.define('option_attachments', {
+const OptionAttachment = db.define('optionAttachments', {
   objectKey: {
     type: db.Sequelize.STRING,
     allowNull: false
@@ -11,6 +11,8 @@ const OptionAttachment = db.define('option_attachments', {
     type: db.Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+  tableName: 'option_attachments'
 });
 
 OptionAttachment.TYPES = {
