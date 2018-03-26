@@ -151,12 +151,14 @@ class FormSubmitter {
    * @param {Commission} commission
    * @returns {Promise}
    */
-  submit(body) {
-    return db.transaction(t => {
+  async submit(body) {
+    let commission;
+
+    await db.transaction(t => {
       return (async () => {
         await this.form.ensureQuestions();
 
-        const commission = await Commission.create({
+        commission = await Commission.create({
           formId: this.form.id,
           userId: this.form.userId,
           email: body.email,
@@ -168,21 +170,20 @@ class FormSubmitter {
           return this.createAnswerForQuestion(t, commission, body, q);
         }));
 
-        commission.ensureAnswers();
         this.form.submittedAt = new Date();
         await this.form.save({ transaction: t });
-
-        const price = await Price.create({
-          commissionId: commission.id,
-          amount: await new PriceCalculator(commission).calculate()
-        }, {
-          transaction: t
-        });
-        commission.prices = [price];
-
         return commission;
       })();
     });
+
+    const price = await Price.create({
+      commissionId: commission.id,
+      amount: await new PriceCalculator(commission).calculate()
+    });
+    commission.prices = [price];
+    await commission.ensureAnswers();
+
+    return commission;
   }
 }
 

@@ -1,41 +1,40 @@
 <template lang="pug">
   .question-details
     .card-body
-      form(@submit='handleSubmit')
-        .form-group
-          h4 {{ $t('forms.details.questions.title') }}
-          v-input-text(
-            ref='title'
-            :defaultValue='question.title'
-            kind='madlibs'
-            size='lg'
-            @keyup='handleChange'
-          )
-        .form-group
-          h4 {{ $t('forms.details.questions.type') }}
-          v-dropdown(
-            ref='type'
-            :defaultValue='this.question.type'
-            :options='[{ label: "Multiple-choice", value: "radio" }, { label: "Short Text", value: "string" }]'
-            @change='handleChange'
-          )
-        .form-group(v-if='shouldShowOptions')
-          h4 {{ $t('forms.details.questions.options') }}
-          question-details-options(
-            ref='options'
-            :question='question'
-            @addOption='handleAddOption'
-            @deleteOption='handleDeleteOption'
-            @change='handleChange'
-          )
-        .form-group(v-if='dirty')
-          button.btn.btn-primary(type='submit') {{ $t('save') }}
-      .card-controls
-        v-card-control(
-          icon='fa-trash-o'
-          kind='danger'
-          @click='handleDestroyClick'
+      .form-group
+        h4 {{ $t('forms.details.questions.title') }}
+        v-input-text(
+          ref='title'
+          :defaultValue='question.title'
+          kind='madlibs'
+          size='lg'
+          @keyup='handleChange'
         )
+      .form-group
+        h4 {{ $t('forms.details.questions.type') }}
+        v-dropdown(
+          ref='type'
+          :defaultValue='this.question.type'
+          :options='[{ label: "Multiple-choice", value: "radio" }, { label: "Short Text", value: "string" }]'
+          @change='handleChange'
+        )
+      .form-group(v-if='shouldShowOptions')
+        h4 {{ $t('forms.details.questions.options') }}
+        question-details-options(
+          ref='options'
+          :question='question'
+          @addOption='handleAddOption'
+          @deleteOption='handleDeleteOption'
+          @change='handleChange'
+        )
+      .form-group(v-if='dirty')
+        button.btn.btn-primary(type='button', @click='handleSubmit') {{ $t('save') }}
+    .card-controls
+      v-card-control(
+        icon='fa-trash-o'
+        kind='danger'
+        @click='handleDestroyClick'
+      )
 </template>
 
 <script>
