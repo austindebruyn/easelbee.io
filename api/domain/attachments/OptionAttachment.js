@@ -1,6 +1,7 @@
 const { invert } = require('lodash');
 const db = require('../../services/db');
 const Option = require('../forms/Option');
+const LocalAttachmentURLBuilder = require('./LocalAttachmentURLBuilder');
 
 const OptionAttachment = db.define('optionAttachments', {
   objectKey: {
@@ -47,6 +48,7 @@ OptionAttachment.prototype.toJSON = function () {
       optionId,
       objectKey,
       engine: this.getEngine(),
+      url: new LocalAttachmentURLBuilder().getPublicURL(this),
       createdAt: createdAt && createdAt.toUTCString(),
       updatedAt: updatedAt && updatedAt.toUTCString()
     });

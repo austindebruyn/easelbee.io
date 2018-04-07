@@ -5,7 +5,7 @@
       :key='option.id'
     )
       .form-row
-        .form-group.col-11
+        .form-group.col-10
           v-input-text(
             :ref='"option-" + option.id'
             :name='"option" + option.id'
@@ -14,7 +14,9 @@
             @keyup='handleChange'
           )
         .col-1
-          button.delete-option-button(
+          upload-photo-button(@submit='file => handleSubmitAttachment(option.id, file)')
+        .col-1
+          button.button-icon.delete-option-button(
             @click='handleDeleteOptionClick($event, option.id)'
           )
             i.fa.fa-times
@@ -36,12 +38,14 @@ import pick from 'lodash.pick';
 import { questionShape } from 'components/shapes';
 import VInputText from 'components/controls/VInputText';
 import QuestionDetailsOptionsDelta from './QuestionDetailsOptionsDelta';
+import UploadPhotoButton from './UploadPhotoButton';
 
 export default {
   name: 'question-details-options',
   components: {
     'v-input-text': VInputText,
-    'question-details-options-delta': QuestionDetailsOptionsDelta
+    'question-details-options-delta': QuestionDetailsOptionsDelta,
+    'upload-photo-button': UploadPhotoButton
   },
   props: {
     /* eslint-disable vue/require-default-prop */
@@ -54,6 +58,9 @@ export default {
     handleDeleteOptionClick: function (e, optionId) {
       e.preventDefault();
       this.$emit('deleteOption', optionId);
+    },
+    handleSubmitAttachment: function (optionId, file) {
+      this.$emit('attachFile', optionId, file);
     },
     getValues: function () {
       const refs = this.$refs;
@@ -89,10 +96,13 @@ export default {
 <style lang="scss" scoped>
   @import 'src/styles/colors';
 
-  .delete-option-button {
+  .button-icon {
     cursor: pointer;
     border: none;
     background: none;
+  }
+
+  .delete-option-button {
     color: $red;
   }
 

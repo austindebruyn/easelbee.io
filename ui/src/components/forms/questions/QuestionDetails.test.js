@@ -6,6 +6,7 @@ import { mount } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
 import sinon from 'sinon';
 import Vuex from 'vuex';
+import { nextTick } from 'vue';
 
 describe('QuestionDetails', function () {
   beforeEach(function () {
@@ -13,7 +14,8 @@ describe('QuestionDetails', function () {
 
     this.actions = {
       updateQuestion: sinon.spy(),
-      destroyQuestion: sinon.spy()
+      destroyQuestion: sinon.spy(),
+      attachFileToOption: sinon.spy()
     };
     this.store = new Vuex.Store({
       actions: this.actions
@@ -35,10 +37,17 @@ describe('QuestionDetails', function () {
     });
   });
 
+  it('should not render button until the form is dirty', async function () {
+    expect(this.wrapper.find('button.btn.btn-primary')).to.have.length(0);
+    this.wrapper.vm.dirty = true;
+    await nextTick();
+    expect(this.wrapper.find('button.btn.btn-primary')).to.have.length(1);
+  });
+
   it('should dispatch when form is submitted', function () {
     this.fillIn(this.wrapper.first('input')).with('How old are you?');
 
-    this.wrapper.first('form').trigger('submit');
+    this.wrapper.first('button.btn.btn-primary').trigger('click');
     expect(this.actions.updateQuestion.args[0][1]).to.eql({
       id: this.question.id,
       title: 'How old are you?',
@@ -100,6 +109,16 @@ describe('QuestionDetails', function () {
           // Cookies is gone. It was option id 11
           { value: 'Creme' }
         ]
+      });
+    });
+
+    it('should dispatch when file is attached', function () {
+      const options = this.wrapper.first(QuestionDetailsOptions);
+      options.vm.$emit('attachFile', 10, { isFileObject: true });
+
+      expect(this.actions.attachFileToOption.args[0][1]).to.eql({
+        id: 10,
+        file: { isFileObject: true }
       });
     });
   });

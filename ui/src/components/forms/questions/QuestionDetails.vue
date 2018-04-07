@@ -25,6 +25,7 @@
           :question='question'
           @addOption='handleAddOption'
           @deleteOption='handleDeleteOption'
+          @attachFile='handleOptionAttachFile'
           @change='handleChange'
         )
       .form-group(v-if='dirty')
@@ -112,6 +113,12 @@ export default {
         title: this.$refs.title.getValue(),
         type: this.$refs.type.getValue(),
         options: this.scrubOptions(options)
+      });
+    },
+    handleOptionAttachFile: function (id, file) {
+      this.$store.dispatch('attachFileToOption', {
+        id,
+        file
       });
     },
     handleDestroyClick: function () {

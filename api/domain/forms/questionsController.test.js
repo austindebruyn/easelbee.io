@@ -7,7 +7,7 @@ const sinon = require('sinon');
 const Question = require('./Question');
 const Delta = require('./Delta');
 const QuestionUpdater = require('./QuestionUpdater');
-const LocalAttachmentRepository = require('../attachments/LocalAttachmentRepository');
+const LocalAttachmentSaver = require('../attachments/LocalAttachmentSaver');
 
 describe('questionsController', function () {
   clock();
@@ -498,7 +498,7 @@ describe('questionsController', function () {
       describe('when uploading succeeds', function () {
         beforeEach(async function () {
           this.attachmentModel = await factory.create('optionAttachment');
-          this.sandbox.stub(LocalAttachmentRepository.prototype, 'save')
+          this.sandbox.stub(LocalAttachmentSaver.prototype, 'save')
             .resolves(this.attachmentModel);
         });
 
@@ -508,7 +508,7 @@ describe('questionsController', function () {
             .attach('file', `${__dirname}/fixtures/mars.jpg`)
             .cookiejar()
             .accept('application/json');
-          expect(LocalAttachmentRepository.prototype.save).to.have.been
+          expect(LocalAttachmentSaver.prototype.save).to.have.been
             .calledWith(sinon.match(/tmp\/uploads\/\w{32}/), this.option.id);
         });
 
@@ -520,14 +520,15 @@ describe('questionsController', function () {
             .accept('application/json')
             .expect(200, {
               ok: true,
-              record: await this.attachmentModel.toJSON()
+              record: await this.attachmentModel.toJSON(),
+              option: await this.option.toJSON()
             });
         });
       });
 
       describe('when uploading failed', function () {
         beforeEach(async function () {
-          this.sandbox.stub(LocalAttachmentRepository.prototype, 'save')
+          this.sandbox.stub(LocalAttachmentSaver.prototype, 'save')
             .rejects(new Error());
         });
 

@@ -3,7 +3,7 @@ const Form = require('./Form');
 const Question = require('./Question');
 const Option = require('./Option');
 const OptionAttachment = require('../attachments/OptionAttachment');
-const LocalAttachmentRepository = require('../attachments/LocalAttachmentRepository');
+const LocalAttachmentSaver = require('../attachments/LocalAttachmentSaver');
 const Delta = require('./Delta');
 const {
   NotFoundError,
@@ -156,12 +156,13 @@ module.exports.createOptionAttachment = function (req, res, next) {
      */
     const { file } = req;
 
-    const repo = new LocalAttachmentRepository();
-    const attachment = await repo.save(file.path, option.id);
+    const repo = new LocalAttachmentSaver();
+    option.attachment = await repo.save(file.path, option.id);
 
     return res.json({
       ok: true,
-      record: await attachment.toJSON()
+      record: await option.attachment.toJSON(),
+      option: await option.toJSON()
     });
   }
   handle().catch(next);

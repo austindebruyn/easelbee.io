@@ -2,7 +2,7 @@ const OptionAttachment = require('./OptionAttachment');
 const fs = require('fs');
 const path = require('path');
 
-class LocalAttachmentRepository {
+class LocalAttachmentSaver {
   /**
    * Persists the indicated temporary file to storage and returns a DB
    * model.
@@ -17,8 +17,10 @@ class LocalAttachmentRepository {
       engine: 'local'
     });
 
-    const oldPath = path.resolve(__dirname, relativePath);
-    const newPath = path.resolve(__dirname, 'public', 'uploads', attachment.objectKey);
+    const appRootDir = path.resolve(__dirname, '..', '..', '..');
+
+    const oldPath = path.resolve(appRootDir, relativePath);
+    const newPath = path.resolve(appRootDir, 'public', 'uploads', attachment.objectKey);
 
     await new Promise((resolve, reject) => {
       fs.rename(oldPath, newPath, err => {
@@ -30,15 +32,6 @@ class LocalAttachmentRepository {
     await attachment.save();
     return attachment;
   }
-
-  /**
-   * Builds a public URL.
-   * @param {OptionAttachment} attachment
-   * @returns {String} url
-   */
-  getPublicURL(attachment) {
-    return `/uploads/${attachment.objectKey}`;
-  }
 }
 
-module.exports = LocalAttachmentRepository;
+module.exports = LocalAttachmentSaver;

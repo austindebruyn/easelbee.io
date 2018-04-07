@@ -26,7 +26,25 @@ Option.prototype.ensureDelta = function () {
   });
 };
 
-Option.prototype.toJSON = async function () {
+/**
+ * Promises to ensure that `attachment` is eager loaded on this
+ * instance.
+ * @returns {Promise}
+ */
+Option.prototype.ensureOptionAttachment = function () {
+  return new Promise((resolve, reject) => {
+    if (this.optionAttachment) return resolve(this);
+
+    return this.getOptionAttachment()
+      .then(optionAttachment => {
+        this.optionAttachment = optionAttachment;
+        return resolve(this);
+      })
+      .catch(reject);
+  });
+};
+
+Option.prototype.toJSON = async function() {
   const {
     id,
     questionId,
@@ -36,6 +54,7 @@ Option.prototype.toJSON = async function () {
   } = this.get();
 
   await this.ensureDelta();
+  await this.ensureOptionAttachment();
 
   return {
     id,
@@ -43,7 +62,8 @@ Option.prototype.toJSON = async function () {
     value,
     createdAt: createdAt && createdAt.toUTCString(),
     updatedAt: updatedAt && updatedAt.toUTCString(),
-    delta: this.delta ? await this.delta.toJSON() : null
+    delta: this.delta ? await this.delta.toJSON() : null,
+    optionAttachment: this.optionAttachment ? await this.optionAttachment.toJSON() : null
   };
 };
 

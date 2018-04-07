@@ -1,4 +1,4 @@
-const LocalAttachmentRepository = require('./LocalAttachmentRepository');
+const LocalAttachmentSaver = require('./LocalAttachmentSaver');
 const { expect } = require('chai');
 const factory = require('../../tests/factory');
 const clock = require('../../tests/clock');
@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const fs = require('fs');
 const path = require('path');
 
-describe('LocalAttachmentRepository', function () {
+describe('LocalAttachmentSaver', function () {
   clock();
 
   beforeEach(async function () {
@@ -25,20 +25,22 @@ describe('LocalAttachmentRepository', function () {
       });
 
       it('should move file', async function () {
-        const repo = new LocalAttachmentRepository();
-        await repo.save('tmp/uploads/tempfile.png', this.option.id);
+        const saver = new LocalAttachmentSaver();
+        await saver.save('tmp/uploads/tempfile.png', this.option.id);
+
+        const appRoot = path.resolve(__dirname, '..', '..', '..');
 
         expect(fs.rename).to.have.been.calledWith(
-          `${__dirname}/tmp/uploads/tempfile.png`,
+          `${appRoot}/tmp/uploads/tempfile.png`,
           sinon.match.string
         );
         expect(path.dirname(fs.rename.args[0][1]))
-          .to.eql(`${__dirname}/public/uploads`);
+          .to.eql(`${appRoot}/public/uploads`);
       });
 
       it('should create model', async function () {
-        const repo = new LocalAttachmentRepository();
-        const model = await repo.save('tmp/uploads/tempfile.png', this.option.id);
+        const saver = new LocalAttachmentSaver();
+        const model = await saver.save('tmp/uploads/tempfile.png', this.option.id);
 
         expect(model).to.include({
           objectKey: (+new Date()).toString(),
@@ -54,24 +56,10 @@ describe('LocalAttachmentRepository', function () {
       });
 
       it('should return error', async function () {
-        const repo = new LocalAttachmentRepository();
-        await expect(repo.save('tmp/uploads/tempfile.png', this.option.id))
+        const saver = new LocalAttachmentSaver();
+        await expect(saver.save('tmp/uploads/tempfile.png', this.option.id))
           .to.eventually.be.rejected.and.include({ message: 'whatever error' });
       });
-    });
-  });
-
-  describe('#getPublicURL', function () {
-    beforeEach(async function () {
-      this.attachment = await factory.create('optionAttachment', {
-        objectKey: 'whatever.png'
-      });
-    });
-
-    it('should build url', function () {
-      const repo = new LocalAttachmentRepository();
-      const actual = repo.getPublicURL(this.attachment);
-      expect(actual).to.eql('/uploads/whatever.png');
     });
   });
 });

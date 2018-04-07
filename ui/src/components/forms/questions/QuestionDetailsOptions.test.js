@@ -1,4 +1,5 @@
 import QuestionDetailsOptions from './QuestionDetailsOptions';
+import UploadPhotoButton from './UploadPhotoButton';
 import VInputText from 'components/controls/VInputText';
 import { shallow, mount } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
@@ -60,6 +61,30 @@ describe('QuestionDetailsOptions', function () {
     expect(this.wrapper.vm.$emit).to.have.been.calledWith(
       'deleteOption',
       this.question.options[1].id
+    );
+  });
+
+  it('should render an upload button for each option', function () {
+    const buttons = this.wrapper.find(UploadPhotoButton);
+    expect(buttons).to.have.length(2);
+  });
+
+  it('should emit attachFile when upload photo button is submitted', function () {
+    const buttons = this.wrapper.find(UploadPhotoButton);
+
+    buttons[0].vm.$emit('submit', { isFileObject: true });
+    expect(this.wrapper.vm.$emit).to.have.been.calledWith(
+      'attachFile',
+      this.question.options[0].id,
+      { isFileObject: true }
+    );
+    this.wrapper.vm.$emit.reset();
+
+    buttons[1].vm.$emit('submit', { isFileObject: true });
+    expect(this.wrapper.vm.$emit).to.have.been.calledWith(
+      'attachFile',
+      this.question.options[1].id,
+      { isFileObject: true }
     );
   });
 
