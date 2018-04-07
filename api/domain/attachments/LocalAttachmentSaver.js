@@ -14,7 +14,7 @@ class LocalAttachmentSaver {
     const attachment = new OptionAttachment({
       optionId,
       objectKey: `${+new Date()}`,
-      engine: 'local'
+      engine: OptionAttachment.TYPES.local
     });
 
     const appRootDir = path.resolve(__dirname, '..', '..', '..');

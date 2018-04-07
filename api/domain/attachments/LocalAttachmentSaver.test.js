@@ -1,4 +1,5 @@
 const LocalAttachmentSaver = require('./LocalAttachmentSaver');
+const OptionAttachment = require('./OptionAttachment');
 const { expect } = require('chai');
 const factory = require('../../tests/factory');
 const clock = require('../../tests/clock');
@@ -42,9 +43,11 @@ describe('LocalAttachmentSaver', function () {
         const saver = new LocalAttachmentSaver();
         const model = await saver.save('tmp/uploads/tempfile.png', this.option.id);
 
+        model.reload();
+
         expect(model).to.include({
           objectKey: (+new Date()).toString(),
-          engine: 'local'
+          engine: OptionAttachment.TYPES.local
         });
         expect(model.id).to.be.a('number');
       });
