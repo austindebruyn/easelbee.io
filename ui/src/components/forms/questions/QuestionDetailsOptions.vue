@@ -13,6 +13,10 @@
             kind='madlibs'
             @keyup='handleChange'
           )
+          question-details-options-attachment(
+            v-if='option.optionAttachment'
+            :option='option'
+          )
         .col-1
           upload-photo-button(@submit='file => handleSubmitAttachment(option.id, file)')
         .col-1
@@ -39,12 +43,14 @@ import { questionShape } from 'components/shapes';
 import VInputText from 'components/controls/VInputText';
 import QuestionDetailsOptionsDelta from './QuestionDetailsOptionsDelta';
 import UploadPhotoButton from './UploadPhotoButton';
+import QuestionDetailsOptionsAttachment from './QuestionDetailsOptionsAttachment';
 
 export default {
   name: 'question-details-options',
   components: {
     'v-input-text': VInputText,
     'question-details-options-delta': QuestionDetailsOptionsDelta,
+    'question-details-options-attachment': QuestionDetailsOptionsAttachment,
     'upload-photo-button': UploadPhotoButton
   },
   props: {

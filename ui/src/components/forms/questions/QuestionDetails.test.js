@@ -115,9 +115,9 @@ describe('QuestionDetails', function () {
     it('should dispatch when file is attached', function () {
       const options = this.wrapper.first(QuestionDetailsOptions);
       options.vm.$emit('attachFile', 10, { isFileObject: true });
-
       expect(this.actions.attachFileToOption.args[0][1]).to.eql({
         id: 10,
+        questionId: this.question.id,
         file: { isFileObject: true }
       });
     });

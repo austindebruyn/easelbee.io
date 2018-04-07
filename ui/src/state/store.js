@@ -233,6 +233,41 @@ export default new Vuex.Store({
       state.questions = questions;
     },
 
+    attachFileToOptionStart: function (state, { questionId }) {
+      const questions = clone(state.questions);
+      questions[questionId].status = STATUS.MUTATING;
+      state.questions = questions;
+    },
+    attachFileToOptionSuccess: function (state, payload) {
+      const questions = clone(state.questions);
+      const { questionId } = payload;
+      questions[questionId].status = STATUS.LOADED;
+
+      const option = _find(questions[questionId].value.options, {
+        id: payload.option.id
+      });
+      Object.assign(option, payload.option);
+
+      state.questions = questions;
+
+      // update form
+      state.forms = clone(state.forms);
+      state.forms.value.forEach(function (form) {
+        for (let i = 0; i < form.questions.length; i++) {
+          if (form.questions[i].id === questionId) {
+            form.questions[i] = state.questions[questionId].value;
+            break;
+          }
+        }
+      });
+    },
+    attachFileToOptionFailure: function (state, { questionId, errors }) {
+      const questions = clone(state.questions);
+      questions[questionId].status = STATUS.ERRORED;
+      questions[questionId].errors = errors;
+      state.questions = questions;
+    },
+
     createFormStart: function (state) {
       state.forms.status = STATUS.MUTATING;
     },
@@ -674,6 +709,33 @@ export default new Vuex.Store({
         })
         .catch(({ response }) => {
           commit('submitFormFailure', response && response.data.errors);
+        });
+    },
+    attachFileToOption ({ state, commit }, payload) {
+      const { questionId, id, file } = payload;
+      commit('attachFileToOptionStart', { questionId });
+
+      const data = new FormData();
+      data.append('file', file);
+
+      return axios.post(`/api/options/${id}/attachment`, data, {
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(function ({ data }) {
+          commit('attachFileToOptionSuccess', {
+            questionId,
+            option: data.option
+          });
+        })
+        .catch(function (err) {
+          const errors = err.response
+            ? err.response.data.errors
+            : [];
+          commit('attachFileToOptionFailure', { questionId, id, errors });
         });
     }
   }

@@ -18,6 +18,15 @@ export const commissionShape = VueTypes.shape({
   updatedAt: VueTypes.string.isRequired
 });
 
+export const attachmentShape = VueTypes.shape({
+  id: VueTypes.number.isRequired,
+  optionId: VueTypes.number.isRequired,
+  createdAt: VueTypes.string.isRequired,
+  updatedAt: VueTypes.string.isRequired,
+  objectKey: VueTypes.string.isRequired,
+  url: VueTypes.string.isRequired
+});
+
 export const optionShape = VueTypes.shape({
   id: VueTypes.number.isRequired,
   questionId: VueTypes.number.isRequired,
@@ -27,7 +36,8 @@ export const optionShape = VueTypes.shape({
   delta: [null, VueTypes.shape({
     type: VueTypes.string.isRequired,
     amount: VueTypes.number.isRequired
-  })]
+  })],
+  optionAttachment: [null, attachmentShape]
 });
 
 export const questionShape = VueTypes.shape({

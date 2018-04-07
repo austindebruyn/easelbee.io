@@ -51,6 +51,31 @@ export default {
   }
 };
 
+export function buildOption (attrs = {}) {
+  const id = attrs.id || chance.integer({ min: 1, max: 1024 });
+  const objectKey = attrs.optionAttachment
+    ? attrs.optionAttachment.objectKey || chance.word()
+    : null;
+  const optionAttachment = attrs.optionAttachment
+    ? {
+      id: chance.integer({ min: 1, max: 1024 }),
+      optionId: id,
+      createdAt: attrs.optionAttachment.createdAt || new Date(chance.timestamp()).toUTCString(),
+      updatedAt: attrs.optionAttachment.updatedAt || new Date(chance.timestamp()).toUTCString(),
+      objectKey,
+      url: `/uploads/${objectKey}`
+    } : null;
+  return {
+    id,
+    questionId: attrs.questionId || chance.integer({ min: 1, max: 1024 }),
+    value: attrs.value,
+    createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
+    updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
+    optionAttachment,
+    delta: null
+  };
+}
+
 export function buildQuestion (attrs = {}) {
   const question = {
     id: attrs.id || chance.integer({ min: 1, max: 1024 }),
@@ -65,14 +90,8 @@ export function buildQuestion (attrs = {}) {
   };
 
   if (question.type === 'radio') {
-    question.options = attrs.options.map(function (option) {
-      return {
-        id: option.id || chance.integer({ min: 1, max: 1024 }),
-        questionId: question.id,
-        value: option.value,
-        createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
-        updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString()
-      };
+    question.options = attrs.options.map(function (optionAttrs) {
+      return buildOption(Object.assign({ questionId: question.id }, optionAttrs));
     });
   }
 

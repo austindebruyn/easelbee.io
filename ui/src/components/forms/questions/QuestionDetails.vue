@@ -118,6 +118,7 @@ export default {
     handleOptionAttachFile: function (id, file) {
       this.$store.dispatch('attachFileToOption', {
         id,
+        questionId: this.question.id,
         file
       });
     },

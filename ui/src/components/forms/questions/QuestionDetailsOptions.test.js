@@ -1,4 +1,5 @@
 import QuestionDetailsOptions from './QuestionDetailsOptions';
+import QuestionDetailsOptionsAttachment from './QuestionDetailsOptionsAttachment';
 import UploadPhotoButton from './UploadPhotoButton';
 import VInputText from 'components/controls/VInputText';
 import { shallow, mount } from 'avoriaz';
@@ -92,6 +93,36 @@ describe('QuestionDetailsOptions', function () {
     const input = this.wrapper.first(VInputText);
     input.vm.$emit('keyup');
     expect(this.wrapper.vm.$emit).to.have.been.calledWith('change');
+  });
+
+  it('should render no attachment if not present', function () {
+    const attachments = this.wrapper.find(QuestionDetailsOptionsAttachment);
+    expect(attachments).to.have.length(0);
+  });
+
+  describe('when attachments are present', function () {
+    beforeEach(function () {
+      this.question = buildQuestion({
+        type: 'radio',
+        options: [
+          { value: 'Sketch', optionAttachment: { objectKey: 'sketch-example.jpg' } },
+          { value: 'Painting' },
+          { value: 'Mona Lista', optionAttachment: { objectKey: 'mona-lista-ex.png' } }
+        ]
+      });
+
+      this.wrapper = shallow(QuestionDetailsOptions, {
+        propsData: { question: this.question },
+        i18n: this.i18n
+      });
+    });
+
+    it('should render attachment if present', function () {
+      const attachments = this.wrapper.find(QuestionDetailsOptionsAttachment);
+      expect(attachments).to.have.length(2);
+      expect(attachments[0].propsData().option).to.eql(this.question.options[0]);
+      expect(attachments[1].propsData().option).to.eql(this.question.options[2]);
+    });
   });
 
   describe('#getValues', function () {
