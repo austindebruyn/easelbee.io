@@ -44,7 +44,7 @@ Option.prototype.ensureOptionAttachment = function () {
   });
 };
 
-Option.prototype.toJSON = async function() {
+Option.prototype.toJSON = async function () {
   const {
     id,
     questionId,
