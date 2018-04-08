@@ -51,6 +51,16 @@ export default {
   }
 };
 
+export function buildDelta (attrs = {}) {
+  return {
+    id: chance.integer({ min: 1, max: 1024 }),
+    createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
+    updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
+    type: attrs.type || chance.pickone(['base', 'add']),
+    amount: attrs.amount || chance.integer({ min: 0, max: 100 })
+  };
+}
+
 export function buildOption (attrs = {}) {
   const id = attrs.id || chance.integer({ min: 1, max: 1024 });
   const objectKey = attrs.optionAttachment
@@ -72,7 +82,7 @@ export function buildOption (attrs = {}) {
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
     optionAttachment,
-    delta: null
+    delta: attrs.delta ? buildDelta(attrs.delta) : null
   };
 }
 
