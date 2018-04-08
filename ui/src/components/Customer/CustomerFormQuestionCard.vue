@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import clone from 'lib/clone';
 import { formShape } from 'components/shapes';
 import QuestionForm from 'components/Customer/QuestionForm/QuestionForm';
 import CommissionPriceCounter from './CommissionPriceCounter';
@@ -50,6 +51,7 @@ export default {
   },
   methods: {
     handleSubmit: function (value) {
+      this.values = clone(this.values);
       const key = `question_${this.form.questions[this.index].id}`;
       this.values[key] = value;
 

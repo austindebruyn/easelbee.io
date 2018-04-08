@@ -10,7 +10,7 @@ export default class PriceCalculator {
       const question = _find(form.questions, { id });
       if (!question) return acc;
 
-      const option = _find(question.options, { value: values[key] });
+      const option = _find(question.options, { id: values[key] });
       if (!option || !option.delta) return acc;
 
       if (option.delta.type === 'base') {

@@ -57,9 +57,9 @@ describe('PriceCalculator', function () {
         id: 10,
         type: 'radio',
         options: [
-          { value: 'Spanish', delta: { type: 'base', amount: 11 } },
-          { value: 'English', delta: { type: 'base', amount: 24 } },
-          { value: 'Russian' }
+          { id: 1, value: 'Spanish', delta: { type: 'base', amount: 11 } },
+          { id: 2, value: 'English', delta: { type: 'base', amount: 24 } },
+          { id: 3, value: 'Russian' }
         ]
       }));
     });
@@ -69,11 +69,11 @@ describe('PriceCalculator', function () {
     });
 
     it('should return base value with answer', function () {
-      this.values = { question_10: 'Spanish' };
+      this.values = { question_10: 1 }; // Spanish
       expect(this.subject()).to.eql(11);
-      this.values = { question_10: 'English' };
+      this.values = { question_10: 2 }; // English
       expect(this.subject()).to.eql(24);
-      this.values = { question_10: 'Russian' };
+      this.values = { question_10: 3 }; // Russian
       expect(this.subject()).to.eql(0);
     });
 
@@ -83,9 +83,9 @@ describe('PriceCalculator', function () {
           id: 99,
           type: 'radio',
           options: [
-            { value: 'No Extra Money' },
-            { value: 'Medium Extra', delta: { type: 'add', amount: 5 } },
-            { value: 'Big Extra', delta: { type: 'add', amount: 50 } }
+            { id: 4, value: 'No Extra Money' },
+            { id: 5, value: 'Medium Extra', delta: { type: 'add', amount: 5 } },
+            { id: 6, value: 'Big Extra', delta: { type: 'add', amount: 50 } }
           ]
         }));
       });
@@ -95,16 +95,16 @@ describe('PriceCalculator', function () {
       });
 
       it('should return just base if no extra', function () {
-        this.values = { question_10: 'Spanish', question_99: 'No Extra Money' };
+        this.values = { question_10: 1, question_99: 4 }; // Spanish, No Extra
         expect(this.subject()).to.eql(11);
       });
 
       it('should add `base` and `add` delta', function () {
-        this.values = { question_10: 'Spanish', question_99: 'Medium Extra' };
+        this.values = { question_10: 1, question_99: 5 }; // Spanish, Meduim
         expect(this.subject()).to.eql(11 + 5);
-        this.values = { question_10: 'English', question_99: 'Big Extra' };
+        this.values = { question_10: 2, question_99: 6 }; // English, Big
         expect(this.subject()).to.eql(24 + 50);
-        this.values = { question_10: 'Russian', question_99: 'Big Extra' };
+        this.values = { question_10: 3, question_99: 6 }; // Russian, Big
         expect(this.subject()).to.eql(0 + 50);
       });
     });
