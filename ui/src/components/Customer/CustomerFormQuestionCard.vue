@@ -1,24 +1,34 @@
 <template lang="pug">
   .customer-form-question-card
-    .card
-      .progress-bar
-      .card-body
-        question-form(
-          :key='index'
-          :question='form.questions[this.index]'
-          :isFinalQuestion='isFinalQuestion'
-          @submit='handleSubmit'
-        )
+    .row
+      .col-2
+        .card
+          commission-price-counter(
+            :values='values'
+            :form='form'
+          )
+      .col-10
+        .card
+          .progress-bar
+          .card-body
+            question-form(
+              :key='index'
+              :question='form.questions[this.index]'
+              :isFinalQuestion='isFinalQuestion'
+              @submit='handleSubmit'
+            )
 </template>
 
 <script>
 import { formShape } from 'components/shapes';
 import QuestionForm from 'components/Customer/QuestionForm/QuestionForm';
+import CommissionPriceCounter from './CommissionPriceCounter';
 
 export default {
   name: 'customer-form-question-card',
   components: {
-    'question-form': QuestionForm
+    'question-form': QuestionForm,
+    'commission-price-counter': CommissionPriceCounter
   },
   props: {
     /* eslint-disable vue/require-default-prop */
@@ -33,6 +43,9 @@ export default {
   computed: {
     isFinalQuestion: function () {
       return this.index === this.form.questions.length - 1;
+    },
+    price: function () {
+      return 0;
     }
   },
   methods: {

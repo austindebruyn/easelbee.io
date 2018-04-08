@@ -2,7 +2,7 @@
   .customer-form-page
     .container
       .row
-        .col-12.col-sm-10.offset-sm-1.col-lg-8.offset-lg-2.col-xl-6.offset-xl-3
+        .col-12.col-sm-10.offset-sm-1
           div(v-if='loaded')
             .title
               h1 {{ artist.displayName }}
