@@ -16,6 +16,10 @@
         label.form-check-label(
           :for='option.id'
         ) {{ option.value }}
+        .option-attachment(
+          v-if='option.optionAttachment'
+        )
+          img(:src='option.optionAttachment.url', :alt='option.value')
 </template>
 
 <script>
@@ -48,5 +52,10 @@ export default {
   @import 'src/styles/colors';
 
   .c-radio {
+    .option-attachment {
+      img {
+        width: 25%;
+      }
+    }
   }
 </style>
