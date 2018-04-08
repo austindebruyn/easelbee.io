@@ -3,10 +3,10 @@
     img.pull-left(:src='attachment.url', :alt='option.value')
     .img-controls.pull-left
       p
-        a.btn.btn-link(href='javascript:;', @click='handleClickReplace')
+        a(href='javascript:;', @click='handleClickReplace')
           | {{ $t('forms.details.questions.attachments.replace') }}
       p
-        a.btn.btn-link(href='javascript:;', @click='handleClickDelete')
+        a.disabled(disabled=true, href='javascript:;', @click='handleClickDelete')
           | {{ $t('forms.details.questions.attachments.delete') }}
 </template>
 
@@ -51,6 +51,13 @@ export default {
 
     .img-controls {
       padding-left: 1rem;
+    }
+
+    a.disabled {
+      color: $gray;
+      &:hover {
+        text-decoration: none;
+      }
     }
   }
 </style>
