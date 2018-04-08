@@ -123,6 +123,17 @@ describe('QuestionDetailsOptions', function () {
       expect(attachments[0].propsData().option).to.eql(this.question.options[0]);
       expect(attachments[1].propsData().option).to.eql(this.question.options[2]);
     });
+
+    it('should handle attachment replace link click as an upload', function () {
+      const uploadPhotoButton = this.wrapper.find(UploadPhotoButton)[0];
+      uploadPhotoButton.vm.handleClick = sinon.spy();
+
+      const attachment = this.wrapper.find(QuestionDetailsOptionsAttachment)[0];
+
+      expect(uploadPhotoButton.vm.handleClick).to.not.have.been.called;
+      attachment.vm.$emit('replace');
+      expect(uploadPhotoButton.vm.handleClick).to.have.been.called;
+    });
   });
 
   describe('#getValues', function () {

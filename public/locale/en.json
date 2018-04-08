@@ -90,6 +90,10 @@
             "add": "Make this an extra cost instead.",
             "none": "Remove this price change."
           }
+        },
+        "attachments": {
+          "delete": "Delete Image",
+          "replace": "Replace Image"
         }
       }
     }

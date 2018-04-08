@@ -16,9 +16,13 @@
           question-details-options-attachment(
             v-if='option.optionAttachment'
             :option='option'
+            @replace='handleAttachmentReplaceClick(option.id)'
           )
         .col-1
-          upload-photo-button(@submit='file => handleSubmitAttachment(option.id, file)')
+          upload-photo-button(
+            :ref='"upload-photo-button-" + option.id'
+            @submit='file => handleSubmitAttachment(option.id, file)'
+          )
         .col-1
           button.button-icon.delete-option-button(
             @click='handleDeleteOptionClick($event, option.id)'
@@ -88,6 +92,10 @@ export default {
           ...pick(option, 'id', 'questionId')
         });
       }
+    },
+    handleAttachmentReplaceClick: function (optionId) {
+      const key = `upload-photo-button-${optionId}`;
+      this.$refs[key][0].handleClick();
     },
     getDeltaType: function (option) {
       return option.delta ? option.delta.type : null;

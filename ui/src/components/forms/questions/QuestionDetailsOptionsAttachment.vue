@@ -2,7 +2,12 @@
   .question-details-options-attachment
     img.pull-left(:src='attachment.url', :alt='option.value')
     .img-controls.pull-left
-      p hey
+      p
+        a.btn.btn-link(href='javascript:;', @click='handleClickReplace')
+          | {{ $t('forms.details.questions.attachments.replace') }}
+      p
+        a.btn.btn-link(href='javascript:;', @click='handleClickDelete')
+          | {{ $t('forms.details.questions.attachments.delete') }}
 </template>
 
 <script>
@@ -22,6 +27,12 @@ export default {
     }
   },
   methods: {
+    handleClickDelete: function () {
+      this.$emit('delete');
+    },
+    handleClickReplace: function () {
+      this.$emit('replace');
+    }
   }
 };
 </script>
