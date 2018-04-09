@@ -229,13 +229,16 @@ describe('formsController', function () {
             userId: signIn.user.id,
             name: 'Untitled Form #2'
           });
+          await factory.create('form', {
+            slug: 'untitled-form-3'
+          });
           const res = await agent()
             .post('/api/users/me/forms')
             .cookiejar()
             .accept('application/json')
             .expect(200);
           expect(res.body.record).to.deep.include({
-            name: 'Untitled Form #3'
+            name: 'Untitled Form #4'
           });
         });
       });

@@ -9,7 +9,8 @@ const Form = db.define('forms', {
   },
   slug: {
     type: db.Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   submittedAt: {
     type: db.Sequelize.DATE,

@@ -103,7 +103,6 @@ module.exports.create = function (req, res, next) {
     for (i = 1; i <= 1024; i++) {
       const count = await Form.count({
         where: {
-          userId: req.user.id,
           [Op.or]: [
             { name: `Untitled Form #${i}` },
             { slug: `untitled-form-${i}` }
