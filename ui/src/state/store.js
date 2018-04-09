@@ -310,18 +310,17 @@ export default new Vuex.Store({
       state.questions = questions;
     },
     updateQuestionSuccess: function (state, { id, json }) {
-      state.questions[id].status = STATUS.LOADED;
-      state.questions[id].value = json;
+      delete state.questions[id];
+      state.questions[json.id] = new Resource({
+        status: Resource.LOADED,
+        value: json
+      });
 
       state.forms.value = state.forms.value.map(function (form) {
         if (form.id === json.formId) {
           const newForm = clone(form);
-          newForm.questions = form.questions.map(function (q) {
-            if (q.id === id) {
-              return json;
-            }
-            return q;
-          });
+          newForm.questions = newForm.questions.filter(q => q.id !== id);
+          newForm.questions.push(json);
           return newForm;
         }
         return clone(form);
@@ -566,7 +565,7 @@ export default new Vuex.Store({
           commit('updateCommissionFailure', errors);
         });
     },
-    updateQuestion ({ state, commit }, payload) {
+    updateQuestion ({ state, commit, dispatch }, payload) {
       const body = omit(payload, 'id');
       commit('updateQuestionStart', payload.id);
 
