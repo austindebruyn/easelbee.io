@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const QuestionUpdater = require('./QuestionUpdater');
 const Question = require('./Question');
 const Delta = require('./Delta');
+const OptionAttachment = require('../attachments/OptionAttachment');
 const Option = require('./Option');
 
 describe('QuestionUpdater', function () {
@@ -134,6 +135,31 @@ describe('QuestionUpdater', function () {
           expect(await Delta.count()).to.eql(0);
         });
       });
+
+      describe('when options have attachments', function () {
+        beforeEach(async function () {
+          await this.question.ensureOptions();
+          const firstOption = this.question.options[0];
+
+          this.attachment = await firstOption.createOptionAttachment({
+            engine: OptionAttachment.TYPES.local,
+            objectKey: 'whatever.png'
+          });
+        });
+
+        it('should remove options that have attachments', async function () {
+          const updater = new QuestionUpdater(this.question);
+
+          const result = await updater.update({
+            options: []
+          });
+
+          await result.ensureOptions();
+          expect(result.options).to.have.length(0);
+          await this.attachment.reload();
+          expect(this.attachment.optionId).to.eql(null);
+        });
+      });
     });
 
     describe('when answers already exist', function () {
@@ -205,11 +231,43 @@ describe('QuestionUpdater', function () {
         expect(result.id).to.not.eql(this.question.id);
         const newOption = result.options[0];
         expect(newOption.id).to.not.eql(option.id);
-        expect(newOption.delta.id)
-          .to.not.eql(delta.id);
+        expect(newOption.delta.id).to.not.eql(delta.id);
         expect(newOption.delta).to.include({
           type: Delta.TYPES.base,
           amount: 14.44
+        });
+      });
+
+      it('should clone OptionAttachments', async function () {
+        const question = await factory.create('question', {
+          type: Question.TYPES.radio
+        });
+        const option = await factory.create('option', {
+          questionId: question.id,
+          value: 'Oil Painting'
+        });
+        const attachment = await factory.create('optionAttachment', {
+          optionId: option.id,
+          engine: OptionAttachment.TYPES.local,
+          objectKey: 'heyladies.png'
+        });
+
+        await factory.create('answer', { questionId: question.id });
+
+        const updater = new QuestionUpdater(question);
+        const result = await updater.update({
+          title: 'Having a good time',
+          options: [{ value: 'Oil Painting' }]
+        });
+
+        expect(result.id).to.not.eql(this.question.id);
+        const newOption = result.options[0];
+        expect(newOption.id).to.not.eql(option.id);
+        expect(newOption.originalId).to.eql(option.id);
+        expect(newOption.optionAttachment.id).to.not.eql(attachment.id);
+        expect(newOption.optionAttachment).to.include({
+          engine: OptionAttachment.TYPES.local,
+          objectKey: 'heyladies.png'
         });
       });
     });

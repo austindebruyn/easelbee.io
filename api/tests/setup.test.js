@@ -6,8 +6,8 @@ const queue = require('kue').createQueue();
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
-beforeEach(function () {
-  return db.sync({ force: true });
+beforeEach(async function () {
+  await db.sync({ force: true });
 });
 
 afterEach(function () {

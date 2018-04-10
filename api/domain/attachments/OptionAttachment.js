@@ -58,4 +58,9 @@ OptionAttachment.prototype.toJSON = function () {
 OptionAttachment.belongsTo(Option);
 Option.hasOne(OptionAttachment);
 
+OptionAttachment.belongsTo(OptionAttachment, {
+  as: 'original',
+  foreignKey: 'originalId'
+});
+
 module.exports = OptionAttachment;

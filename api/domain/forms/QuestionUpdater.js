@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const OptionAttachment = require('../attachments/OptionAttachment');
 const Question = require('./Question');
 const Option = require('./Option');
 const Delta = require('./Delta');
@@ -72,6 +73,17 @@ class QuestionUpdater {
           ..._.pick(originalOption.delta, 'type', 'amount')
         });
       }
+
+      // Duplicate attachments
+      await originalOption.ensureOptionAttachment();
+      if (originalOption.optionAttachment) {
+        newOption.optionAttachment = await OptionAttachment.create({
+          optionId: newOption.id,
+          originalId: originalOption.optionAttachment.id,
+          ..._.pick(originalOption.optionAttachment, 'engine', 'objectKey')
+        });
+      }
+
       this.question.options.push(newOption);
     }
   }
@@ -112,6 +124,13 @@ class QuestionUpdater {
       const option = this.question.options[i];
 
       if (!expectedValues.includes(option.value)) {
+        // Clear any attachments first. Deltas are cascade-delete.
+        const attachment = await option.getOptionAttachment();
+        if (attachment) {
+          attachment.optionId = null;
+          await attachment.save();
+        }
+
         await option.destroy();
         _.pull(this.question.options, option);
       }
