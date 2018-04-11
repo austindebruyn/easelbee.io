@@ -1,7 +1,7 @@
 <template lang="pug">
   dashboard-layout(:breadcrumbs='breadcrumbs')
     .container
-      .row(v-if='loading')
+      .row(v-if='!areCommissionsLoaded')
         .col-12
           loading-spinner(size='xl')
       .row(v-else=true)
@@ -20,10 +20,11 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex';
+
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionsList from 'components/commissions/CommissionsList';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
-import { isLoaded } from 'state/Resource';
 
 export default {
   name: 'commissions-index-page',
@@ -33,12 +34,8 @@ export default {
     'commissions-list': CommissionsList
   },
   computed: {
-    loading: function () {
-      return !isLoaded(this.$store.state.commissions);
-    },
-    commissions: function () {
-      return this.$store.state.commissions.value;
-    },
+    ...mapGetters(['areCommissionsLoaded']),
+    ...mapState(['commissions']),
     breadcrumbs: function () {
       return [
         { name: this.$t('commissions.index.title') }

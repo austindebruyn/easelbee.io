@@ -11,3 +11,7 @@ export function isUserArtist ({ form, artist }) {
 export function areFormsLoaded (state) {
   return state.forms && !state.meta.forms.mutating;
 };
+
+export function areCommissionsLoaded (state) {
+  return state.commissions && !state.meta.commissions.mutating;
+};

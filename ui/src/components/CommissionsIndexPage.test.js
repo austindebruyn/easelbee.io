@@ -1,8 +1,9 @@
-import CommissionsIndexPage from './CommissionsIndexPage';
 import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
-import Resource, { STATUS } from 'state/Resource';
+
+import * as getters from 'state/getters';
+import CommissionsIndexPage from './CommissionsIndexPage';
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionsList from 'components/commissions/CommissionsList';
 import commissionsFixture from 'fixtures/commissions';
@@ -18,11 +19,15 @@ describe('CommissionsIndexPage', function () {
     this.actions.fetchCommissions.reset();
   });
 
-  function storeFactory (resourceOpts = {}) {
+  function storeFactory ({ mutating = false, errored = false, commissions = null } = {}) {
     this.store = new Vuex.Store({
       state: {
-        commissions: new Resource(resourceOpts)
+        meta: {
+          commissions: { mutating, errored }
+        },
+        commissions
       },
+      getters,
       actions: this.actions
     });
   }
@@ -39,6 +44,7 @@ describe('CommissionsIndexPage', function () {
     });
 
     it('should render spinner', function () {
+      storeFactory.call(this, { mutating: true });
       const wrapper = mount(CommissionsIndexPage, {
         store: this.store,
         i18n: this.i18n
@@ -62,8 +68,7 @@ describe('CommissionsIndexPage', function () {
   describe('when loaded', function () {
     beforeEach(function () {
       storeFactory.call(this, {
-        status: STATUS.LOADED,
-        value: [
+        commissions: [
           commissionsFixture.inprogress,
           commissionsFixture.basic,
           commissionsFixture.long

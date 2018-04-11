@@ -13,13 +13,17 @@ const initialState = {
     forms: {
       errored: false,
       mutating: false
+    },
+    commissions: {
+      errored: false,
+      mutating: false
     }
   },
   user: new Resource(),
   passwordReset: new Resource(),
   completePasswordReset: new Resource(),
   emailPreferences: new Resource(),
-  commissions: new Resource(),
+  commissions: null,
   fillouts: {},
   events: {},
   forms: null,

@@ -15,15 +15,21 @@ export function setUser (state, json) {
 };
 
 export function fetchCommissionsStart (state) {
-  state.commissions.status = STATUS.MUTATING;
+  // state.commissions.status = STATUS.MUTATING;
+  state.meta.commissions.mutating = true;
 };
 export function fetchCommissionsSuccess (state, json) {
-  state.commissions.status = STATUS.LOADED;
-  state.commissions.value = json;
+  state.meta.commissions.mutating = false;
+  state.meta.commissions.errored = false;
+  state.commissions = json;
+  // state.commissions.status = STATUS.LOADED;
+  // state.commissions.value = json;
 };
 export function fetchCommissionsFailure (state, errors) {
-  state.commissions.status = STATUS.ERRORED;
-  state.commissions.errors = errors;
+  state.meta.commissions.mutating = false;
+  state.meta.commissions.errored = true;
+  // state.commissions.status = STATUS.ERRORED;
+  // state.commissions.errors = errors;
 };
 
 export function fetchFilloutStart (state, id) {
@@ -69,37 +75,43 @@ export function fetchEventsFailure (state, { id, errors }) {
 };
 
 export function createCommissionStart (state) {
-  state.commissions.status = STATUS.MUTATING;
+  // state.commissions.status = STATUS.MUTATING;
+  state.meta.commissions.mutating = true;
 };
 export function createCommissionSuccess (state, json) {
-  state.commissions.status = STATUS.LOADED;
-  state.commissions.value.push(json);
+  // state.commissions.status = STATUS.LOADED;
+  // state.commissions.value.push(json);
+  state.meta.commissions.mutating = false;
+  state.meta.commissions.errored = false;
+  const commissions = clone(state.commissions);
+  commissions.push(json);
+  state.commissions = commissions;
 };
 export function createCommissionFailure (state, errors) {
-  state.commissions.status = STATUS.ERRORED;
-  state.commissions.errors = errors;
+  // state.commissions.status = STATUS.ERRORED;
+  // state.commissions.errors = errors;
+  state.meta.commissions.mutating = false;
+  state.meta.commissions.errored = true;
 };
 
 export function updateCommissionStart (state) {
-  state.commissions.status = STATUS.MUTATING;
+  // state.commissions.status = STATUS.MUTATING;
+  state.meta.commissions.mutating = true;
 };
 export function updateCommissionSuccess (state, json) {
-  state.commissions.status = STATUS.LOADED;
+  state.meta.commissions.mutating = false;
+  state.meta.commissions.errored = false;
 
-  const newValue = [];
-  state.commissions.value.forEach(function (existing) {
-    if (existing.id === json.id) {
-      newValue.push(json);
-    } else {
-      newValue.push({ ...existing });
-    }
-  });
+  const commissions = clone(state.commissions).filter(c => c.id !== json.id);
+  commissions.push(json);
 
-  state.commissions.value = newValue;
+  state.commissions = commissions;
 };
 export function updateCommissionFailure (state, errors) {
-  state.commissions.status = STATUS.ERRORED;
-  state.commissions.errors = errors;
+  // state.commissions.status = STATUS.ERRORED;
+  // state.commissions.errors = errors;
+  state.meta.commissions.mutating = false;
+  state.meta.commissions.errored = true;
 };
 
 export function fetchFormsStart (state) {
