@@ -1,7 +1,8 @@
+import { shallow } from 'avoriaz';
+
 import CommissionsList from './CommissionsList';
 import CommissionsListItem from './CommissionsListItem';
 import { buildCommission } from 'fixtures/commissions';
-import { shallow } from 'avoriaz';
 
 describe('CommissionsList', function () {
   it('should render zero data', function () {
@@ -19,9 +20,9 @@ describe('CommissionsList', function () {
     const commission1 = buildCommission();
     const commission2 = buildCommission();
 
-    const wrapper = shallow(CommissionsList, { propsData: {
-      commissions: [commission1, commission2]
-    }});
+    const wrapper = shallow(CommissionsList, {
+      propsData: { commissions: [ commission1, commission2 ] }
+    });
 
     expect(wrapper.find('.commissions-list ul')).to.have.length(1);
     expect(wrapper.find(CommissionsListItem)).to.have.length(2);

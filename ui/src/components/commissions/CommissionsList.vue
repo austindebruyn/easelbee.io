@@ -30,8 +30,11 @@
 </template>
 
 <script>
+import VueTypes from 'vue-types';
+
 import VInputText from 'components/controls/VInputText';
 import CommissionsListItem from './CommissionsListItem';
+import { commissionShape } from 'components/shapes';
 
 export default {
   name: 'commissions-list',
@@ -40,10 +43,8 @@ export default {
     'commissions-list-item': CommissionsListItem
   },
   props: {
-    commissions: {
-      type: Array,
-      required: true
-    }
+    /* eslint-disable vue/require-default-prop */
+    commissions: VueTypes.arrayOf(commissionShape)
   },
   methods: {
     handleFormSubmit: function (e) {

@@ -1,12 +1,15 @@
 import flatten from 'lodash.flatten';
 import _find from 'lodash.find';
 import pull from 'lodash.pull';
+
 import Resource, { STATUS } from 'state/Resource';
 import clone from '../lib/clone';
 
-export function fetchI18nSuccess (state, locale) {
-  state.i18n.status = STATUS.LOADED;
-  state.i18n.value = locale;
+export function fetchI18nSuccess (state) {
+  // state.i18n.status = STATUS.LOADED;
+  // state.i18n.value = locale;
+  state.meta.i18n.mutating = false;
+  state.i18n = true;
 };
 
 export function setUser (state, json) {

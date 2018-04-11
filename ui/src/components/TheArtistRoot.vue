@@ -1,15 +1,15 @@
 <template lang="pug">
   .app
-    router-view(v-if='ready')
-    .error-state(v-else-if='errored', size='xl')
+    router-view(v-if='isi18nLoaded')
+    .error-state(v-else-if='isi18nErrored', size='xl')
       h1 Whoops!
     loading-spinner(v-else=true, size='xl')
 </template>
 
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
-import { STATUS } from 'state/Resource';
+import { mapGetters } from 'vuex';
+
 import LoadingSpinner from 'components/LoadingSpinner';
 
 export default Vue.component('the-artist-root', {
@@ -17,13 +17,10 @@ export default Vue.component('the-artist-root', {
     'loading-spinner': LoadingSpinner
   },
   computed: {
-    ...mapState(['i18n']),
-    ready: function () {
-      return this.i18n.status === STATUS.LOADED;
-    },
-    errored: function () {
-      return this.i18n.status === STATUS.ERRORED;
-    }
+    ...mapGetters([
+      'isi18nLoaded',
+      'isi18nErrored'
+    ])
   }
 });
 </script>

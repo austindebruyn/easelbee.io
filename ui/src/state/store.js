@@ -17,18 +17,22 @@ const initialState = {
     commissions: {
       errored: false,
       mutating: false
+    },
+    i18n: {
+      errored: false,
+      mutating: false
     }
   },
+  forms: null,
+  commissions: null,
+  i18n: null,
   user: new Resource(),
   passwordReset: new Resource(),
   completePasswordReset: new Resource(),
   emailPreferences: new Resource(),
-  commissions: null,
   fillouts: {},
   events: {},
-  forms: null,
   questions: {},
-  i18n: new Resource(),
   // Customer
   form: new Resource(),
   formSubmission: new Resource()

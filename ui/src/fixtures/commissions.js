@@ -39,13 +39,13 @@ export default {
 };
 
 export function buildCommission (attrs = {}) {
-  const randomStatus = [
+  const randomStatus = chance.pickone([
     'incoming',
     'inprogress',
     'inreview',
     'finished',
     'canceled'
-  ][Math.random() * 5];
+  ]);
 
   return {
     id: attrs.id || chance.integer({ min: 1, max: 1024 }),
