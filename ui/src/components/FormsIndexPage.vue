@@ -3,7 +3,7 @@
     .container
       .row
         .col-12.col-md-8
-          loading-spinner(v-if='loading', size='xl')
+          loading-spinner(v-if='!areFormsLoaded', size='xl')
           forms-list(v-else=true, :forms='forms')
         .col-12.col-md-4
           .card
@@ -17,7 +17,7 @@
 import DashboardLayout from 'components/dashboard/DashboardLayout';
 import LoadingSpinner from 'components/LoadingSpinner';
 import FormsList from 'components/forms/FormsList';
-import { isLoaded } from 'state/Resource';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'forms-index-page',
@@ -27,11 +27,9 @@ export default {
     'forms-list': FormsList
   },
   computed: {
-    loading: function () {
-      return !isLoaded(this.$store.state.forms);
-    },
+    ...mapGetters(['areFormsLoaded']),
     forms: function () {
-      return this.$store.state.forms.value;
+      return this.$store.state.forms;
     },
     breadcrumbs: function () {
       return [

@@ -1,8 +1,9 @@
-import FormsIndexPage from './FormsIndexPage';
 import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
-import Resource, { STATUS } from 'state/Resource';
+
+import * as getters from 'state/getters';
+import FormsIndexPage from './FormsIndexPage';
 import LoadingSpinner from 'components/LoadingSpinner';
 import FormsList from 'components/forms/FormsList';
 import formsFixture from 'fixtures/forms';
@@ -18,11 +19,15 @@ describe('FormsIndexPage', function () {
     this.actions.fetchForms.reset();
   });
 
-  function storeFactory (resourceOpts = {}) {
+  function storeFactory ({ mutating = false, errored = false, forms = null } = {}) {
     this.store = new Vuex.Store({
       state: {
-        forms: new Resource(resourceOpts)
+        meta: {
+          forms: { mutating, errored }
+        },
+        forms
       },
+      getters,
       actions: this.actions
     });
   }
@@ -61,10 +66,7 @@ describe('FormsIndexPage', function () {
 
   describe('when loaded', function () {
     beforeEach(function () {
-      storeFactory.call(this, {
-        status: STATUS.LOADED,
-        value: [ formsFixture.basic ]
-      });
+      storeFactory.call(this, { forms: [formsFixture.basic] });
     });
 
     it('should not render spinner', function () {

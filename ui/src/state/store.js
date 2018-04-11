@@ -9,6 +9,12 @@ import * as getters from './getters';
 Vue.use(Vuex);
 
 const initialState = {
+  meta: {
+    forms: {
+      errored: false,
+      mutating: false
+    }
+  },
   user: new Resource(),
   passwordReset: new Resource(),
   completePasswordReset: new Resource(),
@@ -16,7 +22,7 @@ const initialState = {
   commissions: new Resource(),
   fillouts: {},
   events: {},
-  forms: new Resource(),
+  forms: null,
   questions: {},
   i18n: new Resource(),
   // Customer

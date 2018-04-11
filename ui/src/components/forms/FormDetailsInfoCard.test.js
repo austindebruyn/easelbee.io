@@ -1,11 +1,12 @@
+import sinon from 'sinon';
+import Vuex from 'vuex';
 import { expect } from 'chai';
 import { mount } from 'avoriaz';
+
 import FormDetailsInfoCard from './FormDetailsInfoCard';
 import VInputText from 'components/controls/VInputText';
 import { buildForm } from 'fixtures/forms';
 import clock from '../../../../api/tests/clock';
-import sinon from 'sinon';
-import Vuex from 'vuex';
 
 describe('FormDetailsInfoCard', function () {
   clock();

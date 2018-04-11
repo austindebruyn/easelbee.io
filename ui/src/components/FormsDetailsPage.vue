@@ -3,7 +3,7 @@
     .container
       .row
         .col-12
-          loading-spinner(v-if='loading', size='xl')
+          loading-spinner(v-if='!areFormsLoaded', size='xl')
           form-details(v-else-if='form', :form='form')
           .not-found(v-else=true)
             .col-12.col-lg-6.offset-lg-3
@@ -21,7 +21,7 @@ import LoadingSpinner from 'components/LoadingSpinner';
 import FormDetails from 'components/forms/FormDetails';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
 import find from 'lodash.find';
-import { isLoaded } from 'state/Resource';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'forms-details-page',
@@ -31,16 +31,14 @@ export default {
     'form-details': FormDetails
   },
   computed: {
-    loading: function () {
-      return !isLoaded(this.$store.state.forms);
-    },
+    ...mapGetters(['areFormsLoaded']),
     id: function () {
       return parseInt(this.$route.params.id);
     },
     form: function () {
-      if (this.loading) return null;
+      if (!this.areFormsLoaded) return null;
 
-      return find(this.$store.state.forms.value, {
+      return find(this.$store.state.forms, {
         id: this.id
       });
     },

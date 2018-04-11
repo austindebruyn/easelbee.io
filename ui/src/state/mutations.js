@@ -103,11 +103,15 @@ export function updateCommissionFailure (state, errors) {
 };
 
 export function fetchFormsStart (state) {
-  state.forms.status = STATUS.MUTATING;
+  // state.forms.status = STATUS.MUTATING;
+  state.meta.forms.mutating = true;
 };
 export function fetchFormsSuccess (state, json) {
-  state.forms.status = STATUS.LOADED;
-  state.forms.value = json;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = false;
+  state.forms = json;
+  // state.forms.status = STATUS.LOADED;
+  // state.forms.value = json;
 
   flatten(json.map(f => f.questions)).forEach(function (question) {
     state.questions[question.id] = new Resource({
@@ -117,26 +121,33 @@ export function fetchFormsSuccess (state, json) {
   });
 };
 export function fetchFormsFailure (state, errors) {
-  state.forms.status = STATUS.ERRORED;
-  state.forms.errors = errors;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = true;
+  // state.forms.status = STATUS.ERRORED;
+  // state.forms.errors = errors;
 };
 
 export function updateFormStart (state, id) {
-  state.forms.status = STATUS.MUTATING;
+  // state.forms.status = STATUS.MUTATING;
+  state.meta.forms.mutating = true;
 };
 export function updateFormSuccess (state, { id, json }) {
   const forms = clone(state.forms);
-  forms.status = STATUS.LOADED;
-  forms.value.forEach(function (form) {
+  // forms.status = STATUS.LOADED;
+  forms.forEach(function (form) {
     if (form.id === id) {
       Object.assign(form, json);
     }
   });
   state.forms = forms;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = false;
 };
 export function updateFormFailure (state, { id, errors }) {
-  state.forms.status = STATUS.ERRORED;
-  state.forms.errors = errors;
+  // state.forms.status = STATUS.ERRORED;
+  // state.forms.errors = errors;
+  state.meta.forms.errored = true;
+  state.meta.forms.mutating = false;
 };
 
 export function updateOptionDeltaStart (state, { questionId }) {
@@ -156,7 +167,7 @@ export function updateOptionDeltaSuccess (state, payload) {
 
   // update form
   state.forms = clone(state.forms);
-  state.forms.value.forEach(function (form) {
+  state.forms.forEach(function (form) {
     for (let i = 0; i < form.questions.length; i++) {
       if (form.questions[i].id === questionId) {
         form.questions[i] = state.questions[questionId].value;
@@ -189,7 +200,7 @@ export function destroyOptionDeltaSuccess (state, payload) {
 
   // update form
   state.forms = clone(state.forms);
-  state.forms.value.forEach(function (form) {
+  state.forms.forEach(function (form) {
     for (let i = 0; i < form.questions.length; i++) {
       if (form.questions[i].id === questionId) {
         form.questions[i] = state.questions[questionId].value;
@@ -224,7 +235,7 @@ export function attachFileToOptionSuccess (state, payload) {
 
   // update form
   state.forms = clone(state.forms);
-  state.forms.value.forEach(function (form) {
+  state.forms.forEach(function (form) {
     for (let i = 0; i < form.questions.length; i++) {
       if (form.questions[i].id === questionId) {
         form.questions[i] = state.questions[questionId].value;
@@ -241,39 +252,49 @@ export function attachFileToOptionFailure (state, { questionId, errors }) {
 }
 
 export function createFormStart (state) {
-  state.forms.status = STATUS.MUTATING;
+  // state.forms.status = STATUS.MUTATING;
+  state.meta.forms.mutating = true;
 };
 export function createFormSuccess (state, json) {
   const forms = clone(state.forms);
-  forms.status = STATUS.LOADED;
-  forms.value.push(json);
+  // forms.status = STATUS.LOADED;
+  forms.push(json);
   state.forms = forms;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = false;
 };
 export function createFormFailure (state, errors) {
-  state.forms.status = STATUS.ERRORED;
-  state.forms.errors = errors;
+  // state.forms.status = STATUS.ERRORED;
+  // state.forms.errors = errors;
+  state.meta.forms.errored = true;
+  state.meta.forms.mutating = false;
 };
 
 export function destroyFormStart (state) {
-  state.forms.status = STATUS.MUTATING;
+  // state.forms.status = STATUS.MUTATING;
+  state.meta.forms.mutating = false;
 };
 export function destroyFormSuccess (state, id) {
   const forms = clone(state.forms);
-  forms.status = STATUS.LOADED;
+  // forms.status = STATUS.LOADED;
 
-  for (let i = 0; i < forms.value.length; i++) {
-    const form = forms.value[i];
+  for (let i = 0; i < forms.length; i++) {
+    const form = forms[i];
     if (form.id === id) {
-      pull(forms.value, form);
+      pull(forms, form);
       break;
     }
   }
 
   state.forms = forms;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = false;
 };
 export function destroyFormFailure (state, errors) {
-  state.forms.status = STATUS.ERRORED;
-  state.forms.errors = errors;
+  // state.forms.status = STATUS.ERRORED;
+  // state.forms.errors = errors;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = true;
 };
 
 export function updateQuestionStart (state, id) {
@@ -288,7 +309,7 @@ export function updateQuestionSuccess (state, { id, json }) {
     value: json
   });
 
-  state.forms.value = state.forms.value.map(function (form) {
+  state.forms = state.forms.map(function (form) {
     if (form.id === json.formId) {
       const newForm = clone(form);
       newForm.questions = newForm.questions.filter(q => q.id !== id);
@@ -304,14 +325,16 @@ export function updateQuestionFailure (state, { id, errors }) {
 };
 
 export function createQuestionStart (state) {
-  state.forms.status = STATUS.MUTATING;
+  state.meta.forms.mutating = false;
 };
 export function createQuestionSuccess (state, { formId, json }) {
   const forms = clone(state.forms);
 
-  forms.status = STATUS.LOADED;
+  // forms.status = STATUS.LOADED;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = false;
 
-  forms.value.forEach(function (form) {
+  forms.forEach(function (form) {
     if (form.id === formId) {
       form.questions.push(json);
     }
@@ -324,16 +347,20 @@ export function createQuestionSuccess (state, { formId, json }) {
   state.questions = newQuestions;
 };
 export function createQuestionFailure (state, errors) {
-  state.forms.status = STATUS.ERRORED;
-  state.forms.errors = errors;
+  // state.forms.status = STATUS.ERRORED;
+  // state.forms.errors = errors;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = true;
 };
 
 export function destroyQuestionStart (state) {
-  state.forms.status = STATUS.MUTATING;
+  state.meta.forms.mutating = false;
 };
 export function destroyQuestionFailure (state, errors) {
-  state.forms.status = STATUS.ERRORED;
-  state.forms.errors = errors;
+  // state.forms.status = STATUS.ERRORED;
+  // state.forms.errors = errors;
+  state.meta.forms.mutating = false;
+  state.meta.forms.errored = true;
 };
 
 // customer
