@@ -9,7 +9,7 @@ import QuestionDetails from './QuestionDetails';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
 import VInputText from 'components/controls/VInputText';
 import VCardControl from 'components/controls/VCardControl';
-import { buildQuestion } from 'fixtures/questions';
+import { buildQuestion, buildOption } from 'fixtures/questions';
 
 describe('QuestionDetails', function () {
   function storeFactory (state = {}) {
@@ -89,8 +89,8 @@ describe('QuestionDetails', function () {
 
       this.store = storeFactory.call(this, {
         options: {
-          11: { id: 11, value: 'Cookies', questionId: this.question.id },
-          36: { id: 36, value: 'Creme', questionId: this.question.id }
+          11: buildOption({ id: 11, value: 'Cookies', questionId: this.question.id }),
+          36: buildOption({ id: 36, value: 'Creme', questionId: this.question.id })
         },
         questions: {
           [this.question.id]: this.question
