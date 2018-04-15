@@ -497,7 +497,9 @@ describe('questionsController', function () {
 
       describe('when uploading succeeds', function () {
         beforeEach(async function () {
-          this.attachmentModel = await factory.create('optionAttachment');
+          this.attachmentModel = await factory.create('optionAttachment', {
+            optionId: this.option.id
+          });
           this.sandbox.stub(LocalAttachmentSaver.prototype, 'save')
             .resolves(this.attachmentModel);
         });
@@ -523,6 +525,28 @@ describe('questionsController', function () {
               record: await this.attachmentModel.toJSON(),
               option: await this.option.toJSON()
             });
+        });
+      });
+
+      describe('when uploading succeeds and old attachments exist', function () {
+        beforeEach(async function () {
+          this.sandbox.stub(LocalAttachmentSaver.prototype, 'save').callsFake(() => {
+            return factory.create('optionAttachment');
+          });
+        });
+
+        it('should dissociate old attachments', async function () {
+          const oldAttachment = await factory.create('optionAttachment', {
+            optionId: this.option.id
+          });
+          await agent()
+            .post(`/api/options/${this.option.id}/attachment`)
+            .attach('file', `${__dirname}/fixtures/mars.jpg`)
+            .cookiejar()
+            .accept('application/json')
+            .expect(200);
+          await oldAttachment.reload();
+          expect(oldAttachment.optionId).to.be.null;
         });
       });
 

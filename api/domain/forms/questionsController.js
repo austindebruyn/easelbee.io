@@ -134,7 +134,7 @@ module.exports.destroyDelta = function (req, res, next) {
 module.exports.createOptionAttachment = function (req, res, next) {
   async function handle() {
     const option = await Option.findById(req.params.id, {
-      include: [OptionAttachment, { model: Question, include: [Form] }]
+      include: [ OptionAttachment, { model: Question, include: [Form] } ]
     });
     if (!option) throw new NotFoundError();
     if (option.question.form.userId !== req.user.id) {
@@ -142,6 +142,10 @@ module.exports.createOptionAttachment = function (req, res, next) {
     }
     if (!req.file) {
       throw new UnprocessableEntityError('MISSING_ATTACHMENT');
+    }
+    if (option.optionAttachment) {
+      option.optionAttachment.optionId = null;
+      await option.optionAttachment.save();
     }
     /**
      * @typedef MulterFile
@@ -157,11 +161,11 @@ module.exports.createOptionAttachment = function (req, res, next) {
     const { file } = req;
 
     const repo = new LocalAttachmentSaver();
-    option.attachment = await repo.save(file.path, option.id);
+    option.optionAttachment = await repo.save(file.path, option.id);
 
     return res.json({
       ok: true,
-      record: await option.attachment.toJSON(),
+      record: await option.optionAttachment.toJSON(),
       option: await option.toJSON()
     });
   }
