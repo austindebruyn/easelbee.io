@@ -23,7 +23,10 @@ const initialState = {
   },
   i18n: null,
   form: null,
-  formSubmission: null
+  formSubmission: null,
+  questions: {},
+  options: {},
+  optionAttachments: {}
 };
 
 export default new Vuex.Store({

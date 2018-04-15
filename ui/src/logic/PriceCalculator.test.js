@@ -1,15 +1,19 @@
-import { buildForm } from 'fixtures/forms';
-import { buildQuestion } from 'fixtures/questions';
+import { buildQuestion, buildOption } from 'fixtures/questions';
 import PriceCalculator from './PriceCalculator';
 const { expect } = require('chai');
 
 describe('PriceCalculator', function () {
   beforeEach(function () {
-    this.form = buildForm();
+    this.questions = {};
+    this.options = {};
     this.values = {};
 
     this.subject = function () {
-      return new PriceCalculator().calculate(this.form, this.values);
+      return new PriceCalculator().calculate(
+        this.questions,
+        this.options,
+        this.values
+      );
     };
   });
 
@@ -19,7 +23,7 @@ describe('PriceCalculator', function () {
 
   describe('with one text question', function () {
     beforeEach(function () {
-      this.form.questions.push(buildQuestion({ id: 10, type: 'string' }));
+      this.questions[10] = buildQuestion({ id: 10, type: 'string' });
     });
 
     it('should return 0 when no answer', function () {
@@ -34,11 +38,11 @@ describe('PriceCalculator', function () {
 
   describe('with one radio question with no deltas', function () {
     beforeEach(function () {
-      this.form.questions.push(buildQuestion({
+      this.questions[10] = buildQuestion({
         id: 10,
         type: 'radio',
         options: [{ value: 'Spanish' }, { value: 'English' }]
-      }));
+      });
     });
 
     it('should return 0 when no answer', function () {
@@ -53,15 +57,22 @@ describe('PriceCalculator', function () {
 
   describe('with one radio question with deltas', function () {
     beforeEach(function () {
-      this.form.questions.push(buildQuestion({
+      this.questions[10] = buildQuestion({
         id: 10,
         type: 'radio',
-        options: [
-          { id: 1, value: 'Spanish', delta: { type: 'base', amount: 11 } },
-          { id: 2, value: 'English', delta: { type: 'base', amount: 24 } },
-          { id: 3, value: 'Russian' }
-        ]
-      }));
+        options: [ 1, 2, 3 ]
+      });
+      this.options[1] = buildOption({
+        id: 1,
+        value: 'Spanish',
+        delta: { type: 'base', amount: 11 }
+      });
+      this.options[2] = buildOption({
+        id: 2,
+        value: 'English',
+        delta: { type: 'base', amount: 24 }
+      });
+      this.options[3] = buildOption({ id: 3, value: 'Russian' });
     });
 
     it('should return 0 when no answer', function () {
@@ -79,15 +90,22 @@ describe('PriceCalculator', function () {
 
     describe('with second radio question that has add delta', function () {
       beforeEach(function () {
-        this.form.questions.push(buildQuestion({
+        this.questions[99] = buildQuestion({
           id: 99,
           type: 'radio',
-          options: [
-            { id: 4, value: 'No Extra Money' },
-            { id: 5, value: 'Medium Extra', delta: { type: 'add', amount: 5 } },
-            { id: 6, value: 'Big Extra', delta: { type: 'add', amount: 50 } }
-          ]
-        }));
+          options: [ 4, 5, 6 ]
+        });
+        this.options[4] = buildOption({ id: 4, value: 'No Extra Money' });
+        this.options[5] = buildOption({
+          id: 5,
+          value: 'Medium Extra',
+          delta: { type: 'add', amount: 5 }
+        });
+        this.options[6] = buildOption({
+          id: 6,
+          value: 'Big Extra',
+          delta: { type: 'add', amount: 50 }
+        });
       });
 
       it('should return 0 when no answer', function () {
@@ -116,8 +134,7 @@ describe('PriceCalculator', function () {
   });
 
   it('should return 0 if no such option', function () {
-    const question = buildQuestion({ id: 99, type: 'radio', options: [] });
-    this.form.questions.push(question);
+    this.questions[99] = buildQuestion({ id: 99, type: 'radio', options: [] });
     this.vaues = { question_99: 'Hey' };
     expect(this.subject()).to.eql(0);
   });

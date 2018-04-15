@@ -19,20 +19,18 @@
         .option-attachment(
           v-if='option.optionAttachment'
         )
-          img(:src='option.optionAttachment.url', :alt='option.value')
+          img(:src='getAttachmentUrl(option.optionAttachment)', :alt='option.value')
 </template>
 
 <script>
 import VueTypes from 'vue-types';
-import { optionShape } from 'components/shapes';
 
 export default {
   name: 'c-radio',
   props: {
     /* eslint-disable vue/require-default-prop */
     id: VueTypes.number.isRequired,
-    required: VueTypes.bool,
-    options: VueTypes.arrayOf(optionShape).isRequired
+    required: VueTypes.bool
   },
   data: function () {
     return { selected: null };
@@ -43,6 +41,14 @@ export default {
     },
     value: function () {
       return this.selected;
+    },
+    options: function () {
+      return this.$store.getters.getOptionsByQuestionId(this.id);
+    }
+  },
+  methods: {
+    getAttachmentUrl: function (optionAttachmentId) {
+      return this.$store.state.optionAttachments[optionAttachmentId].url;
     }
   }
 };

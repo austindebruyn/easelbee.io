@@ -1,19 +1,27 @@
-import CustomerFormQuestionCard from './CustomerFormQuestionCard';
-import QuestionForm from './QuestionForm/QuestionForm';
 import { shallow } from 'avoriaz';
-import { buildQuestion } from 'fixtures/questions';
-import { buildForm } from 'fixtures/forms';
 import { nextTick } from 'vue';
 import sinon from 'sinon';
+import Vuex from 'vuex';
+
+import CustomerFormQuestionCard from './CustomerFormQuestionCard';
+import QuestionForm from './QuestionForm/QuestionForm';
+import { buildQuestion } from 'fixtures/questions';
+import { buildForm } from 'fixtures/forms';
 
 describe('CustomerFormQuestionCard', function () {
   beforeEach(function () {
-    this.questions = [ buildQuestion(), buildQuestion() ];
-    this.form = buildForm({
-      questions: this.questions
+    this.store = new Vuex.Store({
+      state: {
+        questions: {
+          1: buildQuestion({ id: 1, order: 1 }),
+          2: buildQuestion({ id: 2, order: 2 })
+        }
+      }
     });
+    this.form = buildForm({ questions: [1, 2] });
     this.wrapper = shallow(CustomerFormQuestionCard, {
-      propsData: { form: this.form }
+      propsData: { form: this.form },
+      store: this.store
     });
     sinon.spy(this.wrapper.vm, '$emit');
   });
@@ -21,7 +29,7 @@ describe('CustomerFormQuestionCard', function () {
   it('should render a QuestionForm and pass first question', function () {
     const form = this.wrapper.first(QuestionForm);
     expect(form.propsData()).to.deep.include({
-      question: this.questions[0],
+      question: this.store.state.questions[1],
       isFinalQuestion: false
     });
   });
@@ -36,11 +44,11 @@ describe('CustomerFormQuestionCard', function () {
         this.wrapper.first(QuestionForm).vm.$emit('submit', 'Whatever!');
         expect(this.wrapper.vm).to.deep.include({
           index: 1,
-          values: { [`question_${this.questions[0].id}`]: 'Whatever!' }
+          values: { [`question_${this.store.state.questions[1].id}`]: 'Whatever!' }
         });
         nextTick(() => {
           const formProps = this.wrapper.first(QuestionForm).propsData();
-          expect(formProps.question).to.eql(this.questions[1]);
+          expect(formProps.question).to.eql(this.store.state.questions[2]);
         });
       });
     });
@@ -59,7 +67,7 @@ describe('CustomerFormQuestionCard', function () {
       it('should fire complete with all values', function () {
         this.wrapper.first(QuestionForm).vm.$emit('submit', 'All done!');
         expect(this.wrapper.vm.$emit).to.have.been.calledWith('complete', {
-          [`question_${this.questions[1].id}`]: 'All done!'
+          [`question_${this.store.state.questions[2].id}`]: 'All done!'
         });
       });
     });

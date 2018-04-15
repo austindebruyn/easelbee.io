@@ -1,3 +1,6 @@
+import { normalize } from 'normalizr';
+import * as models from '../artist/lib/models';
+
 // ----------------------------------------------------------- //
 // fetchForm
 // ----------------------------------------------------------- //
@@ -14,11 +17,16 @@ export function fetchFormSuccess (state, { record, user }) {
     mutating: false,
     errored: false
   };
-  state.form = record;
+  const flat = normalize(record, models.forms);
+
+  state.form = flat.entities.forms[flat.result];
+  state.questions = flat.entities.questions;
+  state.options = flat.entities.options;
+  state.optionAttachments = flat.entities.optionAttachments;
   state.artist = user;
 };
 
-export function fetchFormFailure (state, errors) {
+export function fetchFormFailure (state) {
   state.meta.form = {
     mutating: false,
     errored: true

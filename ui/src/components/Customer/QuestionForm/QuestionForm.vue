@@ -12,7 +12,6 @@
           ref='input'
           v-else-if='question.type === "radio"'
           :id='question.id'
-          :options='question.options'
         )
       button.btn.btn-primary(type='submit') {{ buttonText }}
 </template>

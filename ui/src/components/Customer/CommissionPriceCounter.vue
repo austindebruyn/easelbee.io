@@ -8,18 +8,22 @@
 <script>
 import VueTypes from 'vue-types';
 import PriceCalculator from 'logic/PriceCalculator';
-import { formShape } from 'components/shapes';
+import { mapState } from 'vuex';
 
 export default {
   name: 'commission-price-counter',
   props: {
     /* eslint-disable vue/require-default-prop */
-    form: formShape.isRequired,
     values: VueTypes.object.isRequired
   },
   computed: {
+    ...mapState([ 'options', 'questions' ]),
     price: function () {
-      return new PriceCalculator().calculate(this.form, this.values);
+      return new PriceCalculator().calculate(
+        this.questions,
+        this.options,
+        this.values
+      );
     }
   }
 };

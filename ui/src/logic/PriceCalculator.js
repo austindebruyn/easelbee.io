@@ -1,16 +1,20 @@
-import _find from 'lodash.find';
-
 export default class PriceCalculator {
-  calculate (form, values) {
+  /**
+   * @param {Object} questions mapping of id to models
+   * @param {Object} options mapping of id to models
+   * @param {Object} values mapping of question_x key to value
+   * @returns {Number}
+   */
+  calculate (questions, options, values) {
     return Object.keys(values).reduce(function (acc, key) {
       const matches = key.match(/^question_(\d+)$/);
       if (!matches) return acc;
 
       const id = parseInt(matches[1], 10);
-      const question = _find(form.questions, { id });
+      const question = questions[id];
       if (!question) return acc;
 
-      const option = _find(question.options, { id: values[key] });
+      const option = options[values[key]];
       if (!option || !option.delta) return acc;
 
       if (option.delta.type === 'base') {

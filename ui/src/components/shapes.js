@@ -37,13 +37,13 @@ export const optionShape = VueTypes.shape({
     type: VueTypes.string.isRequired,
     amount: VueTypes.number.isRequired
   })],
-  optionAttachment: [null, attachmentShape]
+  optionAttachment: [null, Number]
 });
 
 export const questionShape = VueTypes.shape({
   id: VueTypes.number.isRequired,
   formId: VueTypes.number.isRequired,
-  options: [null, VueTypes.arrayOf(optionShape)],
+  options: [null, VueTypes.arrayOf(Number)],
   required: VueTypes.bool,
   order: VueTypes.number.isRequired,
   title: VueTypes.string.isRequired,

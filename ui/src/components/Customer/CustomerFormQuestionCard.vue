@@ -13,7 +13,7 @@
           .card-body
             question-form(
               :key='index'
-              :question='form.questions[this.index]'
+              :question='currentQuestion'
               :isFinalQuestion='isFinalQuestion'
               @submit='handleSubmit'
             )
@@ -47,12 +47,16 @@ export default {
     },
     price: function () {
       return 0;
+    },
+    currentQuestion: function () {
+      const id = this.form.questions[this.index];
+      return this.$store.state.questions[id];
     }
   },
   methods: {
     handleSubmit: function (value) {
       this.values = clone(this.values);
-      const key = `question_${this.form.questions[this.index].id}`;
+      const key = `question_${this.currentQuestion.id}`;
       this.values[key] = value;
 
       if (this.isFinalQuestion) {
