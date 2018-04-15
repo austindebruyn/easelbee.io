@@ -1,23 +1,39 @@
-import QuestionDetailsOptionsAttachment from './QuestionDetailsOptionsAttachment';
 import { shallow } from 'avoriaz';
-import { buildOption } from '../../../fixtures/questions';
 import sinon from 'sinon';
+import Vuex from 'vuex';
+
+import * as getters from 'state/artist/getters';
+import QuestionDetailsOptionsAttachment from './QuestionDetailsOptionsAttachment';
+import { buildOption, buildOptionAttachment } from '../../../fixtures/questions';
 
 describe('QuestionDetailsOptionsAttachment', function () {
   beforeEach(function () {
     this.sandbox = sinon.sandbox.create();
 
+    this.optionAttachment = buildOptionAttachment({
+      objectKey: 'whatever.png'
+    });
     this.option = buildOption({
       value: 'whatever',
-      optionAttachment: {
-        objectKey: 'whatever.png'
-      }
+      optionAttachment: this.optionAttachment.id
     });
-    this.attachment = this.option.optionAttachment;
+
+    this.store = new Vuex.Store({
+      state: {
+        options: {
+          [this.option.id]: this.option
+        },
+        optionAttachments: {
+          [this.optionAttachment.id]: this.optionAttachment
+        }
+      },
+      getters
+    });
 
     this.wrapper = shallow(QuestionDetailsOptionsAttachment, {
-      propsData: { option: this.option },
-      i18n: this.i18n
+      propsData: { optionId: this.option.id },
+      i18n: this.i18n,
+      store: this.store
     });
 
     this.sandbox.spy(this.wrapper.vm, '$emit');
@@ -29,7 +45,7 @@ describe('QuestionDetailsOptionsAttachment', function () {
 
   it('should render img', function () {
     const img = this.wrapper.first('img');
-    expect(img.getAttribute('src')).to.eql(this.attachment.url);
+    expect(img.getAttribute('src')).to.eql(this.optionAttachment.url);
   });
 
   it('should fire replace when link clicked', function () {

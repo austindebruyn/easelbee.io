@@ -1,8 +1,8 @@
-import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
+import { mount } from 'avoriaz';
 
-import * as getters from 'state/getters';
+import * as getters from 'state/artist/getters';
 import CommissionsDetailsPage from './CommissionsDetailsPage';
 import CommissionDetails from 'components/commissions/CommissionDetails';
 import commissionsFixture from 'fixtures/commissions';
@@ -24,7 +24,9 @@ describe('CommissionsDetailsPage', function () {
     this.store = new Vuex.Store({
       state: {
         meta: {
-          commissions: { mutating, errored }
+          commissions: { mutating, errored },
+          fillouts: { mutating: false, errored: false },
+          events: { mutating: false, errored: false }
         },
         commissions,
         fillouts: {},

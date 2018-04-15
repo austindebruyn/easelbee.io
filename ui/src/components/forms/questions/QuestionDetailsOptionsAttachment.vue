@@ -1,6 +1,6 @@
 <template lang="pug">
   .question-details-options-attachment
-    img.pull-left(:src='attachment.url', :alt='option.value')
+    img.pull-left(:src='attachment.url', alt='')
     .img-controls.pull-left
       p
         a(href='javascript:;', @click='handleClickReplace')
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { optionShape } from 'components/shapes';
+import VueTypes from 'vue-types';
 
 export default {
   name: 'question-details-options-attachment',
@@ -19,11 +19,11 @@ export default {
   },
   props: {
     /* eslint-disable vue/require-default-prop */
-    option: optionShape.isRequired
+    optionId: VueTypes.number.def(-1).isRequired
   },
   computed: {
     attachment: function () {
-      return this.option.optionAttachment;
+      return this.$store.getters.getOptionAttachmentByOptionId(this.optionId);
     }
   },
   methods: {

@@ -26,8 +26,8 @@ export default {
     'loading-spinner': LoadingSpinner,
     'settings-page-user-form': SettingsPageUserForm
   },
-  data () {
-    return {username: this.user && this.user.username};
+  data: function () {
+    return { username: this.user && this.user.username };
   },
   computed: {
     user: function () {

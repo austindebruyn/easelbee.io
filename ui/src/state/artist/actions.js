@@ -1,25 +1,6 @@
 import axios from 'axios';
 import omit from 'lodash.omit';
 
-export function fetchForm ({ state, commit }, slug) {
-  commit('fetchFormStart');
-
-  const headers = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  };
-  const url = `/api/forms/${slug}`;
-
-  return axios.get(url, { credentials: 'same-origin', headers })
-    .then(({ data }) => {
-      commit('fetchFormSuccess', data);
-    })
-    .catch(({ response }) => {
-      const errors = response && response.data && response.data.errors;
-      commit('fetchFormFailure', errors);
-    });
-}
-
 export function fetchCommissions ({ state, commit }) {
   commit('fetchCommissionsStart');
 
@@ -90,7 +71,7 @@ export function fetchForms ({ state, commit }) {
       commit('fetchFormsSuccess', data.records);
     })
     .catch(({ response }) => {
-      commit('fetchFormsFailure', response && response.data.errors);
+      commit('fetchFormsFailure');
     });
 }
 
@@ -108,7 +89,7 @@ export function createForm ({ state, commit }) {
       commit('createFormSuccess', data.record);
     })
     .catch(({ response }) => {
-      commit('createFormFailure', response && response.data.errors);
+      commit('createFormFailure');
     });
 }
 
@@ -126,7 +107,7 @@ export function destroyForm ({ state, commit }, { id }) {
       commit('destroyFormSuccess', id);
     })
     .catch(({ response }) => {
-      commit('destroyFormFailure', response && response.data.errors);
+      commit('destroyFormFailure');
     });
 }
 
@@ -148,7 +129,7 @@ export function createCommission ({ state, commit }, payload) {
       commit('createCommissionSuccess', data.record);
     })
     .catch(({ response: { data } }) => {
-      commit('createCommissionFailure', data.errors);
+      commit('createCommissionFailure');
     });
 }
 
@@ -208,10 +189,7 @@ export function updateOptionDelta ({ state, commit }, payload) {
     }
   })
     .then(function ({ data }) {
-      commit('updateOptionDeltaSuccess', {
-        questionId,
-        ...data.record
-      });
+      commit('updateOptionDeltaSuccess', data.record);
     })
     .catch(function (err) {
       const errors = err.response
@@ -222,8 +200,8 @@ export function updateOptionDelta ({ state, commit }, payload) {
 }
 
 export function destroyOptionDelta ({ state, commit }, payload) {
-  const { questionId, id } = payload;
-  commit('destroyOptionDeltaStart', { questionId });
+  const { id } = payload;
+  commit('destroyOptionDeltaStart');
 
   return axios.delete(`/api/options/${id}/delta`, {
     credentials: 'same-origin',
@@ -233,16 +211,10 @@ export function destroyOptionDelta ({ state, commit }, payload) {
     }
   })
     .then(function () {
-      commit('destroyOptionDeltaSuccess', {
-        questionId,
-        optionId: id
-      });
+      commit('destroyOptionDeltaSuccess', { optionId: id });
     })
-    .catch(function (err) {
-      const errors = err.response
-        ? err.response.data.errors
-        : [];
-      commit('destroyOptionDeltaFailure', { questionId, id, errors });
+    .catch(function () {
+      commit('destroyOptionDeltaFailure');
     });
 }
 
@@ -280,10 +252,10 @@ export function createQuestion ({ state, commit }, payload) {
     }
   })
     .then(({ data }) => {
-      commit('createQuestionSuccess', { formId, json: data.record });
+      commit('createQuestionSuccess', { json: data.record });
     })
     .catch(({ response }) => {
-      commit('createQuestionFailure', response && response.data.errors);
+      commit('createQuestionFailure');
     });
 }
 
@@ -303,26 +275,6 @@ export function destroyQuestion ({ state, commit, dispatch }, payload) {
     })
     .catch(({ response }) => {
       commit('destroyQuestionFailure', response && response.data.errors);
-    });
-}
-
-export function submitForm ({ state, commit }, payload) {
-  commit('submitFormStart');
-
-  const { slug } = state.form.value;
-
-  return axios.post(`/forms/${slug}/submit`, payload, {
-    credentials: 'same-origin',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(({ data }) => {
-      commit('submitFormSuccess', { json: data.record });
-    })
-    .catch(({ response }) => {
-      commit('submitFormFailure', response && response.data.errors);
     });
 }
 

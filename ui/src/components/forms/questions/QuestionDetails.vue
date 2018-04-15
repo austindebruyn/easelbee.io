@@ -22,7 +22,7 @@
         h4 {{ $t('forms.details.questions.options') }}
         question-details-options(
           ref='options'
-          :question='question'
+          :options='options'
           @addOption='handleAddOption'
           @deleteOption='handleDeleteOption'
           @attachFile='handleOptionAttachFile'
@@ -39,13 +39,14 @@
 </template>
 
 <script>
+import pick from 'lodash.pick';
+
 import { questionShape } from 'components/shapes';
 import VInputText from 'components/controls/VInputText';
 import VDropdown from 'components/controls/VDropdown';
 import VCardControl from 'components/controls/VCardControl';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
-import clone from '../../../lib/clone';
-import pick from 'lodash.pick';
+import clone from 'lib/clone';
 
 export default {
   name: 'question-details',
@@ -63,6 +64,9 @@ export default {
     return { dirty: false };
   },
   computed: {
+    options: function () {
+      return this.$store.getters.getOptionsByQuestionId(this.question.id);
+    },
     shouldShowOptions: function () {
       return ['radio'].includes(this.question.type);
     }
@@ -82,7 +86,7 @@ export default {
       const options = this.scrubOptions(
         this.shouldShowOptions
           ? this.$refs.options.getValues()
-          : this.question.options || []
+          : this.options || []
       );
 
       this.$store.dispatch('updateQuestion', {
@@ -95,7 +99,7 @@ export default {
       this.dirty = false;
     },
     handleAddOption: function () {
-      const options = clone(this.question.options);
+      const options = clone(this.options);
       options.push({ value: '' });
 
       this.$store.dispatch('updateQuestion', {
@@ -106,7 +110,7 @@ export default {
       });
     },
     handleDeleteOption: function (id) {
-      const options = clone(this.question.options).filter(o => o.id !== id);
+      const options = clone(this.options).filter(o => o.id !== id);
 
       this.$store.dispatch('updateQuestion', {
         id: this.question.id,

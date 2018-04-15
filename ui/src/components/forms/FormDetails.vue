@@ -20,11 +20,12 @@
 </template>
 
 <script>
+import find from 'lodash.find';
+
 import { formShape } from 'components/shapes';
 import FormDetailsInfoCard from './FormDetailsInfoCard';
 import QuestionDetails from './questions/QuestionDetails';
 import FormDetailsQuestionSelector from './FormDetailsQuestionSelector';
-import find from 'lodash.find';
 
 export default {
   name: 'form-details',
@@ -43,8 +44,11 @@ export default {
     };
   },
   computed: {
+    questions: function () {
+      return this.$store.getters.getQuestionsByFormId(this.form.id);
+    },
     selectedQuestion: function () {
-      return find(this.form.questions, { order: this.order });
+      return find(this.questions, { order: this.order });
     }
   },
   methods: {

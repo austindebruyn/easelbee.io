@@ -16,7 +16,7 @@ export default function (opts) {
   Vue.use(VueTween);
   Vue.use(VTooltip);
 
-  const i18n = buildLocale();
+  const i18n = buildLocale(store);
 
   return new Vue({
     router,

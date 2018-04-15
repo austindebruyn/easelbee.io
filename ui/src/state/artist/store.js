@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Resource from 'state/Resource';
 
 import * as mutations from './mutations';
 import * as actions from './actions';
@@ -10,6 +9,14 @@ Vue.use(Vuex);
 
 const initialState = {
   meta: {
+    fillouts: {
+      errored: false,
+      mutating: false
+    },
+    events: {
+      errored: false,
+      mutating: false
+    },
     forms: {
       errored: false,
       mutating: false
@@ -19,6 +26,9 @@ const initialState = {
       mutating: false
     },
     i18n: {
+      mutating: false
+    },
+    questions: {
       errored: false,
       mutating: false
     }
@@ -26,16 +36,12 @@ const initialState = {
   forms: null,
   commissions: null,
   i18n: null,
-  user: new Resource(),
-  passwordReset: new Resource(),
-  completePasswordReset: new Resource(),
-  emailPreferences: new Resource(),
+  user: null,
   fillouts: {},
   events: {},
   questions: {},
-  // Customer
-  form: new Resource(),
-  formSubmission: new Resource()
+  options: {},
+  optionAttachments: {}
 };
 
 export default new Vuex.Store({

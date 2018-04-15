@@ -1,22 +1,31 @@
+import Vuex from 'vuex';
 import sinon from 'sinon';
 import questionsFixture from 'fixtures/questions';
 import commissionsFixture from 'fixtures/commissions';
 import eventsFixture, { buildEvent } from 'fixtures/events';
+import { mount } from 'avoriaz';
+import merge from 'lodash.merge';
+
+import * as getters from 'state/artist/getters';
 import Timeline from './Timeline';
 import TimelineItem from './TimelineItem';
 import TimelineFillout from './TimelineFillout';
-import Vuex from 'vuex';
-import Resource, { STATUS } from 'state/Resource';
-import { mount } from 'avoriaz';
 import clock from '../../../../../api/tests/clock';
 
-function storeFactory (fillouts = {}, events = {}) {
-  this.store = new Vuex.Store({
-    state: {
-      fillouts,
-      events
+function storeFactory (state = {}) {
+  const initialState = {
+    meta: {
+      fillouts: { mutating: false, errored: false },
+      events: { mutating: false, errored: false }
     },
-    actions: this.actions
+    fillouts: {},
+    events: {}
+  };
+
+  this.store = new Vuex.Store({
+    state: merge(initialState, state),
+    actions: this.actions,
+    getters
   });
 }
 
@@ -74,10 +83,7 @@ describe('Timeline', function () {
   describe('when only fillout loaded', function () {
     beforeEach(function () {
       storeFactory.call(this, {
-        [commissionsFixture.basic.id]: new Resource({
-          value: this.fillout,
-          status: STATUS.LOADED
-        })
+        fillouts: { [commissionsFixture.basic.id]: this.fillout }
       });
       this.wrapper = wrapperFactory.call(this);
     });
@@ -96,14 +102,9 @@ describe('Timeline', function () {
 
   describe('when only events loaded', function () {
     beforeEach(function () {
-      storeFactory.call(this,
-        {},
-        {
-          [commissionsFixture.basic.id]: new Resource({
-            value: [ eventsFixture.basic ],
-            status: STATUS.LOADED
-          })
-        });
+      storeFactory.call(this, {
+        events: { [commissionsFixture.basic.id]: [eventsFixture.basic] }
+      });
       this.wrapper = wrapperFactory.call(this);
     });
 
@@ -122,15 +123,8 @@ describe('Timeline', function () {
   describe('when loaded', function () {
     beforeEach(function () {
       storeFactory.call(this, {
-        [commissionsFixture.basic.id]: new Resource({
-          value: this.fillout,
-          status: STATUS.LOADED
-        })
-      }, {
-        [commissionsFixture.basic.id]: new Resource({
-          value: [ eventsFixture.basic ],
-          status: STATUS.LOADED
-        })
+        fillouts: { [commissionsFixture.basic.id]: this.fillout },
+        events: { [commissionsFixture.basic.id]: [eventsFixture.basic] }
       });
 
       this.wrapper = wrapperFactory.call(this);
@@ -175,15 +169,8 @@ describe('Timeline', function () {
       ];
 
       storeFactory.call(this, {
-        [commissionsFixture.basic.id]: new Resource({
-          value: this.fillout,
-          status: STATUS.LOADED
-        })
-      }, {
-        [commissionsFixture.basic.id]: new Resource({
-          value: this.events,
-          status: STATUS.LOADED
-        })
+        fillouts: { [commissionsFixture.basic.id]: this.fillout },
+        events: { [commissionsFixture.basic.id]: this.events }
       });
 
       this.wrapper = wrapperFactory.call(this);

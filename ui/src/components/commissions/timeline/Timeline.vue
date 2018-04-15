@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { commissionShape } from 'components/shapes';
-import { isLoaded } from 'state/Resource';
 import find from 'lodash.find';
 import sortBy from 'lodash.sortby';
+
+import { commissionShape } from 'components/shapes';
 import LoadingSpinner from 'components/LoadingSpinner';
 import TimelineFillout from './TimelineFillout';
 import TimelineItem from './TimelineItem';
@@ -40,20 +40,16 @@ export default {
   },
   computed: {
     fillout: function () {
-      const resource = this.$store.state.fillouts[this.commission.id];
-      return resource && resource.value;
+      return this.$store.getters.getFilloutByCommissionId(this.commission.id);
     },
     isFilloutLoaded: function () {
-      const resource = this.$store.state.fillouts[this.commission.id];
-      return resource && isLoaded(resource);
+      return !this.$store.state.meta.fillouts.mutating && this.fillout;
     },
     events: function () {
-      const resource = this.$store.state.events[this.commission.id];
-      return resource && resource.value;
+      return this.$store.getters.getEventsByCommissionId(this.commission.id);
     },
     areEventsLoaded: function () {
-      const resource = this.$store.state.events[this.commission.id];
-      return resource && isLoaded(resource);
+      return !this.$store.state.meta.events.mutating && this.events;
     },
     eventDescriptors: function () {
       const sortedEvents = sortBy(this.events, e => new Date(e.createdAt));

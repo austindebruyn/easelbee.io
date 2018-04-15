@@ -2,7 +2,7 @@ import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
 
-import * as getters from 'state/getters';
+import * as getters from 'state/artist/getters';
 import CommissionsIndexPage from './CommissionsIndexPage';
 import LoadingSpinner from 'components/LoadingSpinner';
 import CommissionsList from 'components/commissions/CommissionsList';

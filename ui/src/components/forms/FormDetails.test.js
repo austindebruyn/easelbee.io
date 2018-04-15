@@ -1,20 +1,33 @@
-import FormDetails from './FormDetails';
+import sinon from 'sinon';
+import Vuex from 'vuex';
+import merge from 'lodash.merge';
 import { shallow } from 'avoriaz';
-import { buildForm } from 'fixtures/forms';
+import { nextTick } from 'vue';
+
+import * as getters from 'state/artist/getters';
+import FormDetails from './FormDetails';
 import FormDetailsInfoCard from './FormDetailsInfoCard';
 import QuestionDetails from './questions/QuestionDetails';
 import FormDetailsQuestionSelector from './FormDetailsQuestionSelector';
 import { buildQuestion } from 'fixtures/questions';
-import { nextTick } from 'vue';
-import sinon from 'sinon';
-import Vuex from 'vuex';
+import { buildForm } from 'fixtures/forms';
 
 describe('FormDetails', function () {
+  function storeFactory (state = {}) {
+    return new Vuex.Store({
+      state: merge({
+        questions: {}
+      }, state),
+      actions: this.actions,
+      getters
+    });
+  }
+
   beforeEach(function () {
     this.form = buildForm();
 
     this.actions = { createQuestion: sinon.spy() };
-    this.store = new Vuex.Store({ actions: this.actions });
+    this.store = storeFactory.call(this);
 
     this.wrapper = shallow(FormDetails, {
       propsData: { form: this.form },
@@ -37,8 +50,17 @@ describe('FormDetails', function () {
 
   describe('when form has questions', function () {
     beforeEach(function () {
-      this.form.questions.push(buildQuestion({ order: 1 }));
-      this.form.questions.push(buildQuestion({ order: 2 }));
+      this.question1 = buildQuestion({ order: 1, formId: this.form.id });
+      this.question2 = buildQuestion({ order: 2, formId: this.form.id });
+
+      this.store = storeFactory.call(this, {
+        questions: {
+          1: this.question1,
+          2: this.question2
+        }
+      });
+
+      this.form.questions = [ 1, 2 ];
 
       this.wrapper = shallow(FormDetails, {
         propsData: { form: this.form },
@@ -57,24 +79,21 @@ describe('FormDetails', function () {
 
     it('should render question card', function () {
       const questionCard = this.wrapper.first(QuestionDetails);
-      expect(questionCard.propsData().question).to.eql(this.form.questions[0]);
+      expect(questionCard.propsData().question).to.eql(this.question1);
     });
 
     it('should change question when selector clicked', function (done) {
       const questionSelector = this.wrapper.first(FormDetailsQuestionSelector);
 
-      const question1 = this.form.questions[0];
-      const question2 = this.form.questions[1];
-
       expect(this.wrapper.first(QuestionDetails).propsData()).to.eql({
-        question: question1
+        question: this.question1
       });
       questionSelector.vm.$emit('click', 2);
       expect(this.wrapper.vm.order).to.eql(2);
 
       nextTick(() => {
         expect(this.wrapper.first(QuestionDetails).propsData()).to.eql({
-          question: question2
+          question: this.question2
         });
         done();
       });

@@ -29,7 +29,7 @@ export default {
   computed: {
     ...mapGetters(['areFormsLoaded']),
     forms: function () {
-      return this.$store.state.forms;
+      return Object.values(this.$store.state.forms);
     },
     breadcrumbs: function () {
       return [

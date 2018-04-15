@@ -1,23 +1,21 @@
+import { shallow, mount } from 'avoriaz';
+import sinon from 'sinon';
+
+import { buildOption, buildOptionAttachment } from 'fixtures/questions';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
 import QuestionDetailsOptionsAttachment from './QuestionDetailsOptionsAttachment';
 import UploadPhotoButton from './UploadPhotoButton';
 import VInputText from 'components/controls/VInputText';
-import { shallow, mount } from 'avoriaz';
-import { buildQuestion } from 'fixtures/questions';
-import sinon from 'sinon';
 
 describe('QuestionDetailsOptions', function () {
   beforeEach(function () {
-    this.question = buildQuestion({
-      type: 'radio',
-      options: [
-        { value: 'Sketch' },
-        { value: 'Painting' }
-      ]
-    });
+    this.options = [
+      buildOption({ value: 'Sketch' }),
+      buildOption({ value: 'Painting' })
+    ];
 
     this.wrapper = shallow(QuestionDetailsOptions, {
-      propsData: { question: this.question },
+      propsData: { options: this.options },
       i18n: this.i18n
     });
 
@@ -54,14 +52,14 @@ describe('QuestionDetailsOptions', function () {
     buttons[0].trigger('click');
     expect(this.wrapper.vm.$emit).to.have.been.calledWith(
       'deleteOption',
-      this.question.options[0].id
+      this.options[0].id
     );
     this.wrapper.vm.$emit.reset();
 
     buttons[1].trigger('click');
     expect(this.wrapper.vm.$emit).to.have.been.calledWith(
       'deleteOption',
-      this.question.options[1].id
+      this.options[1].id
     );
   });
 
@@ -76,7 +74,7 @@ describe('QuestionDetailsOptions', function () {
     buttons[0].vm.$emit('submit', { isFileObject: true });
     expect(this.wrapper.vm.$emit).to.have.been.calledWith(
       'attachFile',
-      this.question.options[0].id,
+      this.options[0].id,
       { isFileObject: true }
     );
     this.wrapper.vm.$emit.reset();
@@ -84,7 +82,7 @@ describe('QuestionDetailsOptions', function () {
     buttons[1].vm.$emit('submit', { isFileObject: true });
     expect(this.wrapper.vm.$emit).to.have.been.calledWith(
       'attachFile',
-      this.question.options[1].id,
+      this.options[1].id,
       { isFileObject: true }
     );
   });
@@ -102,17 +100,18 @@ describe('QuestionDetailsOptions', function () {
 
   describe('when attachments are present', function () {
     beforeEach(function () {
-      this.question = buildQuestion({
-        type: 'radio',
-        options: [
-          { value: 'Sketch', optionAttachment: { objectKey: 'sketch-example.jpg' } },
-          { value: 'Painting' },
-          { value: 'Mona Lista', optionAttachment: { objectKey: 'mona-lista-ex.png' } }
-        ]
-      });
+      this.options = [
+        buildOption({ value: 'Sketch', optionAttachment: 17 }),
+        buildOption({ value: 'Painting' }),
+        buildOption({ value: 'Mona Lista', optionAttachment: 99 })
+      ];
+      this.optionAttachments = {
+        17: buildOptionAttachment({ objectKey: 'sketch-example.jpg' }),
+        99: buildOptionAttachment({ objectKey: 'mona-lista-ex.jpg' })
+      };
 
       this.wrapper = shallow(QuestionDetailsOptions, {
-        propsData: { question: this.question },
+        propsData: { options: this.options },
         i18n: this.i18n
       });
     });
@@ -120,8 +119,8 @@ describe('QuestionDetailsOptions', function () {
     it('should render attachment if present', function () {
       const attachments = this.wrapper.find(QuestionDetailsOptionsAttachment);
       expect(attachments).to.have.length(2);
-      expect(attachments[0].propsData().option).to.eql(this.question.options[0]);
-      expect(attachments[1].propsData().option).to.eql(this.question.options[2]);
+      expect(attachments[0].propsData().optionId).to.eql(this.options[0].id);
+      expect(attachments[1].propsData().optionId).to.eql(this.options[2].id);
     });
 
     it('should handle attachment replace link click as an upload', function () {
@@ -139,7 +138,7 @@ describe('QuestionDetailsOptions', function () {
   describe('#getValues', function () {
     beforeEach(function () {
       this.wrapper = mount(QuestionDetailsOptions, {
-        propsData: { question: this.question },
+        propsData: { options: this.options },
         i18n: this.i18n
       });
     });

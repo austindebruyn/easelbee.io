@@ -2,8 +2,6 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import 'components/TheArtistRoot';
-import NewPasswordResetPage from 'components/auth/passwordResets/NewPasswordResetPage';
-import CompletePasswordResetPage from 'components/auth/passwordResets/CompletePasswordResetPage';
 import VerifyEmailPage from 'components/auth/VerifyEmailPage';
 import CommissionsIndexPage from 'components/CommissionsIndexPage';
 import CommissionsDetailsPage from 'components/CommissionsDetailsPage';
@@ -18,15 +16,6 @@ const AppRouter = new VueRouter({
   mode: 'history',
   base: '/app/',
   routes: [
-    // { path: '/create', component: CreateAccountPage, beforeEnter: ensureAnonymous },
-    {
-      path: '/passwordResets/new',
-      component: NewPasswordResetPage
-    },
-    {
-      path: '/passwordResets/complete',
-      component: CompletePasswordResetPage
-    },
     {
       path: '/users/me/emailPreferences/verify',
       component: VerifyEmailPage

@@ -1,12 +1,13 @@
 import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
+import merge from 'lodash.merge';
 
-import * as getters from 'state/getters';
+import * as getters from 'state/artist/getters';
 import FormsDetailsPage from './FormsDetailsPage';
 import LoadingSpinner from 'components/LoadingSpinner';
 import FormDetails from 'components/forms/FormDetails';
-import formsFixture from 'fixtures/forms';
+import { buildForm } from 'fixtures/forms';
 
 describe('FormsDetailsPage', function () {
   beforeEach(function () {
@@ -19,15 +20,22 @@ describe('FormsDetailsPage', function () {
     this.actions.fetchForms.reset();
   });
 
-  function storeFactory ({ errored = false, mutating = false, forms = null } = {}) {
-    this.store = new Vuex.Store({
-      state: {
-        meta: {
-          forms: { errored, mutating }
-        },
-        forms
+  function storeFactory (state = {}) {
+    const initialState = merge({
+      meta: {
+        forms: { errored: false, mutating: false }
       },
-      getters,
+      forms: null,
+      questions: {},
+      areFormsLoaded: false
+    }, state);
+
+    this.store = new Vuex.Store({
+      state: initialState,
+      getters: {
+        ...getters,
+        areFormsLoaded: state => state.areFormsLoaded
+      },
       actions: this.actions
     });
   }
@@ -71,7 +79,7 @@ describe('FormsDetailsPage', function () {
     it('should have breadcrumbs but not include form title', function () {
       const wrapper = mount(FormsDetailsPage, {
         propsData: {
-          form: formsFixture.basic
+          form: buildForm({ id: 1 })
         },
         store: this.store,
         i18n: this.i18n,
@@ -91,7 +99,12 @@ describe('FormsDetailsPage', function () {
 
   describe('when loaded', function () {
     beforeEach(function () {
-      storeFactory.call(this, { forms: [formsFixture.basic] });
+      this.form = buildForm({ id: 1, name: 'Some Form' });
+
+      storeFactory.call(this, {
+        areFormsLoaded: true,
+        forms: { 1: this.form }
+      });
     });
 
     it('should not render spinner', function () {
@@ -111,16 +124,11 @@ describe('FormsDetailsPage', function () {
       expect(wrapper.contains('.not-found')).to.be.false;
 
       const child = wrapper.first(FormDetails);
-      expect(child.propsData()).to.include({
-        form: formsFixture.basic
-      });
+      expect(child.propsData()).to.deep.include({ form: this.form });
     });
 
     it('should have breadcrumbs but and include form title', function () {
       const wrapper = mount(FormsDetailsPage, {
-        propsData: {
-          form: formsFixture.basic
-        },
         store: this.store,
         i18n: this.i18n,
         globals: {

@@ -1,7 +1,7 @@
 <template lang="pug">
   .question-details-options
     .option-form(
-      v-for='option in question.options'
+      v-for='option in options'
       :key='option.id'
     )
       .form-row
@@ -15,7 +15,7 @@
           )
           question-details-options-attachment(
             v-if='option.optionAttachment'
-            :option='option'
+            :optionId='option.id'
             @replace='handleAttachmentReplaceClick(option.id)'
           )
         .col-1
@@ -42,8 +42,10 @@
 </template>
 
 <script>
+import VueTypes from 'vue-types';
 import pick from 'lodash.pick';
-import { questionShape } from 'components/shapes';
+
+import { optionShape } from 'components/shapes';
 import VInputText from 'components/controls/VInputText';
 import QuestionDetailsOptionsDelta from './QuestionDetailsOptionsDelta';
 import UploadPhotoButton from './UploadPhotoButton';
@@ -59,7 +61,7 @@ export default {
   },
   props: {
     /* eslint-disable vue/require-default-prop */
-    question: questionShape.isRequired
+    options: VueTypes.arrayOf(optionShape).isRequired
   },
   methods: {
     handleAddOptionClick: function () {
@@ -74,7 +76,7 @@ export default {
     },
     getValues: function () {
       const refs = this.$refs;
-      return this.question.options.map(function (option) {
+      return this.options.map(function (option) {
         return { value: refs[`option-${option.id}`][0].getValue() };
       });
     },

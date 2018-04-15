@@ -61,27 +61,29 @@ export function buildDelta (attrs = {}) {
   };
 }
 
+export function buildOptionAttachment (attrs = {}) {
+  const objectKey = attrs.objectKey || chance.word();
+
+  return {
+    id: attrs.id || chance.integer({ min: 1, max: 1024 }),
+    optionId: attrs.optionId || chance.integer({ min: 1, max: 1024 }),
+    createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
+    updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
+    objectKey,
+    url: `/uploads/${objectKey}`
+  };
+};
+
 export function buildOption (attrs = {}) {
   const id = attrs.id || chance.integer({ min: 1, max: 1024 });
-  const objectKey = attrs.optionAttachment
-    ? attrs.optionAttachment.objectKey || chance.word()
-    : null;
-  const optionAttachment = attrs.optionAttachment
-    ? {
-      id: chance.integer({ min: 1, max: 1024 }),
-      optionId: id,
-      createdAt: attrs.optionAttachment.createdAt || new Date(chance.timestamp()).toUTCString(),
-      updatedAt: attrs.optionAttachment.updatedAt || new Date(chance.timestamp()).toUTCString(),
-      objectKey,
-      url: `/uploads/${objectKey}`
-    } : null;
+
   return {
     id,
     questionId: attrs.questionId || chance.integer({ min: 1, max: 1024 }),
     value: attrs.value,
     createdAt: attrs.createdAt || new Date(chance.timestamp()).toUTCString(),
     updatedAt: attrs.updatedAt || new Date(chance.timestamp()).toUTCString(),
-    optionAttachment,
+    optionAttachment: attrs.optionAttachment || null,
     delta: attrs.delta ? buildDelta(attrs.delta) : null
   };
 }
@@ -100,9 +102,10 @@ export function buildQuestion (attrs = {}) {
   };
 
   if (question.type === 'radio') {
-    question.options = attrs.options.map(function (optionAttrs) {
-      return buildOption(Object.assign({ questionId: question.id }, optionAttrs));
-    });
+    question.options = attrs.options || [];
+    // question.options = attrs.options.map(function (optionAttrs) {
+    //   return buildOption(Object.assign({ questionId: question.id }, optionAttrs));
+    // });
   }
 
   return question;

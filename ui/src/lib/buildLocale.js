@@ -3,9 +3,8 @@ import i18nextXHRBackend from 'i18next-xhr-backend';
 import i18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 import Vue from 'vue';
 import VueI18Next from '@panter/vue-i18next';
-import store from 'state/store';
 
-export default function () {
+export default function (store) {
   Vue.use(VueI18Next);
 
   i18next.on('loaded', function (loaded) {

@@ -1,6 +1,6 @@
 import buildVM from '../../lib/buildVM';
 import router from './router';
-import store from 'state/store';
+import store from 'state/customer/store';
 
 const root = document.getElementById('root');
 

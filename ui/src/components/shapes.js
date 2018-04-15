@@ -69,6 +69,6 @@ export const formShape = VueTypes.shape({
   submitUrl: VueTypes.string.isRequired,
   createdAt: VueTypes.string.isRequired,
   updatedAt: VueTypes.string.isRequired,
-  submittedAt: [String, null],
-  questions: VueTypes.arrayOf(questionShape)
+  submittedAt: [ String, null ],
+  questions: VueTypes.arrayOf(Number)
 });

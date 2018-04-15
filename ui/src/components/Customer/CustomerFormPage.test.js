@@ -1,8 +1,8 @@
-import CustomerFormPage from './CustomerFormPage';
 import { shallow } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
-import Resource, { STATUS } from 'state/Resource';
+
+import CustomerFormPage from './CustomerFormPage';
 import LoadingSpinner from 'components/LoadingSpinner';
 import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
 import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
@@ -26,13 +26,18 @@ describe('CustomerFormPage', function () {
     this.store = new Vuex.Store({
       getters: {
         isCompleted: state => state.isCompleted,
-        isUserArtist: state => state.isUserArtist
+        isUserArtist: state => state.isUserArtist,
+        isFormLoaded: state => state.isFormLoaded
       },
       state: Object.assign({}, {
-        form: new Resource(),
+        meta: {
+          form: { mutating: false, errored: false }
+        },
+        form: null,
         artist: this.artist,
         isCompleted: false,
-        isUserArtist: false
+        isUserArtist: false,
+        isFormLoaded: false
       }, state),
       actions: this.actions
     });
@@ -75,10 +80,8 @@ describe('CustomerFormPage', function () {
   describe('when loaded', function () {
     beforeEach(function () {
       storeFactory.call(this, {
-        form: new Resource({
-          status: STATUS.LOADED,
-          value: formsFixture.basic
-        })
+        form: formsFixture.basic,
+        isFormLoaded: true
       });
     });
 
@@ -114,10 +117,8 @@ describe('CustomerFormPage', function () {
     describe('when user is the artist', function () {
       beforeEach(function () {
         storeFactory.call(this, {
-          form: new Resource({
-            status: STATUS.LOADED,
-            value: formsFixture.basic
-          }),
+          form: formsFixture.basic,
+          isFormLoaded: true,
           isUserArtist: true
         });
         this.wrapper = factory.call(this);
@@ -132,10 +133,8 @@ describe('CustomerFormPage', function () {
   describe('when form is completed', function () {
     beforeEach(function () {
       storeFactory.call(this, {
-        form: new Resource({
-          status: STATUS.LOADED,
-          value: formsFixture.basic
-        }),
+        form: formsFixture.basic,
+        isFormLoaded: true,
         isCompleted: true
       });
       this.wrapper = factory.call(this);

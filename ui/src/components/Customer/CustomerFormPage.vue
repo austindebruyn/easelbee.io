@@ -3,10 +3,10 @@
     .container
       .row
         .col-12.col-sm-10.offset-sm-1
-          div(v-if='loaded')
+          div(v-if='isFormLoaded')
             .title
               h1 {{ artist.displayName }}
-              h2 {{ form.value.name }}
+              h2 {{ form.name }}
             user-is-artist-warning-banner(v-if='isUserArtist')
             customer-form-completed-card(
               v-if='isCompleted'
@@ -14,7 +14,7 @@
             )
             customer-form-question-card(
               v-else=true
-              :form='form.value'
+              :form='form'
               @complete='handleComplete'
             )
           loading-spinner(v-else=true)
@@ -25,7 +25,6 @@ import LoadingSpinner from 'components/LoadingSpinner';
 import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
 import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
 import UserIsArtistWarningBanner from 'components/Customer/UserIsArtistWarningBanner';
-import { isLoaded } from 'state/Resource';
 import { mapState, mapGetters } from 'vuex';
 
 export default {
@@ -38,12 +37,9 @@ export default {
   },
   computed: {
     ...mapState(['form', 'artist']),
-    ...mapGetters(['isCompleted', 'isUserArtist']),
+    ...mapGetters(['isCompleted', 'isFormLoaded', 'isUserArtist']),
     formSlug: function () {
       return this.$route.params.slug;
-    },
-    loaded: function () {
-      return isLoaded(this.form);
     }
   },
   mounted: function () {

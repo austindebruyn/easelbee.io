@@ -17,11 +17,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import LoadingSpinner from 'components/LoadingSpinner';
 import FormDetails from 'components/forms/FormDetails';
 import DashboardLayout from 'components/dashboard/DashboardLayout';
-import find from 'lodash.find';
-import { mapGetters } from 'vuex';
 
 export default {
   name: 'forms-details-page',
@@ -38,9 +38,7 @@ export default {
     form: function () {
       if (!this.areFormsLoaded) return null;
 
-      return find(this.$store.state.forms, {
-        id: this.id
-      });
+      return this.$store.state.forms[this.id];
     },
     breadcrumbs: function () {
       const crumbs = [

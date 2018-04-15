@@ -2,7 +2,7 @@ import { mount } from 'avoriaz';
 import Vuex from 'vuex';
 import sinon from 'sinon';
 
-import * as getters from 'state/getters';
+import * as getters from 'state/artist/getters';
 import FormsIndexPage from './FormsIndexPage';
 import LoadingSpinner from 'components/LoadingSpinner';
 import FormsList from 'components/forms/FormsList';

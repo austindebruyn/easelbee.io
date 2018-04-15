@@ -1,14 +1,28 @@
+import sinon from 'sinon';
+import Vuex from 'vuex';
+import merge from 'lodash.merge';
+import { mount } from 'avoriaz';
+import { nextTick } from 'vue';
+
+import * as getters from 'state/artist/getters';
 import QuestionDetails from './QuestionDetails';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
 import VInputText from 'components/controls/VInputText';
 import VCardControl from 'components/controls/VCardControl';
-import { mount } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
-import sinon from 'sinon';
-import Vuex from 'vuex';
-import { nextTick } from 'vue';
 
 describe('QuestionDetails', function () {
+  function storeFactory (state = {}) {
+    return new Vuex.Store({
+      actions: this.actions,
+      getters,
+      state: merge({
+        options: {},
+        questions: {}
+      }, state)
+    });
+  }
+
   beforeEach(function () {
     this.question = buildQuestion();
 
@@ -17,8 +31,8 @@ describe('QuestionDetails', function () {
       destroyQuestion: sinon.spy(),
       attachFileToOption: sinon.spy()
     };
-    this.store = new Vuex.Store({
-      actions: this.actions
+    this.store = storeFactory.call(this, {
+      questions: {[this.question.id]: this.question}
     });
 
     this.wrapper = mount(QuestionDetails, {
@@ -70,7 +84,17 @@ describe('QuestionDetails', function () {
       this.question = buildQuestion({
         title: 'Oreos?',
         type: 'radio',
-        options: [{ id: 11, value: 'Cookies' }, { value: 'Creme' }]
+        options: [11, 36]
+      });
+
+      this.store = storeFactory.call(this, {
+        options: {
+          11: { id: 11, value: 'Cookies', questionId: this.question.id },
+          36: { id: 36, value: 'Creme', questionId: this.question.id }
+        },
+        questions: {
+          [this.question.id]: this.question
+        }
       });
       this.wrapper = mount(QuestionDetails, {
         propsData: { question: this.question },
@@ -85,7 +109,6 @@ describe('QuestionDetails', function () {
 
     it('should dispatch when add option is clicked', function () {
       this.wrapper.first(QuestionDetailsOptions).vm.$emit('addOption');
-
       expect(this.actions.updateQuestion.args[0][1]).to.eql({
         id: this.question.id,
         title: 'Oreos?',
