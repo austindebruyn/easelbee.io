@@ -95,7 +95,7 @@ describe('CommissionsIndexPage', function () {
 
       const lists = wrapper.find(CommissionsList);
 
-      expect(lists).to.have.length(2);
+      expect(lists).to.have.length(4);
 
       expect(lists[0].propsData()).to.eql({
         commissions: [commissionsFixture.inprogress]

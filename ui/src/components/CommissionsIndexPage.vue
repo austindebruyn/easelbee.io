@@ -1,22 +1,35 @@
 <template lang="pug">
   dashboard-layout(:breadcrumbs='breadcrumbs')
-    .container
-      .row(v-if='!areCommissionsLoaded')
-        .col-12
-          loading-spinner(size='xl')
-      .row(v-else=true)
-        .col-8
-          h2 In Progress
-          hr
-          commissions-list(
-            :commissions='commissionsByStatus("inprogress")'
-          )
-        .col-4
-          h2 Incoming
-          hr
-          commissions-list(
-            :commissions='commissionsByStatus("incoming")'
-          )
+    .commissions-index
+      .container
+        .row(v-if='!areCommissionsLoaded')
+          .col-12
+            loading-spinner(size='xl')
+        .row(v-else=true)
+          .col-8
+            h2 In Progress
+            hr
+            commissions-list(
+              :commissions='commissionsByStatus("inprogress")'
+            )
+          .col-4
+            h2 Incoming
+            hr
+            commissions-list(
+              :commissions='commissionsByStatus("incoming")'
+            )
+          .col-12
+            h2 In Review
+            hr
+            commissions-list(
+              :commissions='commissionsByStatus("inreview")'
+            )
+          .col-12
+            h2 Completed
+            hr
+            commissions-list(
+              :commissions='commissionsByStatus("completed")'
+            )
 </template>
 
 <script>
@@ -60,5 +73,9 @@ export default {
 
   h2 {
     font-size: 1.6rem;
+  }
+
+  .commissions-index {
+    padding-bottom: 60px;
   }
 </style>
