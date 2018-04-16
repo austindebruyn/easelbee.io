@@ -18,11 +18,10 @@ export function fetchFormSuccess (state, { record, user }) {
     errored: false
   };
   const flat = normalize(record, models.forms);
-
   state.form = flat.entities.forms[flat.result];
-  state.questions = flat.entities.questions;
-  state.options = flat.entities.options;
-  state.optionAttachments = flat.entities.optionAttachments;
+  state.questions = flat.entities.questions || {};
+  state.options = flat.entities.options || {};
+  state.optionAttachments = flat.entities.optionAttachments || {};
   state.artist = user;
 };
 
