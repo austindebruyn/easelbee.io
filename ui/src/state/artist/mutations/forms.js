@@ -20,10 +20,10 @@ export function fetchFormsSuccess (state, json) {
   };
 
   const flat = normalize(json, [models.forms]);
-  state.forms = flat.entities.forms;
-  state.questions = flat.entities.questions;
-  state.options = flat.entities.options;
-  state.optionAttachments = flat.entities.optionAttachments;
+  state.forms = flat.entities.forms || [];
+  state.questions = flat.entities.questions || {};
+  state.options = flat.entities.options || {};
+  state.optionAttachments = flat.entities.optionAttachments || {};
 };
 
 export function fetchFormsFailure (state, errors) {

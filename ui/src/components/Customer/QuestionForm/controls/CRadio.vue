@@ -1,8 +1,6 @@
 <template lang="pug">
   .c-radio
     .form-group
-      label(:for='htmlId') fill me out
-      span.required.ml-1 *
       .form-check(
         v-for='option in options'
       )
