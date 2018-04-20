@@ -2,7 +2,7 @@ import { shallow } from 'avoriaz';
 import sinon from 'sinon';
 import Vuex from 'vuex';
 
-import CommissionPriceCounter from 'components/Customer/CommissionPriceCounter';
+import CommissionPriceCounter from './CommissionPriceCounter';
 import PriceCalculator from 'logic/PriceCalculator';
 import { buildQuestion, buildOption } from 'fixtures/questions';
 

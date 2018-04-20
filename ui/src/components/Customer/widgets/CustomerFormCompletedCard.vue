@@ -1,10 +1,8 @@
 <template lang="pug">
   .customer-form-completed-card
-    .card
-      .card-body
-        h2 {{ $t('customer.completed') }}
-        p {{ $t('customer.completed-message', { name: name }) }}
-        p {{ $t('customer.completed-message-2') }}
+    h2 {{ $t('customer.completed') }}
+    p {{ $t('customer.completed-message', { name: name }) }}
+    p {{ $t('customer.completed-message-2') }}
 </template>
 
 <script>

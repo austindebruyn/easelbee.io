@@ -4,13 +4,13 @@ import sinon from 'sinon';
 
 import CustomerFormPage from './CustomerFormPage';
 import LoadingSpinner from 'components/LoadingSpinner';
-import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
-import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
+import CustomerFormContainer from 'components/Customer/CustomerFormContainer';
 import UserIsArtistWarningBanner from 'components/Customer/UserIsArtistWarningBanner';
-import formsFixture from 'fixtures/forms';
+import { buildForm } from 'fixtures/forms';
 
 describe('CustomerFormPage', function () {
   beforeEach(function () {
+    this.form = buildForm();
     this.actions = {
       fetchForm: sinon.spy(),
       submitForm: sinon.spy()
@@ -25,7 +25,6 @@ describe('CustomerFormPage', function () {
     this.artist = { id: 1, displayName: 'Austin' };
     this.store = new Vuex.Store({
       getters: {
-        isCompleted: state => state.isCompleted,
         isUserArtist: state => state.isUserArtist,
         isFormLoaded: state => state.isFormLoaded
       },
@@ -35,7 +34,6 @@ describe('CustomerFormPage', function () {
         },
         form: null,
         artist: this.artist,
-        isCompleted: false,
         isUserArtist: false,
         isFormLoaded: false
       }, state),
@@ -73,14 +71,14 @@ describe('CustomerFormPage', function () {
       const wrapper = factory.call(this);
 
       expect(wrapper.contains(LoadingSpinner)).to.be.true;
-      expect(wrapper.contains(CustomerFormQuestionCard)).to.be.false;
+      expect(wrapper.contains(CustomerFormContainer)).to.be.false;
     });
   });
 
   describe('when loaded', function () {
     beforeEach(function () {
       storeFactory.call(this, {
-        form: formsFixture.basic,
+        form: this.form,
         isFormLoaded: true
       });
     });
@@ -89,12 +87,13 @@ describe('CustomerFormPage', function () {
       const wrapper = factory.call(this);
 
       expect(wrapper.contains(LoadingSpinner)).to.be.false;
-      expect(wrapper.contains(CustomerFormQuestionCard)).to.be.true;
+      expect(wrapper.contains(CustomerFormContainer)).to.be.true;
       expect(wrapper.contains('.not-found')).to.be.false;
 
-      const child = wrapper.first(CustomerFormQuestionCard);
+      const child = wrapper.first(CustomerFormContainer);
       expect(child.propsData()).to.eql({
-        form: formsFixture.basic
+        form: this.form,
+        artist: this.artist
       });
     });
 
@@ -106,7 +105,7 @@ describe('CustomerFormPage', function () {
     it('should fire submitForm when question card is complete', function () {
       const values = { 'answer0': 'Hey', 'answer1': 'Hello' };
       this.wrapper = factory.call(this);
-      const questionCard = this.wrapper.first(CustomerFormQuestionCard);
+      const questionCard = this.wrapper.first(CustomerFormContainer);
       questionCard.vm.$emit('complete', values);
       expect(this.actions.submitForm).to.have.been.calledWith(
         sinon.match.object,
@@ -117,7 +116,7 @@ describe('CustomerFormPage', function () {
     describe('when user is the artist', function () {
       beforeEach(function () {
         storeFactory.call(this, {
-          form: formsFixture.basic,
+          form: this.form,
           isFormLoaded: true,
           isUserArtist: true
         });
@@ -127,23 +126,6 @@ describe('CustomerFormPage', function () {
       it('should show "This is your form" banner when user is artist', function () {
         expect(this.wrapper.find(UserIsArtistWarningBanner)).to.have.length(1);
       });
-    });
-  });
-
-  describe('when form is completed', function () {
-    beforeEach(function () {
-      storeFactory.call(this, {
-        form: formsFixture.basic,
-        isFormLoaded: true,
-        isCompleted: true
-      });
-      this.wrapper = factory.call(this);
-    });
-
-    it('should render completed card and not question card', function () {
-      expect(this.wrapper.find(CustomerFormQuestionCard)).to.have.length(0);
-      const completedCard = this.wrapper.first(CustomerFormCompletedCard);
-      expect(completedCard.propsData().name).to.eql(this.artist.displayName);
     });
   });
 });

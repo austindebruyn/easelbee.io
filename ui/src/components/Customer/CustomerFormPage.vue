@@ -4,40 +4,39 @@
       .row
         .col-12.col-sm-10.offset-sm-1
           div(v-if='isFormLoaded')
-            .title
-              h1 {{ artist.displayName }}
-              h2 {{ form.name }}
+            artist-info(:name='artist.displayName')
             user-is-artist-warning-banner(v-if='isUserArtist')
-            customer-form-completed-card(
-              v-if='isCompleted'
-              :name='artist.displayName'
-            )
-            customer-form-question-card(
-              v-else=true
+            customer-form-container(
               :form='form'
+              :artist='artist'
               @complete='handleComplete'
             )
           loading-spinner(v-else=true)
 </template>
 
 <script>
-import LoadingSpinner from 'components/LoadingSpinner';
-import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
-import CustomerFormQuestionCard from 'components/Customer/CustomerFormQuestionCard';
-import UserIsArtistWarningBanner from 'components/Customer/UserIsArtistWarningBanner';
 import { mapState, mapGetters } from 'vuex';
 
+import LoadingSpinner from 'components/LoadingSpinner';
+import ArtistInfo from 'components/Customer/widgets/ArtistInfo';
+import CustomerFormContainer from 'components/Customer/CustomerFormContainer';
+import UserIsArtistWarningBanner from 'components/Customer/UserIsArtistWarningBanner';
+
+/**
+ * CustomerFormPage is the entry point for the route. Hides the fetch action
+ * and the loading state.
+ */
 export default {
   name: 'customer-form-page',
   components: {
+    'artist-info': ArtistInfo,
     'loading-spinner': LoadingSpinner,
-    'customer-form-completed-card': CustomerFormCompletedCard,
-    'customer-form-question-card': CustomerFormQuestionCard,
+    'customer-form-container': CustomerFormContainer,
     'user-is-artist-warning-banner': UserIsArtistWarningBanner
   },
   computed: {
     ...mapState(['form', 'artist']),
-    ...mapGetters(['isCompleted', 'isFormLoaded', 'isUserArtist']),
+    ...mapGetters(['isFormLoaded', 'isUserArtist']),
     formSlug: function () {
       return this.$route.params.slug;
     }
@@ -57,24 +56,10 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import 'src/styles/colors';
 
   .customer-form-page {
     padding-top: 40px;
-
-    .title {
-      padding-bottom: 40px;
-      h1 {
-        font-family: 'tensoregular';
-        font-weight: normal;
-        color: $blue-dark;
-      }
-      h2 {
-        font-family: 'sinkinsans';
-        font-weight: normal;
-        color: $gray;
-      }
-    }
   }
 </style>

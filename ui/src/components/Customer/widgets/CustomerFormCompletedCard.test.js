@@ -1,5 +1,5 @@
 import { shallow } from 'avoriaz';
-import CustomerFormCompletedCard from 'components/Customer/CustomerFormCompletedCard';
+import CustomerFormCompletedCard from './CustomerFormCompletedCard';
 
 describe('CustomerFormPage', function () {
   it('should render text', function () {

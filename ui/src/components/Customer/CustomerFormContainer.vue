@@ -7,11 +7,16 @@
             :values='values'
             :form='form'
           )
-      .col-10
+      .col-12.col-lg-10.offset-lg-1.col-
         .card
           .progress-bar
           .card-body
+            customer-form-completed-card(
+              v-if='isCompleted'
+              :name='artist.displayName'
+            )
             question-form(
+              v-else=true
               :key='index'
               :question='currentQuestion'
               :isFinalQuestion='isFinalQuestion'
@@ -20,20 +25,32 @@
 </template>
 
 <script>
-import clone from 'lib/clone';
-import { formShape } from 'components/shapes';
-import QuestionForm from 'components/Customer/QuestionForm/QuestionForm';
-import CommissionPriceCounter from './CommissionPriceCounter';
+import { mapGetters } from 'vuex';
+import VueTypes from 'vue-types';
 
+import { formShape } from 'components/shapes';
+import clone from 'lib/clone';
+import QuestionForm from './QuestionForm/QuestionForm';
+import CommissionPriceCounter from './widgets/CommissionPriceCounter';
+import CustomerFormCompletedCard from './widgets/CustomerFormCompletedCard';
+
+/**
+ * CustomerFormContainer contains state on the user's progress in the form.
+ */
 export default {
-  name: 'customer-form-question-card',
+  name: 'customer-form-container',
   components: {
     'question-form': QuestionForm,
-    'commission-price-counter': CommissionPriceCounter
+    'commission-price-counter': CommissionPriceCounter,
+    'customer-form-completed-card': CustomerFormCompletedCard
   },
   props: {
     /* eslint-disable vue/require-default-prop */
-    form: formShape.isRequired
+    form: formShape.isRequired,
+    artist: VueTypes.shape({
+      id: VueTypes.number.isRequired,
+      displayName: VueTypes.string.isRequired
+    }).isRequired
   },
   data: function () {
     return {
@@ -42,6 +59,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['isCompleted']),
     isFinalQuestion: function () {
       return this.index === this.form.questions.length - 1;
     },
@@ -79,5 +97,9 @@ export default {
   h2 {
     font-size: 1rem;
     color: $gray;
+  }
+
+  .card {
+    border: 1px solid $gray;
   }
 </style>
