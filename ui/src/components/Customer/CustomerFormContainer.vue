@@ -1,5 +1,6 @@
 <template lang="pug">
   .customer-form-question-card
+    artist-info(:name='artist.displayName')
     .row
       .col-2
         .card
@@ -33,6 +34,7 @@ import clone from 'lib/clone';
 import QuestionForm from './QuestionForm/QuestionForm';
 import CommissionPriceCounter from './widgets/CommissionPriceCounter';
 import CustomerFormCompletedCard from './widgets/CustomerFormCompletedCard';
+import ArtistInfo from 'components/Customer/widgets/ArtistInfo';
 
 /**
  * CustomerFormContainer contains state on the user's progress in the form.
@@ -40,6 +42,7 @@ import CustomerFormCompletedCard from './widgets/CustomerFormCompletedCard';
 export default {
   name: 'customer-form-container',
   components: {
+    'artist-info': ArtistInfo,
     'question-form': QuestionForm,
     'commission-price-counter': CommissionPriceCounter,
     'customer-form-completed-card': CustomerFormCompletedCard
@@ -101,5 +104,6 @@ export default {
 
   .card {
     border: 1px solid $gray;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 </style>

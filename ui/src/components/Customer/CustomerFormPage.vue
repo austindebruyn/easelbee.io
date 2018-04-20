@@ -4,7 +4,6 @@
       .row
         .col-12.col-sm-10.offset-sm-1
           div(v-if='isFormLoaded')
-            artist-info(:name='artist.displayName')
             user-is-artist-warning-banner(v-if='isUserArtist')
             customer-form-container(
               :form='form'
@@ -18,7 +17,6 @@
 import { mapState, mapGetters } from 'vuex';
 
 import LoadingSpinner from 'components/LoadingSpinner';
-import ArtistInfo from 'components/Customer/widgets/ArtistInfo';
 import CustomerFormContainer from 'components/Customer/CustomerFormContainer';
 import UserIsArtistWarningBanner from 'components/Customer/UserIsArtistWarningBanner';
 
@@ -29,7 +27,6 @@ import UserIsArtistWarningBanner from 'components/Customer/UserIsArtistWarningBa
 export default {
   name: 'customer-form-page',
   components: {
-    'artist-info': ArtistInfo,
     'loading-spinner': LoadingSpinner,
     'customer-form-container': CustomerFormContainer,
     'user-is-artist-warning-banner': UserIsArtistWarningBanner

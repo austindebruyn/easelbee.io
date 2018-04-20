@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import Vuex from 'vuex';
 import merge from 'lodash.merge';
 
+import ArtistInfo from './widgets/ArtistInfo';
 import CustomerFormContainer from './CustomerFormContainer';
 import CustomerFormCompletedCard from './widgets/CustomerFormCompletedCard';
 import QuestionForm from './QuestionForm/QuestionForm';
@@ -43,6 +44,11 @@ describe('CustomerFormContainer', function () {
       this.form = buildForm({ questions: [1, 2] });
       this.wrapper = factory.call(this);
       sinon.spy(this.wrapper.vm, '$emit');
+    });
+
+    it('should render artist info', function () {
+      const artistInfo = this.wrapper.first(ArtistInfo);
+      expect(artistInfo.propsData().name).to.eql(this.artist.displayName);
     });
 
     it('should render a QuestionForm and pass first question', function () {
