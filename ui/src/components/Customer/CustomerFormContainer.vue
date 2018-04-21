@@ -1,14 +1,14 @@
 <template lang="pug">
   .customer-form-question-card
-    artist-info(:name='artist.displayName')
     .row
-      .col-2
-        .card
-          commission-price-counter(
-            :values='values'
-            :form='form'
-          )
+      //- .col-2
+      //-   .card
+      //-     commission-price-counter(
+      //-       :values='values'
+      //-       :form='form'
+      //-     )
       .col-12.col-lg-10.offset-lg-1.col-
+        artist-info(:name='artist.displayName')
         .card
           .progress-bar
           .card-body

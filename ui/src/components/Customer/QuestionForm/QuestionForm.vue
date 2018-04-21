@@ -1,6 +1,6 @@
 <template lang="pug">
   .question-form
-    h4 {{ question.title }}
+    h2.question-title {{ question.title }}
     form(@submit='handleSubmit')
       .control
         c-string(
@@ -13,7 +13,8 @@
           v-else-if='question.type === "radio"'
           :id='question.id'
         )
-      button.btn.btn-primary(type='submit') {{ buttonText }}
+      .button-row
+        button.btn.btn-primary(type='submit') {{ buttonText }}
 </template>
 
 <script>
@@ -52,13 +53,34 @@ export default {
 <style lang="scss">
   @import 'src/styles/colors';
 
+  $ui-font-family: 'vocal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
   .question-form {
-    h4 {
+    h2 {
+      font-weight: 100;
+      font-family: $ui-font-family;
+      color: $black;
+      font-size: 30px;
+      text-rendering: optimizeLegibility;
+
       padding-bottom: 40px;
     }
 
     .control {
       padding-bottom: 20px;
+    }
+
+    .button-row {
+      text-align: right;
+    }
+
+    .btn {
+      font-family: $ui-font-family;
+      font-size: 24px;
+      background-color: $ui-blue;
+      border-color: $ui-blue;
+      border-radius: 0;
+      padding: 12px 42px;
     }
   }
 </style>

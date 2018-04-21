@@ -7,7 +7,7 @@ export function isFormLoaded (state) {
 }
 
 export function isUserArtist (state) {
-  return isFormLoaded(state) && state.artist && state.artist.id === state.form.userId;
+  return isFormLoaded(state) && state.artist && state.user && state.user.id === state.artist.id;
 };
 
 export * from '../common/getters';

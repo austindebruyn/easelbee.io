@@ -1,5 +1,6 @@
 <template lang="pug">
   .customer-form-page
+    .polygon
     .container
       .row
         .col-12.col-sm-10.offset-sm-1
@@ -53,10 +54,23 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import 'src/styles/colors';
+
+  body {
+    background-color: white;
+  }
 
   .customer-form-page {
     padding-top: 40px;
+  }
+
+  .polygon {
+    position: fixed;
+    width: 0;
+    height: 0;
+    border-bottom: 300px solid $blue;
+    border-right: 600px solid transparent;
+    bottom: 0;
   }
 </style>
