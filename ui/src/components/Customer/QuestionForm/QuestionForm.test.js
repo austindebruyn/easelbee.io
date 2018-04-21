@@ -28,7 +28,7 @@ describe('QuestionForm', function () {
   });
 
   it('should render title', function () {
-    expect(this.wrapper.first('h4').text()).to.eql(this.question.title);
+    expect(this.wrapper.first('h2').text()).to.eql(this.question.title);
   });
 
   it('should render submit button with correct text', function () {
