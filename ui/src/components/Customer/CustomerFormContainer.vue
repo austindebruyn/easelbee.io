@@ -52,7 +52,10 @@ export default {
     form: formShape.isRequired,
     artist: VueTypes.shape({
       id: VueTypes.number.isRequired,
-      displayName: VueTypes.string.isRequired
+      displayName: VueTypes.string.isRequired,
+      createdAt: VueTypes.string,
+      updatedAt: VueTypes.string,
+      email: VueTypes.string
     }).isRequired
   },
   data: function () {

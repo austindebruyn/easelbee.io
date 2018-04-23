@@ -1,19 +1,17 @@
 <template lang="pug">
   .c-radio
+    span {{ value }}
     .form-group
       .form-check(
         v-for='option in options'
       )
-        input.form-check-input(
-          v-model='selected'
-          :id='option.id',
-          :name='htmlId',
-          type='radio',
+        c-radio-option(
+          v-model='value'
+          :id='option.id'
+          :name='htmlId'
+          :label='option.value'
           :value='option.id'
         )
-        label.form-check-label(
-          :for='option.id'
-        ) {{ option.value }}
         .option-attachment(
           v-if='option.optionAttachment'
         )
@@ -22,23 +20,24 @@
 
 <script>
 import VueTypes from 'vue-types';
+import CRadioOption from './CRadioOption';
 
 export default {
   name: 'c-radio',
+  components: {
+    CRadioOption
+  },
   props: {
     /* eslint-disable vue/require-default-prop */
     id: VueTypes.number.isRequired,
     required: VueTypes.bool
   },
   data: function () {
-    return { selected: null };
+    return { value: null };
   },
   computed: {
     htmlId: function () {
       return `input-${this.id}`;
-    },
-    value: function () {
-      return this.selected;
     },
     options: function () {
       return this.$store.getters.getOptionsByQuestionId(this.id);

@@ -63,11 +63,11 @@ export default {
       font-size: 30px;
       text-rendering: optimizeLegibility;
 
-      padding-bottom: 40px;
+      margin-bottom: 40px;
     }
 
     .control {
-      padding-bottom: 20px;
+      margin-bottom: 20px;
     }
 
     .button-row {
@@ -81,6 +81,10 @@ export default {
       border-color: $ui-blue;
       border-radius: 0;
       padding: 12px 42px;
+    }
+
+    form {
+      margin: 0;
     }
   }
 </style>
