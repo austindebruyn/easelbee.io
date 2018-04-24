@@ -1,6 +1,5 @@
 <template lang="pug">
   .c-radio
-    span {{ value }}
     .form-group
       .form-check(
         v-for='option in options'
@@ -58,6 +57,14 @@ export default {
     .option-attachment {
       img {
         width: 25%;
+      }
+    }
+
+    .form-check {
+      padding-bottom: 10px;
+
+      &:last-child {
+        padding-bottom: 0;
       }
     }
   }
