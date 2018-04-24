@@ -59,12 +59,6 @@ export default {
 
       display: flex;
       align-items: center;
-
-      &.checked {
-        .label-text {
-          font-weight: bold;
-        }
-      }
     }
 
     $dot-size: 36px;
@@ -90,6 +84,16 @@ export default {
       font-size: 18px;
       font-family: tensoregular;
       padding-left: 20px;
+    }
+
+    .form-check-label.checked {
+      .label-text {
+        font-weight: bold;
+      }
+
+      .dot {
+        border-color: $black;
+      }
     }
   }
 </style>
