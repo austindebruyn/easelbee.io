@@ -83,6 +83,9 @@ export default {
     },
     getValue: function () {
       return this.value;
+    },
+    setValue: function (value) {
+      this.value = value;
     }
   }
 };

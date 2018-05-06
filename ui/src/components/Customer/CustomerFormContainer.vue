@@ -7,7 +7,7 @@
       //-       :values='values'
       //-       :form='form'
       //-     )
-      .col-12.col-lg-10.offset-lg-1.col-
+      .col-12.col-lg-10.offset-lg-1
         artist-info(:name='artist.displayName')
         .card
           .progress-bar
@@ -67,12 +67,20 @@ export default {
   computed: {
     ...mapGetters(['isCompleted']),
     isFinalQuestion: function () {
-      return this.index === this.form.questions.length - 1;
+      // There is always an extra "contact info" question that is considered
+      // to be question n (where n = length of questions). For that reason,
+      // the form is not complete until n + 1 questions have been answered and
+      // it is valid to be on item n (not n-1) of an array with only n
+      // elements.
+      return this.index === this.form.questions.length;
     },
     price: function () {
       return 0;
     },
     currentQuestion: function () {
+      if (this.isFinalQuestion) {
+        return null;
+      }
       const id = this.form.questions[this.index];
       return this.$store.state.questions[id];
     }
@@ -80,12 +88,13 @@ export default {
   methods: {
     handleSubmit: function (value) {
       this.values = clone(this.values);
-      const key = `question_${this.currentQuestion.id}`;
-      this.values[key] = value;
 
       if (this.isFinalQuestion) {
+        Object.assign(this.values, value);
         this.$emit('complete', this.values);
       } else {
+        const key = `question_${this.currentQuestion.id}`;
+        this.values[key] = value;
         this.index = this.index + 1;
       }
     }

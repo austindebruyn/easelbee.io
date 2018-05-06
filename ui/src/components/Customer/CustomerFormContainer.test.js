@@ -82,7 +82,7 @@ describe('CustomerFormContainer', function () {
 
       describe('when on the final question', function () {
         beforeEach(function () {
-          this.wrapper.vm.index = 1;
+          this.wrapper.vm.index = 2;
           return nextTick();
         });
 
@@ -92,9 +92,23 @@ describe('CustomerFormContainer', function () {
         });
 
         it('should fire complete with all values', function () {
-          this.wrapper.first(QuestionForm).vm.$emit('submit', 'All done!');
+          const question1key = `question_${this.store.state.questions[1].id}`;
+          const question2key = `question_${this.store.state.questions[2].id}`;
+          this.wrapper.setData({
+            values: {
+              [question1key]: 'cool',
+              [question2key]: 'beans'
+            }
+          });
+          this.wrapper.first(QuestionForm).vm.$emit('submit', {
+            nickname: 'Jason',
+            email: 'whatever@jas.on'
+          });
           expect(this.wrapper.vm.$emit).to.have.been.calledWith('complete', {
-            [`question_${this.store.state.questions[2].id}`]: 'All done!'
+            nickname: 'Jason',
+            email: 'whatever@jas.on',
+            [question1key]: 'cool',
+            [question2key]: 'beans'
           });
         });
       });

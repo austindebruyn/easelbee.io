@@ -1,6 +1,7 @@
 import QuestionForm from './QuestionForm';
 import CString from './controls/CString';
 import CRadio from './controls/CRadio';
+import SGatherUserDetails from './steps/SGatherUserDetails';
 import { shallow } from 'avoriaz';
 import { buildQuestion } from 'fixtures/questions';
 import sinon from 'sinon';
@@ -9,7 +10,7 @@ describe('QuestionForm', function () {
   function factory (props = {}) {
     return shallow(QuestionForm, {
       propsData: {
-        isFinalQuestion: true,
+        isFinalQuestion: false,
         question: this.question,
         ...props
       },
@@ -31,9 +32,7 @@ describe('QuestionForm', function () {
     expect(this.wrapper.first('h2').text()).to.eql(this.question.title);
   });
 
-  it('should render submit button with correct text', function () {
-    expect(this.wrapper.first('button').text()).to.eql('Finish');
-
+  it('should render submit button with `Next`', function () {
     this.wrapper = factory.call(this, { isFinalQuestion: false });
     expect(this.wrapper.first('button').text()).to.eql('Next');
   });
@@ -67,6 +66,25 @@ describe('QuestionForm', function () {
     it('should render CRadio', function () {
       expect(this.wrapper.find(CRadio)).to.have.length(1);
       expect(this.wrapper.find(CString)).to.have.length(0);
+    });
+  });
+
+  describe('when final question', function () {
+    beforeEach(function () {
+      this.wrapper = factory.call(this, {
+        question: null,
+        isFinalQuestion: true
+      });
+    });
+
+    it('should render GatherUserDetails step', function () {
+      const step = this.wrapper.find(SGatherUserDetails);
+      expect(step).to.have.length(1);
+      expect(this.wrapper.first('h2').text()).to.eql('Who are you?');
+    });
+
+    it('should render submit button with `Finish`', function () {
+      expect(this.wrapper.first('button').text()).to.eql('Finish');
     });
   });
 });

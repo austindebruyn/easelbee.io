@@ -32,8 +32,11 @@ export default {
 
   $ui-font-family: 'vocal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
+  $height: 108px;
+
   .artist-info {
     margin-bottom: 40px;
+    border-radius: $height / 2;
     background: linear-gradient(45deg, rgba(79, 238, 128, 0.2), rgba(224, 237, 178, 0.2)),
       linear-gradient(142deg, transparent, rgba(178, 237, 227, 0.2)),
       linear-gradient(108deg, rgba(224, 237, 178, 0.2), transparent);
@@ -45,6 +48,7 @@ export default {
       img {
         width: 108px;
         height: 108px;
+        border-radius: $height / 2;
       }
     }
 

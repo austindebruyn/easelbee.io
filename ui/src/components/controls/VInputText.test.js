@@ -58,4 +58,12 @@ describe('VInputText', function () {
       expect(wrapper.vm.getValue()).to.eql('bath time!');
     });
   });
+
+  describe('#setValue', function () {
+    it('should set value', function () {
+      const wrapper = mount(VInputText);
+      wrapper.vm.setValue('squeaky clean');
+      expect(wrapper.vm.getValue()).to.eql('squeaky clean');
+    });
+  });
 });

@@ -113,6 +113,13 @@
     "user-is-artist": {
       "hey": "Hey there!",
       "message": "This is your form, but can still submit it if you really want to."
+    },
+    "steps": {
+      "gather-user-details": {
+        "title": "Who are you?",
+        "nickname-label": "Enter a nickname",
+        "email-label": "Enter your email"
+      }
     }
   }
 }

@@ -1,8 +1,12 @@
 <template lang="pug">
   .question-form
-    h2.question-title {{ question.title }}
+    h2.question-title {{ formTitle }}
     form(@submit='handleSubmit')
-      .control
+      .step(v-if='isFinalQuestion')
+        s-gather-user-details(
+          ref='step'
+        )
+      .control(v-else=true)
         c-string(
           ref='input'
           v-if='question.type === "string"'
@@ -18,20 +22,24 @@
 </template>
 
 <script>
+import VueTypes from 'vue-types';
+
 import { questionShape } from 'components/shapes';
 import CString from './controls/CString';
 import CRadio from './controls/CRadio';
-import VueTypes from 'vue-types';
+import SGatherUserDetails from './steps/SGatherUserDetails';
 
 export default {
   name: 'question-form',
   components: {
-    'c-string': CString,
-    'c-radio': CRadio
+    CString,
+    CRadio,
+    SGatherUserDetails
   },
   props: {
     /* eslint-disable vue/require-default-prop */
-    question: questionShape.isRequired,
+    question: questionShape,
+    // if `isFinalQuestion` is true, then `question` must be null
     isFinalQuestion: VueTypes.bool
   },
   computed: {
@@ -39,12 +47,22 @@ export default {
       return this.isFinalQuestion
         ? this.$t('customer.finish')
         : this.$t('customer.next');
+    },
+    formTitle: function () {
+      if (this.question) {
+        return this.question.title;
+      }
+      return this.$t('customer.steps.gather-user-details.title');
     }
   },
   methods: {
     handleSubmit: function (e) {
       e.preventDefault();
-      this.$emit('submit', this.$refs.input.value);
+      if (this.question) {
+        return this.$emit('submit', this.$refs.input.value);
+      }
+      const values = this.$refs.step.getValues();
+      this.$emit('submit', values);
     }
   }
 };

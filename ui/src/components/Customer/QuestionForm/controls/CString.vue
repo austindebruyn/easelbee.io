@@ -1,8 +1,7 @@
 <template lang="pug">
   .c-text
     .form-group
-      label(:for='htmlId') fill me out
-      span.required.ml-1 *
+      label(v-if='label', :for='htmlId') {{ label }}
       v-input-text(:id='htmlId', ref='input')
 </template>
 
@@ -17,8 +16,9 @@ export default {
   },
   props: {
     /* eslint-disable vue/require-default-prop */
-    id: VueTypes.number.isRequired,
-    required: VueTypes.bool
+    id: VueTypes.oneOfType([VueTypes.number, VueTypes.string]).isRequired,
+    required: VueTypes.bool,
+    label: VueTypes.string
   },
   computed: {
     htmlId: function () {
@@ -26,6 +26,11 @@ export default {
     },
     value: function () {
       return this.$refs.input.value;
+    }
+  },
+  methods: {
+    setValue: function (value) {
+      this.$refs.input.setValue(value);
     }
   }
 };
