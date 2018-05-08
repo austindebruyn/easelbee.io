@@ -118,7 +118,9 @@
       "gather-user-details": {
         "title": "Who are you?",
         "nickname-label": "Enter a nickname",
-        "email-label": "Enter your email"
+        "email-label": "Enter your email",
+        "nickname-placeholder": "King Arthur",
+        "email-placeholder": "arthur@camelot.net"
       }
     }
   }

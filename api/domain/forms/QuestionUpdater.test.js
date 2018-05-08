@@ -74,7 +74,7 @@ describe('QuestionUpdater', function () {
 
         const result = await updater.update({
           options: [
-            { value: 'James Bond' },
+            { id: this.option.id, value: 'James Bond' },
             { value: 'Star Wars' }
           ]
         });
@@ -103,6 +103,26 @@ describe('QuestionUpdater', function () {
         expect(result.options.map(q => q.value)).to.eql([
           'Star Wars', 'Not James Bond'
         ]);
+
+        const optionExists = await Option.count({ where: { id: this.option.id } });
+        expect(optionExists).to.eql(0);
+      });
+
+      it('should update options in place', async function () {
+        const updater = new QuestionUpdater(this.question);
+
+        const result = await updater.update({
+          options: [
+            { id: this.option.id, value: 'Jemes Bondy' }
+          ]
+        });
+
+        await result.ensureOptions();
+        expect(result.options).to.have.length(1);
+        expect(result.options.map(q => q.value)).to.eql(['Jemes Bondy']);
+
+        await this.option.reload();
+        expect(this.option.value).to.eql('Jemes Bondy');
       });
 
       it('should remove all options when changing to non-radio type', async function () {
@@ -225,7 +245,7 @@ describe('QuestionUpdater', function () {
         const updater = new QuestionUpdater(question);
         const result = await updater.update({
           title: 'Having a good time',
-          options: [{ value: 'Oil Painting' }]
+          options: [{ id: option.id, value: 'Oil Painting' }]
         });
 
         expect(result.id).to.not.eql(this.question.id);
@@ -257,7 +277,7 @@ describe('QuestionUpdater', function () {
         const updater = new QuestionUpdater(question);
         const result = await updater.update({
           title: 'Having a good time',
-          options: [{ value: 'Oil Painting' }]
+          options: [{ id: option.id, value: 'Oil Painting' }]
         });
 
         expect(result.id).to.not.eql(this.question.id);

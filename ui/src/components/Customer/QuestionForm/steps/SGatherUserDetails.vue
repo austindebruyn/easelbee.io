@@ -4,11 +4,13 @@
       c-string(
         ref='email'
         :label='$t("customer.steps.gather-user-details.email-label")'
+        :placeholder='$t("customer.steps.gather-user-details.email-placeholder")'
         id='email'
       )
       c-string(
         ref='nickname'
         :label='$t("customer.steps.gather-user-details.nickname-label")'
+        :placeholder='$t("customer.steps.gather-user-details.nickname-placeholder")'
         id='nickname'
       )
 </template>

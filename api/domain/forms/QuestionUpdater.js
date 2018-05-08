@@ -44,14 +44,18 @@ class QuestionUpdater {
     this.originalQuestion = this.question;
     this.question = await Question.create({
       originalQuestionId: this.originalQuestion.id,
-      ..._.pick(this.originalQuestion,
+      ..._.pick(
+        this.originalQuestion,
         'title',
         'type',
         'order',
         'formId',
         'required'
       ),
-      ...extraProperties
+      ..._.omit(
+        extraProperties,
+        'options'
+      )
     });
 
     // Duplicate options
@@ -64,6 +68,10 @@ class QuestionUpdater {
         originalId: originalOption.id,
         ..._.pick(originalOption, 'value')
       });
+      const optionParams = _.find(extraProperties.options, { id: originalOption.id });
+      if (optionParams) {
+        optionParams.id = newOption.id;
+      }
 
       // Duplicate deltas
       await originalOption.ensureDelta();
@@ -89,41 +97,60 @@ class QuestionUpdater {
   }
 
   /**
-   * @typedef Option
+   * @typedef OptionParams
    * @property {String} value
    */
   /**
    * @private
-   * @param {Option[]} options 
+   * @param {OptionParams[]} options 
    */
   async createMissingOptions(options) {
     await this.question.ensureOptions();
-    const values = this.question.options.map(o => o.value);
+    const ids = _.map(this.question.options, 'id');
 
     for (let i = 0; i < options.length; i++) {
       const option = options[i];
 
-      if (!values.includes(option.value)) {
+      if (!option.id || !ids.includes(option.id)) {
         const newOption = await this.question.createOption({
           value: option.value
         });
         this.question.options.push(newOption);
+        option.id = newOption.id;
       }
     }
   }
 
   /**
    * @private
-   * @param {Option[]} expectedOptions
+   * @param {OptionParams[]} options 
+   */
+  async updateExistingOptions(options) {
+    await this.question.ensureOptions();
+
+    for (let i = 0; i < options.length; i++) {
+      const option = options[i];
+      const existingOption = _.find(this.question.options, { id: option.id });
+
+      if (existingOption) {
+        existingOption.value = option.value;
+        await existingOption.save();
+      }
+    }
+  }
+
+  /**
+   * @private
+   * @param {OptionParams[]} expectedOptions
    */
   async destroyExtraOptions(expectedOptions = []) {
     await this.question.ensureOptions();
-    const expectedValues = expectedOptions.map(o => o.value);
+    const expectedIds = expectedOptions.map(o => o.id).filter(Boolean);
 
     for (let i = 0; i < this.question.options.length; i++) {
       const option = this.question.options[i];
 
-      if (!expectedValues.includes(option.value)) {
+      if (!expectedIds.includes(option.id)) {
         // Clear any attachments first. Deltas are cascade-delete.
         const attachment = await option.getOptionAttachment();
         if (attachment) {
@@ -144,24 +171,29 @@ class QuestionUpdater {
    * @returns {Promise}
    */
   async update(body) {
-    if (await this.needsDuplicate()) {
+    const needsDuplicate = await this.needsDuplicate();
+    if (needsDuplicate) {
       await this.performDuplicate(body);
     } else {
       Object.assign(this.question, _.omit(body, 'options'));
       await this.question.save();
     }
+    const expectedOptions = body.options;
 
     if (this.question.isMultipleChoice()) {
-      if (!body.options || !Array.isArray(body.options)) {
+      if (!expectedOptions || !Array.isArray(expectedOptions)) {
         throw new UnprocessableEntityError('options-not-array');
       }
 
-      await this.createMissingOptions(body.options);
+      await this.createMissingOptions(expectedOptions);
+      if (!needsDuplicate) {
+        await this.updateExistingOptions(expectedOptions);
+      }
     }
     // We should destroy missing options even for non-multiple-choice questions
     // because a Question that has changed type from `radio` to `string` should
     // have all options removed.
-    await this.destroyExtraOptions(body.options);
+    await this.destroyExtraOptions(expectedOptions);
 
     return this.question;
   }

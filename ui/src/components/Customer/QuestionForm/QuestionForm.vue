@@ -11,6 +11,7 @@
           ref='input'
           v-if='question.type === "string"'
           :id='question.id'
+          :label='question.title'
         )
         c-radio(
           ref='input'
@@ -58,6 +59,7 @@ export default {
   methods: {
     handleSubmit: function (e) {
       e.preventDefault();
+
       if (this.question) {
         return this.$emit('submit', this.$refs.input.value);
       }

@@ -42,11 +42,11 @@
 import pick from 'lodash.pick';
 
 import { questionShape } from 'components/shapes';
+import clone from 'lib/clone';
 import VInputText from 'components/controls/VInputText';
 import VDropdown from 'components/controls/VDropdown';
 import VCardControl from 'components/controls/VCardControl';
 import QuestionDetailsOptions from './QuestionDetailsOptions';
-import clone from 'lib/clone';
 
 export default {
   name: 'question-details',

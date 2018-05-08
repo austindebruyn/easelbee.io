@@ -2,7 +2,11 @@
   .c-text
     .form-group
       label(v-if='label', :for='htmlId') {{ label }}
-      v-input-text(:id='htmlId', ref='input')
+      v-input-text(
+        ref='input'
+        :id='htmlId'
+        :placeholder='placeholder'
+      )
 </template>
 
 <script>
@@ -12,13 +16,14 @@ import VInputText from 'components/controls/VInputText';
 export default {
   name: 'c-text',
   components: {
-    'v-input-text': VInputText
+    VInputText
   },
   props: {
     /* eslint-disable vue/require-default-prop */
     id: VueTypes.oneOfType([VueTypes.number, VueTypes.string]).isRequired,
     required: VueTypes.bool,
-    label: VueTypes.string
+    label: VueTypes.string,
+    placeholder: VueTypes.string
   },
   computed: {
     htmlId: function () {
