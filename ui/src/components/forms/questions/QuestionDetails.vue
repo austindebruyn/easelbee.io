@@ -77,8 +77,8 @@ export default {
     },
     scrubOptions: function (options) {
       // When submitting options to the API, don't include model attributes like
-      // id or timestamps.
-      return options.map(option => pick(option, 'value'));
+      // keys or timestamps.
+      return options.map(option => pick(option, 'id', 'value'));
     },
     handleSubmit: function (e) {
       e.preventDefault();

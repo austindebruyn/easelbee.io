@@ -77,7 +77,10 @@ export default {
     getValues: function () {
       const refs = this.$refs;
       return this.options.map(function (option) {
-        return { value: refs[`option-${option.id}`][0].getValue() };
+        return {
+          id: option.id,
+          value: refs[`option-${option.id}`][0].getValue()
+        };
       });
     },
     handleChange: function () {

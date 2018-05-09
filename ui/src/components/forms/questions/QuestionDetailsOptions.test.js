@@ -149,8 +149,8 @@ describe('QuestionDetailsOptions', function () {
       this.fillIn(inputs[1].first('input')).with('apple');
 
       expect(this.wrapper.vm.getValues()).to.eql([
-        { value: 'banana' },
-        { value: 'apple' }
+        { id: this.options[0].id, value: 'banana' },
+        { id: this.options[1].id, value: 'apple' }
       ]);
     });
   });

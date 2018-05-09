@@ -109,13 +109,14 @@ describe('QuestionDetails', function () {
 
     it('should dispatch when add option is clicked', function () {
       this.wrapper.first(QuestionDetailsOptions).vm.$emit('addOption');
+
       expect(this.actions.updateQuestion.args[0][1]).to.eql({
         id: this.question.id,
         title: 'Oreos?',
         type: 'radio',
         options: [
-          { value: 'Cookies' },
-          { value: 'Creme' },
+          { id: 11, value: 'Cookies' },
+          { id: 36, value: 'Creme' },
           { value: '' }
         ]
       });
@@ -130,7 +131,7 @@ describe('QuestionDetails', function () {
         type: 'radio',
         options: [
           // Cookies is gone. It was option id 11
-          { value: 'Creme' }
+          { id: 36, value: 'Creme' }
         ]
       });
     });
